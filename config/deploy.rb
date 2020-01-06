@@ -21,7 +21,7 @@ set :branch, 'master'
 set :port, '2222'
 set :user, 'depus'
 set :shared_dirs,  fetch(:shared_dirs, []).push('tmp', 'log', 'public/uploads', 'public/system')
-set :shared_files, fetch(:shared_files, []).push('config/puma.rb', 'config/database.yml', 'config/secrets.yml')
+set :shared_files, fetch(:shared_files, []).push('config/puma.rb', 'config/database.yml', 'config/master.key')
 
 #set :rails_env, 'production'
 
