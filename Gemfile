@@ -57,3 +57,11 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'mina'
 gem 'mina-puma',  require: false
 gem 'mina-nginx', require: false
+
+gem 'slim'
+gem 'bootstrap'
+
+group :test, :development do
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+end

@@ -18,7 +18,7 @@ set :domain, 'projects74.ru'
 set :deploy_to, '/home/depus/app_deploy'
 set :repository, 'git@github.com:Cheshir74/MCS.git'
 set :branch, 'master'
-set :port, '9022'
+set :port, '2222'
 set :user, 'depus'
 set :shared_dirs,  fetch(:shared_dirs, []).push('tmp', 'log', 'public/uploads', 'public/system')
 set :shared_files, fetch(:shared_files, []).push('config/puma.rb', 'config/database.yml', 'config/master.key')
@@ -48,7 +48,6 @@ end
 
 task :deploy do
   deploy do
-    invoke :'rbenv:load'
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
