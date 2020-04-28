@@ -24,14 +24,19 @@ set :port, '22'
 set :user, 'depus'
 set :shared_dirs,  fetch(:shared_dirs, []).push('tmp', 'log', 'public/uploads', 'public/system')
 set :shared_files, fetch(:shared_files, []).push('config/puma.rb', 'config/database.yml', 'config/master.key')
+set :bundle_options, -> { '' }
 
-set :rails_env, 'production'
+#set :rails_env, 'production'
 
 task :remote_environment do
   invoke :'rbenv:load'
 end
 
 task :setup do
+  command "#{fetch(:bundle_bin)} config set deployment 'true'"
+  command "#{fetch(:bundle_bin)} config set path '#{fetch(:bundle_path)}'"
+  command "#{fetch(:bundle_bin)} config set without '#{fetch(:bundle_withouts)}'"
+
   command %{mkdir -p "#{fetch(:shared_path)}/log"}
   command %{chmod g+rx,u+rwx "#{fetch(:shared_path)}/log"}
 
