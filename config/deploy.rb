@@ -14,16 +14,18 @@ require 'mina/puma'
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :application_name, 'Cheshir_pro'
-set :domain, 'projects74.ru'
+set :domain, '192.168.9.95'
+#set :domain, 'projects74.ru'
 set :deploy_to, '/home/depus/app_deploy'
 set :repository, 'git@github.com:Cheshir74/MCS.git'
 set :branch, 'master'
-set :port, '9022'
+set :port, '22'
+#set :port, '9022'
 set :user, 'depus'
 set :shared_dirs,  fetch(:shared_dirs, []).push('tmp', 'log', 'public/uploads', 'public/system')
 set :shared_files, fetch(:shared_files, []).push('config/puma.rb', 'config/database.yml', 'config/master.key')
 
-#set :rails_env, 'production'
+set :rails_env, 'production'
 
 task :remote_environment do
   invoke :'rbenv:load'
