@@ -1,0 +1,8 @@
+h1 Все материалы
+
+- @articles.each do |a|
+  div.alert.alert-light
+    h3 = a.title
+    p = a.body
+    = link_to "Читать далее", article_path(a), :class => 'btn btn-outline-primary'
+

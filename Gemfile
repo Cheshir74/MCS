@@ -60,8 +60,10 @@ gem 'mina-nginx', require: false
 
 gem 'slim'
 gem 'bootstrap'
+gem 'jquery-rails'
 
 group :test, :development do
+  gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'factory_bot'
 end
