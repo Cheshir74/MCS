@@ -2,4 +2,17 @@ h1 = @article.title
 p = @article.body
 hr = link_to "Редактировать", edit_article_path(@article), :class => 'btn btn-warning'
 = link_to "Удалить", article_path(@article), method: :delete, data: { confirm: "Подтвердить удаление?" }, :class => 'btn btn-danger'
-
+hr
+h2 Все комментарии
+- @article.comments.each do |comment|
+  div.alert.alert-light
+    p.strong = comment.username
+    = comment.body
+= form_for ([@article, @article.comments.build]) do |f|
+  p Пользователь
+  br
+  p = f.text_field :username, class: 'form-control'
+  p Текст комментария
+  br
+  p = f.text_area :body, class: 'form-control'
+  p = f.submit "Добавить комментарий",  class: 'btn btn-success'

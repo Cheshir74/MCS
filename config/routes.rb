@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
 
   get 'about' => 'pages#about'
-  resources :articles
+  resources :articles do
+    resources :comments
+  end
 
 end
