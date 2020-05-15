@@ -3,6 +3,21 @@ RSpec.describe ArticlesController, type: :controller do
 
   let(:article) { create(:article) }
 
+  describe 'GET #edit' do
+
+  end
+
+  describe 'PATCH #update' do
+    it 'Article edit' do
+
+    end
+
+  end
+
+  describe 'GET #destroy' do
+
+  end
+
   describe 'GET #index' do
     let(:articles) { create_list(:article, 2) }
 

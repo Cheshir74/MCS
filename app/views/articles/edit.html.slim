@@ -1,0 +1,17 @@
+h1 Редактировать статью
+= form_for :article, url: article_path(@article), method: :patch do |f|
+  - if @article.errors.any?
+    - @article.errors.full_messages.each do |msg|
+      div.alert.alert-danger
+        = msg
+  p Название
+  br
+  p
+    = f.text_field :title, class: 'form-control'
+  p Текст
+  br
+  p
+    = f.text_area :body, class: 'form-control'
+  p
+    = f.submit class: 'btn btn-success'
+
