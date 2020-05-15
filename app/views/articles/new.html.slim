@@ -4,13 +4,11 @@ h1 Добавить статью
     - @article.errors.full_messages.each do |msg|
       div.alert.alert-danger
         = msg
-  p
-    Название
+  p Название
   br
   p
     = f.text_field :title, class: 'form-control'
-  p
-    Текст
+  p Текст
   br
   p
     = f.text_area :body, class: 'form-control'

@@ -9,7 +9,7 @@ FactoryBot.define do
   end
 
   factory :invalid_article, class: "Article" do
-    title nil
-    body nil
+    title { nil }
+    body { nil }
   end
 end

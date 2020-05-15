@@ -46,16 +46,30 @@ RSpec.describe ArticlesController, type: :controller do
   end
 
   describe 'POST #create' do
-    let(:request) { post :create, params: { article: attributes_for(:article) } }
+    let(:http_request) { post :create, params: { article: attributes_for(:article) } }
+    let(:invalid_params) { post :create, params: { article: attributes_for(:invalid_article) } }
 
-    it 'saves the new question in the DB' do
-      expect { request }.to change(Article, :count).by(1)
+    context 'with valid attributes' do
+      it 'saves the new question in the DB' do
+        expect { http_request }.to change(Article, :count).by(1)
+      end
+
+      it 'redirects to show view' do
+        expect(http_request).to redirect_to(assigns(:article))
+      end
     end
 
-    it 'redirects to show view' do
-      request
-      expect(response).to redirect_to assigns(:article)
+    context 'with invalid attributes' do
+      it 'does not save the question in the DB' do
+        expect { invalid_params }.to_not change(Article, :count)
+      end
+
+      it 're-renders new view' do
+        invalid_params
+        expect(response).to render_template(:new)
+      end
     end
   end
+
 
 end
