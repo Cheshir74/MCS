@@ -13,6 +13,7 @@
 
   <header>
     <!-- Fixed navbar -->
+    <!--
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
       <a class="navbar-brand" href="#">Fixed navbar</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,7 +37,42 @@
         </form>
       </div>
     </nav>
-  </header>
+  </header> -->
+
+  <% if current_user.nil? %>
+    <%= link_to new_user_session_path, class: 'login-button' do %>Sign in<% end %>
+  <% else %>
+    <%= link_to home_path, class: 'login-button' do %>Go to App<% end %>
+    <%= link_to destroy_user_session_path, method: :delete do %>Log out<% end %>
+  <% end %>
+
+  <% if user_signed_in? %>
+
+    <%= link_to('Edit registration', edit_user_registration_path) %>
+    <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
+
+  <% else %>
+
+    <%= link_to('Register', new_user_registration_path)  %>
+    <%= link_to('Login', new_user_session_path)  %>
+
+  <% end %>
+
+  <% unless flash.empty? %>
+    <script type="text/javascript">
+        <% flash.each do |f| %>
+        <% type = f[0].to_s.gsub('alert', 'error').gsub('notice', 'info') %>
+        toastr['<%= type %>']('<%= f[1] %>');
+        <% end %>
+    </script>
+  <% end %>
+
+
+
+  <% if can? :manage, User %>
+    <p>Visible only for superadmins and supervisors! </p>
+  <% end %>
+
 
     <%= yield %>
   </body>
