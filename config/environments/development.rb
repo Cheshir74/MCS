@@ -1,4 +1,9 @@
 Rails.application.configure do
+
+
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
@@ -32,7 +37,19 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      ssl:   'true',
+      user_name:      Rails.application.secrets.mail_username,
+      password:       Rails.application.secrets.mail_password,
+      domain:         'yandex.ru',
+      address:       'smtp.yandex.ru',
+      port:          '465',
+      authentication: :plain,
+      enable_starttls_auto: true
+  }
 
   config.action_mailer.perform_caching = false
 
