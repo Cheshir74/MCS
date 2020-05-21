@@ -58,11 +58,15 @@
           <li class="nav-item active">
             <span class="nav-link"><%= link_to "Home", home_path %> <span class="sr-only">(current)</span></span>
           </li>
+          <% @galleryNav.each do |gallery| %>
+            <li class="nav-item"><a class="nav-link"><%= link_to gallery.name, gallery_path(gallery.id) %></a></li>
+          <% end %>
+
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "Upload Photo", upload_path %></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "New Gallery", new_gallery_path %></a>
           </li>
         </ul>
         <form class="form-inline mt-2 mt-md-0">
@@ -111,6 +115,7 @@
 
 
     <%= yield %>
+
   </div>
   </main>
   </body>
