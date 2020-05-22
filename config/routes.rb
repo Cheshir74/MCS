@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'homes/index'
+  get 'homes/show'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   devise_for :users, controllers: {
       sessions: 'users/sessions',
@@ -7,14 +9,15 @@ Rails.application.routes.draw do
      # confirmations: 'confirmations'
   }
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  root 'articles#index', as: 'home'
-
+  #root 'articles#index', as: 'home'
+  root 'homes#index', as: 'home'
   get "upload" => "images#new", :as => "upload"
   get 'about' => 'pages#about'
+
   resources :articles do
     resources :comments
   end
 
   resources :images, :galleries
-
+  resources :pages, only: [:show]
 end
