@@ -2,6 +2,7 @@
 <html>
 <style>
 
+
   .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
@@ -10,8 +11,30 @@
     -ms-user-select: none;
     user-select: none;
   }
+  @media (max-width: 768px) {
+    .navbar {
+      background-color: #f9f9f9;
+    }
+    .navbar-dark .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+    }
+    .dark-nav a{
+      color: #000000 !important;
+      border-color:#000000 !important;
+    }
 
-  @media (min-width: 768px) {
+    .dark-nav a.btn.btn-outline-light{
+      color: #000000 !important;
+      border-color:#000000 !important;
+      margin-left: 24px;
+      margin-bottom: 12px;
+      margin-top: 25px;
+    }
+  }
+
+
+    @media (min-width: 768px) {
+
     .bd-placeholder-img-lg {
       font-size: 3.5rem;
     }
@@ -46,17 +69,17 @@
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body class="d-flex flex-column h-100">
+  <body class="d-flex flex-column h-100 ">
 
   <header>
     <!-- Fixed navbar -->
     <% if current_page?(home_path) %>
-      <nav class="navbar navbar-expand-md navbar-dark fixed-top">
-        <h5> <a class="navbar-brand" href="#"><%= link_to "Dmitriy Tolstosheev Photography", home_path %></a></h5>
+      <nav class="navbar navbar-expand-md navbar-dark navbar-collapse fixed-top" id="nav-black">
+        <h5> <a class="navbar-brand" href="#"><%= link_to "Dmitry Tolstosheev Photography", home_path %></a></h5>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="collapse navbar-collapse dark-nav" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
             <% @galleryNav.each do |gallery| %>
               <li class="nav-item"><a class="nav-link"><%= link_to gallery.name, gallery_path(gallery.id) %></a></li>
