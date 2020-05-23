@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html>    <style>
+<html>
+<style>
+
   .bd-placeholder-img {
     font-size: 1.125rem;
     text-anchor: middle;
@@ -31,6 +33,7 @@
       font-size: 80%;
     }
 
+
   }
 </style>
   <head>
@@ -47,56 +50,79 @@
 
   <header>
     <!-- Fixed navbar -->
+    <% if current_page?(home_path) %>
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+        <h5> <a class="navbar-brand" href="#"><%= link_to "Dmitriy Tolstosheev Photography", home_path %></a></h5>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            <% @galleryNav.each do |gallery| %>
+              <li class="nav-item"><a class="nav-link"><%= link_to gallery.name, gallery_path(gallery.id) %></a></li>
+            <% end %>
+          </ul>
 
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="#">Fixed navbar</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <span class="nav-link"><%= link_to "Home", home_path %> <span class="sr-only">(current)</span></span>
-          </li>
-          <% @galleryNav.each do |gallery| %>
-            <li class="nav-item"><a class="nav-link"><%= link_to gallery.name, gallery_path(gallery.id) %></a></li>
-          <% end %>
+              <% if current_user.nil? %>
+                <%= link_to new_user_session_path, class: 'btn btn-outline-light' do %>Sign in<% end %>
+              <% else %>
+                <%= link_to destroy_user_session_path, class: 'btn btn-outline-light', method: :delete do %>Log out<% end %>
+              <% end %>
 
-          <li class="nav-item">
-            <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "Upload Photo", upload_path %></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "New Gallery", new_gallery_path %></a>
-          </li>
-        </ul>
-        <form class="form-inline mt-2 mt-md-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">  <% if current_user.nil? %>
-              <%= link_to new_user_session_path, class: 'login-button' do %>Sign in<% end %>
-            <% else %>
-              <%= link_to destroy_user_session_path, method: :delete do %>Log out<% end %>
-            <% end %></button>
-        </form>
-      </div>
-    </nav>
-  </header>
+        </div>
+      </nav>
 
-  <main role="main" class="flex-shrink-0">
-     <div class="container">
+      </header>
 
 
-  <% if user_signed_in? %>
+      <% else %>
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">Fixed navbar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <span class="nav-link"><%= link_to "Home", home_path %> <span class="sr-only">(current)</span></span>
+            </li>
+            <% @galleryNav.each do |gallery| %>
+              <li class="nav-item"><a class="nav-link"><%= link_to gallery.name, gallery_path(gallery.id) %></a></li>
+            <% end %>
 
-    <%= link_to('Edit registration', edit_user_registration_path) %>
-    <%= link_to('Logout', destroy_user_session_path, :method => :delete) %>
 
-  <% else %>
+          </ul>
+          <form class="form-inline mt-2 mt-md-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+              <% if current_user.nil? %>
+                <%= link_to new_user_session_path, class: 'login-button' do %>Sign in<% end %>
+              <% else %>
+                <% if can? :manage, User %>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "Upload Photo", upload_path %></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "New Gallery", new_gallery_path %></a>
+                  </li>
+                  <p>Visible only for superadmins and supervisors! </p>
+                <% end %>
+                <%= link_to destroy_user_session_path, method: :delete do %>Log out<% end %>
+              <% end %></button>
+          </form>
+        </div>
+      </nav>
 
-    <%= link_to('Register', new_user_registration_path)  %>
-    <%= link_to('Login', new_user_session_path)  %>
+      </header>
 
-  <% end %>
+    <% end %>
+
+    <!--
+     <main role="main" class="flex-shrink-0">
+      <div class="container"> -->
+
+
  <div id="toast-container">
   <% unless flash.empty? %>
     <script type="text/javascript">
@@ -109,14 +135,12 @@
      </div>
 
 
-  <% if can? :manage, User %>
-    <p>Visible only for superadmins and supervisors! </p>
-  <% end %>
+
 
 
     <%= yield %>
 
-  </div>
-  </main>
+ <!-- </div>
+  </main>-->
   </body>
 </html>
