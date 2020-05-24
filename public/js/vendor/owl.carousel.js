@@ -190,9 +190,9 @@
 		rewind: false,
 		checkVisibility: true,
 
-		mouseDrag: true,
-		touchDrag: true,
-		pullDrag: true,
+		mouseDrag: false,
+		touchDrag: false,
+		pullDrag: false,
 		freeDrag: false,
 
 		margin: 0,
@@ -451,6 +451,7 @@
 	Owl.prototype.initializeStage = function() {
 		this.$stage = this.$element.find('.' + this.settings.stageClass);
 
+
 		// if the stage is already in the DOM, grab it and skip stage initialization
 		if (this.$stage.length) {
 			return;
@@ -474,6 +475,7 @@
 	 */
 	Owl.prototype.initializeItems = function() {
 		var $items = this.$element.find('.owl-item');
+
 
 		// if the items are already in the DOM, grab them and skip item initialization
 		if ($items.length) {
@@ -520,6 +522,7 @@
 		if (this.settings.autoWidth && !this.is('pre-loading')) {
 			var imgs, nestedSelector, width;
 			imgs = this.$element.find('img');
+
 			nestedSelector = this.settings.nestedItemSelector ? '.' + this.settings.nestedItemSelector : undefined;
 			width = this.$element.children(nestedSelector).width();
 
@@ -1160,6 +1163,7 @@
 	 * @returns {Array.<Number>} - The absolute positions of clones for the item or all if no position was given.
 	 */
 	Owl.prototype.clones = function(position) {
+
 		var odd = this._clones.length / 2,
 			even = odd + this._items.length,
 			map = function(index) { return index % 2 === 0 ? even + index / 2 : odd - (index + 1) / 2 };
@@ -1243,6 +1247,7 @@
 	 * @param {Number} [speed] - The time in milliseconds for the transition.
 	 */
 	Owl.prototype.to = function(position, speed) {
+
 		var current = this.current(),
 			revert = null,
 			distance = position - this.relative(current),
@@ -1345,6 +1350,7 @@
 	 * @param {HTMLElement|jQuery|String} content - The new content.
 	 */
 	Owl.prototype.replace = function(content) {
+
 		this.$stage.empty();
 		this._items = [];
 
@@ -1364,6 +1370,7 @@
 			this._items.push(item);
 			this._mergers.push(item.find('[data-merge]').addBack('[data-merge]').attr('data-merge') * 1 || 1);
 		}, this));
+		this.count_myitems = this._items.length;
 
 		this.reset(this.isNumeric(this.settings.startPosition) ? this.settings.startPosition : 0);
 

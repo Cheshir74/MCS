@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	let count_items = $("div.item").length;
 
 	"use strict";
 
@@ -57,18 +58,39 @@ $(document).ready(function(){
         e.css({'background-image': 'url(' + ocImg + ')'});
     });
 
-    slides.owlCarousel({
-	    // stagePadding: 50,
-	    loop: true,
-	    // margin: 10,
-	    nav: false,
-	    navText: [
-	        '<i class="fa fa-angle-left" aria-hidden="true"></i>',
-	        '<i class="fa fa-angle-right" aria-hidden="true"></i>'
-	    ],
-	    // navContainer: '.banner .custom-nav',
-	    items: 1,
-	})
+    if (b.length == 1) {
+		slides.owlCarousel({
+			// stagePadding: 50,
+			loop: true,
+			// margin: 10,
+			nav: false,
+			navText: [
+				'<i class="fa fa-angle-left" aria-hidden="true"></i>',
+				'<i class="fa fa-angle-right" aria-hidden="true"></i>'
+			],
+			// navContainer: '.banner .custom-nav',
+			items: 1,
+		})
+	} else
+	{
+		slides.owlCarousel({
+			// stagePadding: 50,
+			loop: true,
+
+			mouseDrag: true,
+			touchDrag: true,
+			pullDrag: true,
+			freeDrag: false,
+			// margin: 10,
+			nav: false,
+			navText: [
+				'<i class="fa fa-angle-left" aria-hidden="true"></i>',
+				'<i class="fa fa-angle-right" aria-hidden="true"></i>'
+			],
+			// navContainer: '.banner .custom-nav',
+			items: 1,
+		})
+	}
 
 	// Slide Thumbnail
 	var slider = $(".carousel-full");
@@ -84,6 +106,7 @@ $(document).ready(function(){
     });
 
 	slider
+
     .owlCarousel({
         loop: true,
         nav: true,
@@ -139,8 +162,9 @@ $(document).ready(function(){
 	function counter(event) {
 	   var element   = event.target; 
 	   var items     = event.item.count; 
-	   var item      = event.item.index + 1; 
-	  
+	   var item      = event.item.index + 1;
+
+
 	  if(item > items) {
 	    item = item - items
 	  }
@@ -149,6 +173,7 @@ $(document).ready(function(){
 	}
 
 	function syncPosition(el) {
+
 	    var count = el.item.count - 1;
 	    var current = Math.round(el.item.index - el.item.count / 2 - 0.5);
 
@@ -188,253 +213,6 @@ $(document).ready(function(){
 	        slider.data("owl.carousel").to(number, 100, true);
 	    }
 	}
-
-	var offset = 300,
-		//browser window scroll (in pixels) after which the "back to top" link opacity is reduced
-		offset_opacity = 1200,
-		//duration of the top scrolling animation (in ms)
-		scroll_top_duration = 700,
-		//grab the "back to top" link
-		$back_to_top = $('.cd-top');
-
-	//hide or show the "back to top" link
-	$(window).scroll(function(){
-		( $(this).scrollTop() > offset ) ? $back_to_top.addClass('cd-is-visible') : $back_to_top.removeClass('cd-is-visible cd-fade-out');
-		if( $(this).scrollTop() > offset_opacity ) { 
-			$back_to_top.addClass('cd-fade-out');
-		}
-	});
-
-	//smooth scroll to top
-	$back_to_top.on('click', function(event){
-		event.preventDefault();
-		$('body,html').animate({
-			scrollTop: 0 ,
-		 	}, scroll_top_duration
-		);
-	});
-
-	var caro = $("#caro");
-	caro.owlCarousel({
-		items: 1,
-		autoplay: true,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		loop: true,
-	});	
-	var caro2 = $("#caro-2");
-	caro2.owlCarousel({
-		autoplay: true,
-		margin: 30,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		items : 3,
-		dots: true,
-		loop: true,
-		responsive:{
-			0:{
-				items:1
-			},
-			768:{
-				items:2
-			},
-			1000:{
-				items:3
-			}
-		}
-	});
-	var testimony = $("#testimonial");
-	testimony.owlCarousel({
-		items: 1,
-		autoplay: true,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		loop: true,
-		animateIn: 'fadeIn',
-        animateOut: 'fadeOut',
-	});
-	
-	var testimony2 = $("#owl-testimony2");
-	testimony2.owlCarousel({
-		items: 1,
-		autoplay: true,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		navText: ["<span class='fa fa-chevron-left'></span>", "<span class='fa fa-chevron-right'></span>"],
-		dots: true,
-		loop: true
-	});
-	var caro_2_colm = $("#caro_2_colm");
-	caro_2_colm.owlCarousel({
-		autoplay: true,
-		margin: 30,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		dots: true,
-		loop: true,
-		nav: false,
-		navText: ["<span class='fa fa-chevron-left'></span>", "<span class='fa fa-chevron-right'></span>"],
-		items : 2,
-		responsive:{
-			0:{
-				items:1
-			},
-			768:{
-				items:2
-			},
-			1000:{
-				items:2
-			}
-		}
-	});
-	var caro4 = $("#caro-4");
-	caro4.owlCarousel({
-		autoplay: true,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		items : 4,
-		dots: true,
-		loop: true,
-		responsive:{
-			0:{
-				items:1
-			},
-			768:{
-				items:2
-			},
-			1000:{
-				items:4
-			}
-		}
-	});
-
-	// edit
-	var carousel_1 = $("#carousel-1");
-	carousel_1.owlCarousel({
-		items: 1,
-		autoplay: true,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		loop: true,
-		animateIn: 'fadeIn',
-        animateOut: 'fadeOut',
-	});
-	var carousel_2 = $("#carousel-2");
-	carousel_2.owlCarousel({
-		autoplay: true,
-		margin: 30,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		dots: true,
-		loop: true,
-		nav: false,
-		items : 2,
-		responsive:{
-			0:{
-				items:1
-			},
-			768:{
-				items:2
-			},
-			1000:{
-				items:2
-			}
-		}
-	});
-	var carousel_3 = $("#carousel-3");
-	carousel_3.owlCarousel({
-		autoplay: true,
-		margin: 30,
-		autoplayTimeout: 5000,
-		autoplayHoverPause: true,
-		items : 3,
-		dots: true,
-		loop: true,
-		responsive:{
-			0:{
-				items:1
-			},
-			768:{
-				items:2
-			},
-			1000:{
-				items:3
-			}
-		}
-	});
-
-	$('.popup-youtube, .popup-vimeo, .popup-gmaps').magnificPopup({
-      disableOn: 700,
-      type: 'iframe',
-      mainClass: 'mfp-fade',
-      removalDelay: 160,
-      preloader: false,
-
-      fixedContentPos: false
-    });
-
-	$('.grid, .popup-gallery').magnificPopup({
-	  delegate: 'a',
-	  type: 'image',
-	  tLoading: 'Loading image #%curr%...',
-	  mainClass: 'mfp-img-mobile',
-	  gallery: {
-		enabled: true,
-		navigateByImgClick: true,
-		preload: [0,1]
-	  },
-	  image: {
-		tError: '<a href="%url%">The image #%curr%</a> could not be loaded.',
-		titleSrc: function(item) {
-		  return item.el.attr('title') + '';
-		}
-	  }
-	});
-
-
-	var $grid = $('.grid').isotope({
-		itemSelector: '.grid-item',
-		isFitWidth: true,
-		masonry: {
-			columnWidth: '.grid-sizer'
-		}
-	});
-
-	$grid.imagesLoaded().progress( function() {
-		$grid.isotope('layout');
-	});
-
-	var $gridv2 = $('.grid-v1');
-	$gridv2.isotope({
-		itemSelector: '.grid-item-v1',
-		isFitWidth: true,
-		filter: '*',
-		masonry: {
-			columnWidth: '.grid-sizer-v1'
-		}
-	});
-
-	$gridv2.imagesLoaded().progress( function() {
-		$gridv2.isotope('layout');
-	});
-
-	$('.portfolio_filter a').on('click', function() {
- 		$('.portfolio_filter .active').removeClass('active');
-		$(this).addClass('active');
- 
-		var selector = $(this).attr('data-filter');
-		$gridv2.isotope({
-			filter: selector,
-			animationOptions: {
-				duration: 500,
-				animationEngine : "jquery"
-			}
-		});
-		return false;
- 	});
-
-
-	
 });
 
 
