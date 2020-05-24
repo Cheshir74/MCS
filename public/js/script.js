@@ -1,6 +1,4 @@
 $(document).ready(function(){
-	let count_items = $("div.item").length;
-
 	"use strict";
 
 	$(".loader").delay(400).fadeOut();
