@@ -5,7 +5,9 @@
 import "bootstrap"
 import "../stylesheets/application"
 
-global.toastr = require("toastr")
+import './src/application.scss'
+import toastr from 'toastr'
+window.toastr = toastr
 
 require("@rails/ujs").start()
 require("turbolinks").start()

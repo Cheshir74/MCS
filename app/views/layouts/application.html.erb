@@ -31,10 +31,22 @@
       margin-top: 25px;
     }
   }
+    #toast-container{
+      top: 72px;
+  }
 
 
     @media (min-width: 768px) {
+      .nav-item {
+        font-family: "Old Stansard", serif;
+        padding-right: .5rem;
+        padding-left: .5rem;
+      }
+      .dark-nav a.btn.btn-outline-light{
 
+        margin-left: 30px;
+
+      }
     .bd-placeholder-img-lg {
       font-size: 3.5rem;
     }
@@ -80,10 +92,22 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse dark-nav" id="navbarCollapse">
-          <ul class="navbar-nav mr-auto">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link"><%= link_to "Home", home_path %> </a>
+            </li>
             <% @galleryNav.each do |gallery| %>
               <li class="nav-item"><a class="nav-link"><%= link_to gallery.name, gallery_path(gallery.id) %></a></li>
             <% end %>
+            <li class="nav-item">
+              <a class="nav-link"><%= link_to "Price", home_path %> </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link"><%= link_to "Contact", home_path %> </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link"><%= link_to "About", home_path %> </a>
+            </li>
           </ul>
 
               <% if current_user.nil? %>
@@ -144,24 +168,45 @@
     <!--
      <main role="main" class="flex-shrink-0">
       <div class="container"> -->
+    <% if current_page?(home_path) %>
+      <div id="oc-fullslider" class="banner ">
 
+          <% unless flash.empty? %>
+            <script type="text/javascript">
+                <% flash.each do |f| %>
+                <% type = f[0].to_s.gsub('alert', 'error').gsub('notice', 'info') %>
+                toastr['<%= type %>']('<%= f[1] %>');
+                <% end %>
+            </script>
+          <% end %>
 
- <div id="toast-container">
-  <% unless flash.empty? %>
-    <script type="text/javascript">
-        <% flash.each do |f| %>
-        <% type = f[0].to_s.gsub('alert', 'error').gsub('notice', 'info') %>
-        toastr['<%= type %>']('<%= f[1] %>');
+        <%= yield %>
+      </div>
+
+    <% else %>
+        <% unless flash.empty? %>
+          <script type="text/javascript">
+              <% flash.each do |f| %>
+              <% type = f[0].to_s.gsub('alert', 'error').gsub('notice', 'info') %>
+              toastr['<%= type %>']('<%= f[1] %>');
+              <% end %>
+          </script>
         <% end %>
-    </script>
-  <% end %>
-     </div>
+
+
+      <%= yield %>
+      <% end %>
 
 
 
 
 
-    <%= yield %>
+
+
+
+
+
+
 
  <!-- </div>
   </main>-->

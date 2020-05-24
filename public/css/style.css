@@ -154,13 +154,14 @@ a {
     color: #ffffff;
     text-decoration: none; }
 
+.navbar .navbar-brand{
+  height: 28px;
+}
 @media (max-width: 768px) {
   .navbar{
     padding:  inherit;
   }
-  .navbar .navbar-brand{
-    height: 24px;
-  }
+
   a {
     color: #000000;
     text-decoration: none; }
