@@ -51,7 +51,7 @@
       font-size: 3.5rem;
     }
 
-    main > .container {
+  /*  main > .container {
       padding: 60px 15px 0;
     }
 
@@ -67,7 +67,7 @@
     code {
       font-size: 80%;
     }
-
+*/
 
   }
 </style>
@@ -169,7 +169,6 @@
      <main role="main" class="flex-shrink-0">
       <div class="container"> -->
     <% if current_page?(home_path) %>
-      <div id="oc-fullslider" class="banner ">
 
           <% unless flash.empty? %>
             <script type="text/javascript">
@@ -182,6 +181,7 @@
 
         <%= yield %>
       </div>
+
 
     <% else %>
         <% unless flash.empty? %>
