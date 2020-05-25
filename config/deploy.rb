@@ -13,7 +13,7 @@ require 'mina/puma'
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
-set :application_name, 'Cheshir_pro'
+set :application_name, 'TolstosheevPhoto'
 set :domain, '192.168.9.95'
 #set :domain, 'projects74.ru'
 set :deploy_to, '/home/depus/app_deploy'

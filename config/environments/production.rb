@@ -59,6 +59,19 @@ Rails.application.configure do
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "MCS_production"
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+      ssl:   'true',
+      user_name:      Rails.application.secrets.mail_username,
+      password:       Rails.application.secrets.mail_password,
+      domain:         'yandex.ru',
+      address:       'smtp.yandex.ru',
+      port:          '465',
+      authentication: :plain,
+      enable_starttls_auto: true
+  }
 
   config.action_mailer.perform_caching = false
 

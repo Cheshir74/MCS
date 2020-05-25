@@ -73,7 +73,7 @@
 </style>
   <head>
 
-    <title>MCS</title>
+    <title>TolstosheevPhoto</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -136,9 +136,17 @@
             <% @galleryNav.each do |gallery| %>
               <li class="nav-item"><a class="nav-link"><%= link_to gallery.name, gallery_path(gallery.id) %></a></li>
             <% end %>
-
-
+            <% if can? :manage, User %>
+              <li class="nav-item">
+                <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "Upload Photo", upload_path %></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "New Gallery", new_gallery_path %></a>
+              </li>
+              <p>Visible only for superadmins and supervisors! </p>
+            <% end %>
           </ul>
+
           <form class="form-inline mt-2 mt-md-0">
             <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -146,15 +154,6 @@
               <% if current_user.nil? %>
                 <%= link_to new_user_session_path, class: 'login-button' do %>Sign in<% end %>
               <% else %>
-                <% if can? :manage, User %>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "Upload Photo", upload_path %></a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="#" tabindex="-1" aria-disabled="true"><%= link_to "New Gallery", new_gallery_path %></a>
-                  </li>
-                  <p>Visible only for superadmins and supervisors! </p>
-                <% end %>
                 <%= link_to destroy_user_session_path, method: :delete do %>Log out<% end %>
               <% end %></button>
           </form>
