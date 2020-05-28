@@ -1,11 +1,26 @@
 
-<div id="gallary">
+ <div class="container">
   <h2><%= @gallery.name %> <small class="pull-right"><%= link_to "Edit", edit_gallery_path %></small></h2>
+
   <% if @images.exists? %>
     <% @images.each_slice(4) do |image| %>
       <div class="row">
         <% image.each do |image| %>
-          <div class="col-md-3">
+          <div class="col-md-12">
+
+            <div id="mdb-lightbox-ui"></div>
+
+            <div class="mdb-lightbox">
+
+              <figure class="col-md-4">
+                <a href="<%= image.image_url() %>" data-size="1600x1067">
+                  <img alt="picture" src="<%= image_tag image.image_url(:thumb) %>" class="img-fluid">
+                </a>
+              </figure>
+            </div>
+          </div>
+
+      <!--    <div class="col-md-3">
             <div class="photo photo-type-line">
               <a href="<%= image.image_url() %>" class="photo-hover" data-lightbox="my-images" data-title="<%= image.image_title %>">
                 <div class="photo-info">
@@ -17,7 +32,7 @@
               </a>
               <div class="photo-img"><%= image_tag image.image_url(:thumb) %></div>
             </div>
-          </div>
+          </div> -->
         <% end %>
       </div>
     <% end %>
@@ -25,4 +40,4 @@
     <p>There are no images</p>
   <% end %>
 
-</div>
+ </div>
