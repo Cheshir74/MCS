@@ -1,4 +1,6 @@
 class GalleriesController < ApplicationController
+  skip_before_action :authenticate_user!, :only => [:show]
+
   def new
     @gallery = Gallery.new
   end
