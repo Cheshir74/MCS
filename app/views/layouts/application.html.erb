@@ -168,6 +168,7 @@
      <main role="main" class="flex-shrink-0">
       <div class="container"> -->
     <% if current_page?(home_path) %>
+      <div class="toast-container">
 
           <% unless flash.empty? %>
             <script type="text/javascript">
@@ -177,6 +178,7 @@
                 <% end %>
             </script>
           <% end %>
+      </div>
 
         <%= yield %>
       </div>
