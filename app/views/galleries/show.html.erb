@@ -1,46 +1,76 @@
 <link href="/css/lightgallery.css" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
- <div class="container-fluid">
-   <div class="row">
-     <ul id="lightgallery" class="list-unstyled row">
-  <% if @images.exists? %>
-    <% @images.each_slice(6) do |image| %>
-
-        <% image.each do |image| %>
-            <li class="col-xs-6 col-sm-4 col-md-3" data-src="<%= image.image_url() %>">
-              <a href='<%= image.image_url() %>'>
-                <%= image_tag image.image_url(:thumb) %>
-              </a>
-            </li>
-
-
-      <!--    <div class="col-md-3">
-            <div class="photo photo-type-line">
-              <a href="<%= image.image_url() %>" class="photo-hover" data-lightbox="my-images" data-title="<%= image.image_title %>">
-                <div class="photo-info">
-                  <div class="headline"><%= image.image_title %></div>
-                  <div class="line"></div>
-                  <div class="desc"><%= image.image_description %></div>
-                </div>
-                <div class="mask"></div>
-              </a>
-              <div class="photo-img"><%= image_tag image.image_url(:thumb) %></div>
-            </div>
-          </div> -->
-        <% end %>
-
-    <% end %>
-  <% else %>
-    <p>There are no images</p>
-  <% end %>
-     </ul>
-   </div>
- </div>
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#lightgallery').lightGallery();
+        $('#lightgallery').lightGallery({
+            selector: '.item'
+        });
     });
 </script>
+
+  <link rel="stylesheet" href="/assets/web/assets/mobirise-icons/mobirise-icons.css">
+  <link rel="stylesheet" href="/assets/mobirise-gallery/style.css">
+
+
+<section class="mbr-gallery mbr-slider-carousel cid-qx5qFCU1Ss" id="gallery3-5" data-rv-view="360">
+
+  <div>
+    <div>
+      <!-- Filter -->
+      <!-- Gallery -->
+
+      <div class="mbr-gallery-row">
+        <div class="mbr-gallery-layout-default">
+          <div>
+            <div id="lightgallery">
+
+              <% if @images.exists? %>
+                <% @images.each_slice(6) do |image| %>
+
+                  <% image.each do |image| %>
+
+
+
+                    <div class="mbr-gallery-item mbr-gallery-item--pNaN">
+
+                      <div class="item" data-src="<%= image.image_url() %>">
+                        <a href='<%= image.image_url() %>'>
+                          <%= image_tag image.image_url(:thumb) %>
+                        </a>
+                        <span class="icon-focus"></span>
+                      </div>
+                    </div>
+
+                    <% end %>
+                  <% end %>
+              <% else %>
+                <p>There are no images</p>
+              <% end %>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<script src="/assets/masonry/masonry.pkgd.min.js"></script>
+
+<script src="/assets/theme/js/script.js"></script>
+<script src="/assets/mobirise-gallery/player.min.js"></script>
+<script src="/assets/mobirise-gallery/script.js"></script>
+
+
+
+ <div class="container-fluid">
+
+ </div>
+
+<!-- JS VENDOR -->
+<script src="/js/vendor/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/picturefill/2.3.1/picturefill.min.js"></script>
 <script src="/js/lightgallery-all.js"></script>
