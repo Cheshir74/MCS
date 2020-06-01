@@ -21,6 +21,11 @@
 /yarn-error.log
 
 /public/assets
+!/public/assets/masonry
+!/public/assets/mobirise-gallery
+!/public/assets/rails_admin
+!/public/assets/theme
+!/public/assets/web
 /public/uploads
 .byebug_history
 
