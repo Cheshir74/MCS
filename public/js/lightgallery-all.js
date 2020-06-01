@@ -31,7 +31,7 @@
         cssEasing: 'ease',
 
         //'for jquery animation'
-        easing: 'linear',
+        easing: '',
         speed: 600,
         height: '100%',
         width: '100%',
@@ -52,7 +52,7 @@
         loop: true,
         escKey: true,
         keyPress: true,
-        controls: false,
+        controls: true,
         slideEndAnimatoin: false,
         hideControlOnEnd: false,
         mousewheel: true,

@@ -1,13 +1,5 @@
 <link href="/css/lightgallery.css" rel="stylesheet">
 
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#lightgallery').lightGallery({
-            selector: '.item'
-        });
-    });
-</script>
-
   <link rel="stylesheet" href="/css/mobirise-icons/mobirise-icons.css">
   <link rel="stylesheet" href="/css/style_mob.css">
 
@@ -72,4 +64,11 @@
 
 <!-- JS VENDOR -->
 <script src="https://cdn.jsdelivr.net/picturefill/2.3.1/picturefill.min.js"></script>
-<script src="/js/lightgallery-all.js"></script>
+
+<script type="text/javascript">
+    $(document).on('turbolinks:load', function(){
+        $('#lightgallery').lightGallery({
+            selector: '.item'
+        });
+    });
+</script>
