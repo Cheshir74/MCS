@@ -2,68 +2,74 @@
 
   <link rel="stylesheet" href="/css/mobirise-icons/mobirise-icons.css">
   <link rel="stylesheet" href="/css/style_mob.css">
+<style>
+  *{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Sans-Serif;
+  }
+    h1{
+      font-weight: 800;
+    }
+    p{
+      font-weight: 500;
+    }
+    .row{
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .row .column{
+      flex: 16.6%; /*three columns*/
+      width: auto;
+      overflow: hidden;
+      padding: 0 4px;
+      height: 100%;
+    }
+    .row .column img{
+      margin-top: 2%;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+  @media only screen and (max-width: 800px) {
+    .row .column {
+      flex: 50%;
+    }
+  }
+  @media only screen and (max-width: 600px){
+    .row .column{
+      flex: 100%;
+    }
+  }
+</style>
+<h1 class="text-center text-primary p-2">Gallery</h1>
+<div class="row" id="lightgallery">
+    <% if @images.exists? %>
+    <% @images.in_groups(5, false).each do |group| %>
+        <div class="column">
+          <% group.each do |image| %>
 
 
-<section class="mbr-gallery mbr-slider-carousel cid-qx5qFCU1Ss" id="gallery3-5" data-rv-view="360">
-
-  <div>
-    <div>
-      <!-- Filter -->
-      <!-- Gallery -->
-
-      <div class="mbr-gallery-row">
-        <div class="mbr-gallery-layout-default">
-          <div>
-            <div id="lightgallery">
-
-              <% if @images.exists? %>
-                <% @images.each_slice(6) do |image| %>
-
-                  <% image.each do |image| %>
 
 
-
-                    <div class="mbr-gallery-item mbr-gallery-item--pNaN">
-
-                      <div class="item" data-src="<%= image.image_url() %>">
-                        <a href='<%= image.image_url() %>'>
-                          <%= image_tag image.image_url(:thumb) %>
-                        </a>
-                        <span class="icon-focus"></span>
-                      </div>
-                    </div>
-
-                    <% end %>
-                  <% end %>
-              <% else %>
-                <p>There are no images</p>
-              <% end %>
-
-
+            <div class="item" data-src="<%= image.image_url() %>">
+              <a href='<%= image.image_url() %>'>
+                <%= image_tag image.image_url(:thumb) %>
+              </a>
+              <span class="icon-focus"></span>
             </div>
-          </div>
+
+          <% end %>
         </div>
-      </div>
-    </div>
-  </div>
+      <% end %>
+    <% else %>
+      <p>There are no images</p>
+    <% end %>
 
-</section>
-
-
-<script src="/js/masonry.pkgd.min.js"></script>
-
-<script src="/js/scripttheme.js"></script>
-<script src="/js/player.min.js"></script>
-<script src="/js/scriptgal.js"></script>
-
-
-
- <div class="container-fluid">
-
- </div>
-
-<!-- JS VENDOR -->
-<script src="https://cdn.jsdelivr.net/picturefill/2.3.1/picturefill.min.js"></script>
+</div>
 
 <script type="text/javascript">
     $(document).on('turbolinks:load', function(){
