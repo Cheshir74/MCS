@@ -7,7 +7,6 @@
     margin:0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Sans-Serif;
   }
     h1{
       font-weight: 800;
@@ -45,7 +44,6 @@
     }
   }
 </style>
-<h1 class="text-center text-primary p-2">Gallery</h1>
 <div class="row" id="lightgallery">
     <% if @images.exists? %>
     <% @images.in_groups(5, false).each do |group| %>
