@@ -23,7 +23,6 @@ class GalleriesController < ApplicationController
       params[:gallery][:images].each do |image|
         @gallery.images.attach(image)
       end
-
       flash[:notice] = "Gallery updated"
       redirect_to gallery_path(params[:id])
     else
