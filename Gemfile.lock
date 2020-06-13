@@ -365,6 +365,7 @@ DEPENDENCIES
   mina
   mina-nginx
   mina-puma
+  mini_magick
   pg
   puma (~> 4.1)
   rails (~> 6.0.2, >= 6.0.2.1)

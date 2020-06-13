@@ -7,7 +7,7 @@ class ImagesController < ApplicationController
   def create
     @image = Image.new(image_params)
     if @image.save
-      flash[:notice] = "Gallery Created"
+      flash[:notice] = "image Created"
       redirect_to home_path
     else
       render 'new'

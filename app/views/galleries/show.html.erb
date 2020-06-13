@@ -7,6 +7,7 @@
     margin:0;
     padding: 0;
     box-sizing: border-box;
+    font-family: Sans-Serif;
   }
     h1{
       font-weight: 800;
@@ -44,25 +45,23 @@
     }
   }
 </style>
+
 <div class="row" id="lightgallery">
-    <% if @images.exists? %>
-    <% @images.in_groups(5, false).each do |group| %>
-        <div class="column">
-          <% group.each do |image| %>
+  <% if @gallery.images.present? %>
 
+    <% @gallery.images.in_groups(5, false).each do |group| %>
+      <div class="column">
+        <% group.each do |image| %>
+          <div class="item" data-src="<%= url_for(image.variant(resize_to_limit: [2000, 1200])) %>">
+          <a href='<%= image_tag image.variant(resize_to_limit: [1000, 670]) %>'>
+            <%= image_tag image.variant(resize_to_limit: [1000, 670]) %>
+          </a>
+          <span class="icon-focus"></span>
+          </div>
 
-
-
-            <div class="item" data-src="<%= image.image_url() %>">
-              <a href='<%= image.image_url() %>'>
-                <%= image_tag image.image_url(:thumb) %>
-              </a>
-              <span class="icon-focus"></span>
-            </div>
-
-          <% end %>
+        <% end %>
         </div>
-      <% end %>
+    <% end %>
     <% else %>
       <p>There are no images</p>
     <% end %>

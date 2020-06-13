@@ -7,18 +7,22 @@ class GalleriesController < ApplicationController
   def show
     @gallery = Gallery.find(params[:id])
     @galleries = Gallery.all
-    @images = @gallery.images
+   # @images = @gallery.images
   end
 
   def edit
     @gallery = Gallery.find(params[:id])
     @galleries = Gallery.all
-    @images = @gallery.images
+   # @images = @gallery.images
   end
 
   def update
     @gallery = Gallery.find(params[:id])
-    if @gallery.update(gallery_params)
+
+    if params[:gallery][:images].present?
+      params[:gallery][:images].each do |image|
+        @gallery.images.attach(image)
+      end
       flash[:notice] = "Gallery updated"
       redirect_to gallery_path(params[:id])
     else
