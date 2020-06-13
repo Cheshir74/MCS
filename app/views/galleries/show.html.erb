@@ -52,7 +52,7 @@
     <% @gallery.images.in_groups(5, false).each do |group| %>
       <div class="column">
         <% group.each do |image| %>
-          <div class="item" data-src="<%= url_for(image.variant(resize_to_limit: [1000, 670])) %>">
+          <div class="item" data-src="<%= url_for(image.variant(resize_to_limit: [2000, 1200])) %>">
           <a href='<%= image_tag image.variant(resize_to_limit: [1000, 670]) %>'>
             <%= image_tag image.variant(resize_to_limit: [1000, 670]) %>
           </a>
