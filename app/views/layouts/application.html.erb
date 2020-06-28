@@ -140,55 +140,11 @@
       </header>
 
       <%= yield %>
-      <div class="footer">
-        <!--  <div class="footer"> -->
-        <div class="fcopy">
-          <div class="container">
-            <div class="row align-items-center">
-              <div class="col-6 col-md-6">
-                <p class="mb-0">&copy; 2020 <span class="text-primary">Dmitry Tolstosheev</span>. All Rights Reserved.</p>
-              </div>
-              <div class="col-6 col-md-6">
-                <div class="sosmed-icon float-right d-inline-flex">
-                  <a href="https://www.facebook.com/dreamingcheshir"><i class="fa fa-facebook"></i></a>
-                  <a href="https://vk.com/dreamingcheshir"><i class="fa fa-vk"></i></a>
-                  <a href="https://www.instagram.com/dreamingcheshir"><i class="fa fa-instagram"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <% else %>
-      <nav class="navbar navbar-expand-md navbar-dark navbar-collapse fixed-top" id="nav-black">
-        <h5> <a class="navbar-brand"><%= link_to "Dmitry Tolstosheev Photography", home_path %></a></h5>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse dark-nav" id="navbarCollapse">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link"><%= link_to "Home", home_path %> </a>
-            </li>
-            <% @galleryNav.each do |gallery| %>
-              <li class="nav-item"><a class="nav-link"><%= link_to gallery.name, gallery_path(gallery.id) %></a></li>
-            <% end %>
-            <li class="nav-item">
-              <a class="nav-link"><%= link_to "Price", home_path %> </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"><%= link_to "Contact", home_path %> </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link"><%= link_to "About", home_path %> </a>
-            </li>
-          </ul>
+      <%= render 'layouts/footer' %>
 
-          <% if current_user.nil? %>
-            <%= link_to new_user_session_path, class: 'btn btn-outline-light' do %>Sign in<% end %>
-          <% else %>
-            <%= link_to destroy_user_session_path, class: 'btn btn-outline-light', method: :delete do %>Log out<% end %>
-          <% end %>
+      <% else %>
+
+      <%= render 'layouts/header' %>
 
         </div>
       </nav>
@@ -202,25 +158,8 @@
 
         </div>
       </main>
-      <div class="footer mt-auto">
-        <!--  <div class="footer"> -->
-        <div class="fcopy">
-          <div class="container">
-            <div class="row align-items-center">
-              <div class="col-6 col-md-6">
-                <p class="mb-0">&copy; 2020 <span class="text-primary">Dmitry Tolstosheev</span>. All Rights Reserved.</p>
-              </div>
-              <div class="col-6 col-md-6">
-                <div class="sosmed-icon float-right d-inline-flex">
-                  <a href="https://www.facebook.com/dreamingcheshir"><i class="fa fa-facebook"></i></a>
-                  <a href="https://vk.com/dreamingcheshir"><i class="fa fa-vk"></i></a>
-                  <a href="https://www.instagram.com/dreamingcheshir"><i class="fa fa-instagram"></i></a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <%= render 'layouts/footer' %>
+
     <% end %>
 
 
