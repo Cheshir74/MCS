@@ -28,34 +28,11 @@
   <%= link_to "Cancel", galleries_path, class:'btn btn-default' %>
 
 
-
-
-
 <% end %>
 
 <h3 class="page-header">Images in <%= @gallery.name %></h3>
 <div id="edit_images">
-  <div class="row" id="lightgallery">
-    <% if @gallery.images.present? %>
-
-      <% @gallery.images.in_groups(5, false).each do |group| %>
-        <div class="column">
-          <% group.each do |image| %>
-            <div class="item" data-src="<%= url_for(image.variant(resize_to_limit: [2000, 1200])) %>">
-            <a href='<%= image_tag image.variant(resize_to_limit: [1000, 670]) %>'>
-              <%= image_tag image.variant(resize_to_limit: [1000, 670]) %>
-            </a>
-            <span class="icon-focus"></span>
-            </div>
-
-          <% end %>
-          </div>
-      <% end %>
-    <% else %>
-      <p>There are no images</p>
-    <% end %>
-
-    </div>
+  <%= render 'galleries/images' %>
 
 <script type="text/javascript">
     $(document).on('turbolinks:load', function(){
@@ -64,6 +41,5 @@
         });
     });
 </script>
-
 
 </div>
