@@ -6,4 +6,9 @@ link rel="stylesheet" href="/css/style_mob.css"
 
 = render 'galleries/images'
 
-= javascript_pack_tag 'galleryscript'
+javascript:
+    $(document).on('turbolinks:load', function () {
+        $('#lightgallery').lightGallery({
+            selector: '.item'
+        });
+    });

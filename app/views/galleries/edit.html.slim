@@ -29,4 +29,9 @@ h3.page-header
   | Images in #{@gallery.name}
 div id="edit_images"
   = render 'galleries/images'
-  = javascript_pack_tag 'galleryscript', 'data-turbolinks-track': 'reload'
+javascript:
+    $(document).on('turbolinks:load', function () {
+        $('#lightgallery').lightGallery({
+            selector: '.item'
+        });
+    });
