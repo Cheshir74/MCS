@@ -1,0 +1,32 @@
+link href="/css/lightgallery.css" rel="stylesheet"
+
+link rel="stylesheet" href="/css/mobirise-icons/mobirise-icons.css"
+link rel="stylesheet" href="/css/style_mob.css"
+= stylesheet_link_tag 'galleries', media: 'all', 'data-turbolinks-track': 'reload'
+
+h1.text-center.text-primary.p-2 Gallery
+
+h2 edit New Gallery
+
+= form_for @gallery do |f|
+
+  - if @gallery.errors.any?
+    - @gallery.errors.full_messages.each do |msg|
+      .alert.alert-danger = msg
+
+
+  .form-group
+    = f.label :name
+    = f.text_field :name, class:'form-control'
+    = f.file_field :images, multiple: true, as: :file
+
+
+  br
+  = f.submit "Submit", :class => 'btn btn-primary'
+  = link_to "Cancel", galleries_path, :class =>'btn btn-default'
+
+h3.page-header
+  | Images in #{@gallery.name}
+div id="edit_images"
+  = render 'galleries/images'
+  = javascript_pack_tag 'galleryscript', 'data-turbolinks-track': 'reload'
