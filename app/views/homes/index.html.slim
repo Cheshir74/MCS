@@ -1,0 +1,36 @@
+
+link rel="stylesheet" type="text/css" href="css/vendor/owl.carousel.min.css"
+link rel="stylesheet" type="text/css" href="css/vendor/animate.min.css"
+
+= javascript_pack_tag 'script', 'data-turbolinks-track': 'reload'
+
+.banner id="oc-fullslider"
+  .owl-carousel.owl-theme.full-screen
+    - if Home.first.present?
+      - Home.first.images.each do |image|
+        .item
+          img src = url_for(image.variant(resize_to_limit: [2000, 1200])) alt="Slider"
+          .overlay-bg
+          .container-fluid.d-flex.align-items-center
+            .wrap-caption
+              h1.caption-heading.text-primary
+                = Home.first.title
+                p = Home.first.body
+    - else
+      .item
+        img src="" alt="Slider"
+        .overlay-bg
+        .container-fluid.d-flex.align-items-center
+          .wrap-caption
+            h1.caption-heading.text-primary
+
+  .owl-theme.banner-nav
+    .owl-controls
+      .custom-nav.owl-nav
+
+
+script src="js/vendor/owl.js"
+script src="js/vendor/jquery.magnific-popup.min.js"
+script src="js/vendor/isotope.pkgd.min.js"
+script src="js/vendor/imagesloaded.pkgd.min.js"
+
