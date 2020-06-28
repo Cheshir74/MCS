@@ -1,3 +1,55 @@
 // Place all the styles related to the homes controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+.bd-placeholder-img {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+@media (max-width: 768px) {
+  .navbar {
+    background-color: #f9f9f9;
+  }
+  .navbar-dark .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  }
+  .dark-nav a{
+    color: #000000 !important;
+    border-color:#000000 !important;
+  }
+
+  .dark-nav a.btn.btn-outline-light{
+    color: #000000 !important;
+    border-color:#000000 !important;
+    margin-left: 24px;
+    margin-bottom: 12px;
+    margin-top: 25px;
+  }
+}
+#toast-container{
+  top: 72px;
+}
+
+
+@media (min-width: 768px) {
+  .nav-item {
+    font-family: "Old Stansard", serif;
+    padding-right: .5rem;
+    padding-left: .5rem;
+  }
+  .dark-nav a.btn.btn-outline-light{
+
+    margin-left: 30px;
+
+  }
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
+
+  main > .container-fluid {
+    padding: 60px 15px 0;
+  }
+}

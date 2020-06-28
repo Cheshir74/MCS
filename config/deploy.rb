@@ -22,7 +22,7 @@ set :branch, 'master'
 set :port, '22'
 #set :port, '9022'
 set :user, 'depus'
-set :shared_dirs,  fetch(:shared_dirs, []).push('tmp', 'log', 'public/uploads', 'public/system')
+set :shared_dirs,  fetch(:shared_dirs, []).push('tmp', 'log', 'public/uploads', 'public/system', 'storage')
 set :shared_files, fetch(:shared_files, []).push('config/puma.rb', 'config/database.yml', 'config/master.key', 'config/secrets.yml')
 set :bundle_options, -> { '' }
 
