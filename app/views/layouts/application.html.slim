@@ -1,0 +1,32 @@
+doctype html
+html
+  head
+    title TolstosheevPhoto
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag 'homes', media: 'all', 'data-turbolinks-track': 'reload'
+
+    = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+    link rel="stylesheet" type="text/css" href="/css/vendor/font-awesome.min.css"
+
+  body.d-flex.flex-column.h-100
+    - unless flash.empty?
+      = render 'layouts/notice'
+
+    = render 'layouts/header'
+
+    - if current_page?(home_path)
+
+      = yield
+
+    - else
+        main role="main" class="flex-shrink-0"
+          div.container-fluid
+               = yield
+
+
+    = render 'layouts/footer'
+
+  script src="/js/lightgallery-all.js"
