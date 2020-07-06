@@ -14,5 +14,6 @@
  *= require_self
  *= require toastr
  *= require main
+ *= require login_form
  *= require_tree .
  */

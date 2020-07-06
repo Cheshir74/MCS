@@ -1,0 +1,21 @@
+.modal.fade id="sign_in"
+  .modal-dialog.modal-login
+    .modal-content
+      .modal-header
+        .avatar
+          img src="images/avatar.png" alt="Avatar"
+        h4.modal-title Member Login
+        button type="button" class="close" data-dismiss="modal" aria-hidden="true" &times;
+      .modal-body
+        = form_for(User.new, url: session_path(:user), html:{id: 'sign_in_user', :'data-type' => 'json'}, remote: true) do |f|
+          .form-group
+            = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Email", required:"required"
+
+          .form-group
+            = f.password_field :password, autocomplete: "current-password", class: "form-control", placeholder: "Password", required:"required"
+
+          .form-group
+            = f.submit "Log in", class:"btn btn-primary btn-lg btn-block login-btn"
+
+      .modal-footer
+        a href="#" Forgot Password?
