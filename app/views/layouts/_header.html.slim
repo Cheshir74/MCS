@@ -25,7 +25,8 @@ header
             = link_to 'About', home_path
 
       - if current_user.nil?
-        = link_to 'Sign in', new_user_session_path, :class => 'btn btn-outline-light'
+        = link_to 'Sign in', "#sign_in", :class => 'btn btn-outline-light', data: { toggle: "modal" }
       - else
         = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-light', method: :delete
+  = render 'users/shared/login_form'
 
