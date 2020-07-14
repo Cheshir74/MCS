@@ -1,9 +1,9 @@
-.modal.fade id="sign_in"
+.modal.fade id="sign_in" tabindex="-1"
   .modal-dialog.modal-login
     .modal-content
       .modal-header
         .avatar
-          img src="images/avatar.png" alt="Avatar"
+          img src="/images/avatar.png" alt="Avatar"
         h4.modal-title Member Login
         button type="button" class="close" data-dismiss="modal" aria-hidden="true" &times;
       .modal-body
@@ -18,4 +18,4 @@
             = f.submit "Log in", class:"btn btn-primary btn-lg btn-block login-btn"
 
       .modal-footer
-        a href="#" Forgot Password?
+        = link_to 'Sign up', "#sign_up", :data => {dismiss: "modal", toggle: "modal", target: "#sign_up"}

@@ -6,6 +6,7 @@ header
     button.navbar-toggler aria-controls="navbarCollapse" aria-expanded="false" aria-label=("Toggle navigation") data-target="#navbarCollapse" data-toggle="collapse" type="button"
       span.navbar-toggler-icon
     .collapse.navbar-collapse.dark-nav id="navbarCollapse"
+
       ul class="navbar-nav ml-auto"
         li class="nav-item"
           a class="nav-link"
@@ -25,8 +26,9 @@ header
             = link_to 'About', home_path
 
       - if current_user.nil?
-        = link_to 'Sign in', "#sign_in", :class => 'btn btn-outline-light', data: { toggle: "modal" }
+        = link_to 'Sign in', "#sign_in", :class => 'btn btn-outline-light', data: { toggle: "modal", target: "#sign_in" }
       - else
         = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-light', method: :delete
-  = render 'users/shared/login_form'
 
+  = render 'users/shared/sign_in'
+  = render 'users/shared/sign_up'

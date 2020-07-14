@@ -1,0 +1,22 @@
+.modal.fade id="sign_up" tabindex="-1"
+  .modal-dialog.modal-login
+    .modal-content
+      .modal-header
+        .avatar
+          img src="/images/avatar.png" alt="Avatar"
+        h4.modal-title Sign Up
+        button type="button" class="close" data-dismiss="modal" aria-hidden="true" &times;
+      .modal-body
+        = form_for(User.new, url: registration_path(:user), html: {id: 'sign_up_user', :'data-type' => 'json'}, remote: true) do |f|
+          .form-group
+            = f.email_field :email, autofocus: true, class: "form-control", placeholder: "Email", required:"required"
+          .form-group
+            = f.password_field :password, autocomplete: "off", class: "form-control", placeholder: "Password", required:"required"
+
+          .form-group
+            = f.password_field :password_confirmation, autocomplete: "off", class: "form-control", placeholder: "Password", required:"required"
+          .form-group
+            = f.submit "Sign up", class:"btn btn-primary btn-lg btn-block login-btn"
+
+        .modal-footer
+          = link_to 'Sign in', "#sign_in",  :data => {dismiss: "modal", toggle: "modal", target: "#sign_in"}
