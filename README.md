@@ -22,3 +22,7 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+* require Webpack yarn
+apt install yarn, nodejs
+* rails webpack
