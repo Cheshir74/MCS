@@ -8,6 +8,18 @@
         button type="button" class="close" data-dismiss="modal" aria-hidden="true" &times;
       .modal-body
         = form_for(User.new, url: session_path(:user), html:{id: 'sign_in_user', :'data-type' => 'json'}, remote: true) do |f|
+          javascript:
+              $(document).ready(function () {
+                  return $("#sign_in_user").on("ajax:error", function (event) {
+                      var data, ref, status, xhr;
+                      ref = event.detail, data = ref[0], status = ref[1], xhr = ref[2];
+                      return $("#sign_in_user").append(xhr.responseText);
+                  }).on("ajax:success", function (event) {
+                      return $("#sign_in_user").append("<p>ERROR</p>");
+                  });
+              });
+
+
           .form-group
             = f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Email", required:"required"
 
