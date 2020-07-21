@@ -7,6 +7,7 @@
         h4.modal-title Sign Up
         button type="button" class="close" data-dismiss="modal" aria-hidden="true" &times;
       .modal-body
+        .error id="sign_up_error"
         = form_for(User.new, url: registration_path(:user), html: {id: 'sign_up_user', :'data-type' => 'json'}, remote: true) do |f|
           .form-group
             = f.email_field :email, autofocus: true, class: "form-control", placeholder: "Email", required:"required"
@@ -20,3 +21,12 @@
 
         .modal-footer
           = link_to 'Sign in', "#sign_in",  :data => {dismiss: "modal", toggle: "modal", target: "#sign_in"}
+
+javascript:
+    $(document).ready(function () {
+        return $("#sign_up_user").on("ajax:error", function (event) {
+            return $("#sign_up_error").empty().prepend("<p>Ууп-с! Что-то пошло не так. Попробуйте позже.</p>");
+        }).on("ajax:success", function (event) {
+            return $("#sign_up_error").empty().prepend("<p>ERROR</p>");
+        });
+    });
