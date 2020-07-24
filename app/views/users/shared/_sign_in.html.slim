@@ -30,7 +30,5 @@ javascript:
           let messageObj = JSON.parse(xhr.response);
 
           return $("#sign_in_error").empty().append(messageObj.error);
-      }).on("ajax:success", function (event) {
-          return $("#sign_in_user").append("<p>ERROR</p>");
       });
   });

@@ -26,7 +26,5 @@ javascript:
     $(document).ready(function () {
         return $("#sign_up_user").on("ajax:error", function (event) {
             return $("#sign_up_error").empty().prepend("<p>Ууп-с! Что-то пошло не так. Попробуйте позже.</p>");
-        }).on("ajax:success", function (event) {
-            return $("#sign_up_error").empty().prepend("<p>ERROR</p>");
         });
     });
