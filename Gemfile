@@ -63,8 +63,6 @@ gem 'mina-puma',  require: false
 gem 'mina-nginx', require: false
 
 gem 'slim'
-gem 'bootstrap'
-gem 'jquery-rails'
 
 group :test, :development do
   gem 'rails-controller-testing'
