@@ -3918,7 +3918,7 @@ jest-worker@^25.4.0:
     merge-stream "^2.0.0"
     supports-color "^7.0.0"
 
-jquery@>=1.12.0, jquery@^3.5.1:
+jquery@>=1.12.0, jquery@>=1.7.0, jquery@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.5.1.tgz#d7b4d08e1bfdb86ad2f1a3d039ea17304717abb5"
   integrity sha512-XwIBPqcMn57FxfT+Go5pzySnm4KWkT1Tv7gjrpT1srtf8Weynl6R273VJ5GjkRb51IzMp5nbaPjJXMWeju2MKg==
@@ -4053,6 +4053,34 @@ levenary@^1.1.1:
   integrity sha512-mkAdOIt79FD6irqjYSs4rdbnlT5vRonMEvBVPVb3XmevfS8kgRXwfes0dhPdEtzTWD/1eNE/Bm/G1iRt6DcnQQ==
   dependencies:
     leven "^3.1.0"
+
+lg-fullscreen@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/lg-fullscreen/-/lg-fullscreen-1.2.1.tgz#9402aae62ce22148e13bee2fb177f2195dbbfbd6"
+  integrity sha512-mntHGBHEKWfbz/ZiFkWQhBgxzm8ZtWUcgI83GOv9uxmtGi5G9mhTxplkHODHNt9+Ss+IHYZJav/UTjcGPIcSVw==
+  dependencies:
+    jquery ">=1.7.0"
+
+lg-hash@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/lg-hash/-/lg-hash-1.0.4.tgz#ce9bb23426b23110e1feb4ecea1fb8a45d3104f8"
+  integrity sha1-zpuyNCayMRDh/rTs6h+4pF0xBPg=
+  dependencies:
+    jquery ">=1.7.0"
+
+lg-pager@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/lg-pager/-/lg-pager-1.0.2.tgz#e9d928de8f9fa440151d0eab8265dcfb9accb041"
+  integrity sha1-6dko3o+fpEAVHQ6rgmXc+5rMsEE=
+  dependencies:
+    jquery ">=1.7.0"
+
+lightgallery@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/lightgallery/-/lightgallery-1.7.2.tgz#081692c896d08686ab283ce2edbef214c6de3b36"
+  integrity sha512-y5xeJySeZWYSIc/SGB2Ahz7oSw1pQCg8aTWLrjttaxY4qRKN4YyzdpV1b9pyd5QJ+CJ4POHor/Yc5ZIum6YySA==
+  dependencies:
+    jquery ">=1.7.0"
 
 lines-and-columns@^1.1.6:
   version "1.1.6"
