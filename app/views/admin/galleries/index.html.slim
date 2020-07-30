@@ -1,5 +1,12 @@
 h1 Galleries
-
-- @galleries.each do |gallery|
-  h2
-    = gallery.name
+table class="table"
+  tbody
+    - @galleries.each_with_index do |gallery, index|
+      tr
+        td
+          = index + 1
+        td
+          = gallery.name
+        td
+          = link_to 'Change', edit_admin_gallery_path(gallery), class: 'btn btn-outline-primary btn-sm'
+          = link_to 'Delete', admin_gallery_path(gallery), method: :delete, data: { confirm: 'Are you really? ' }, class: 'btn btn-outline-danger btn-sm'
