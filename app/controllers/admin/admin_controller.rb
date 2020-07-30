@@ -1,5 +1,13 @@
 class Admin::AdminController < ApplicationController
 
+  def index
+
+  end
+
+  def show
+
+  end
+
 
   protected
 

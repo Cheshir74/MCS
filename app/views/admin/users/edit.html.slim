@@ -1,0 +1,24 @@
+h1.text-center.text-primary.p-2 User
+
+h2 edit User
+
+= form_for [:admin, @user] do |f|
+
+  - if @user.errors.any?
+    - @user.errors.full_messages.each do |msg|
+      .alert.alert-danger = msg
+
+
+  .form-group.form-check
+
+    = f.label :superadmin_role
+    = f.check_box :superadmin_role, class:'form-check-input'
+    = f.label :supervisor_role
+    = f.check_box :supervisor_role, class: 'form-check-input'
+    = f.label :user_role
+    = f.check_box :user_role, class: 'form-check-input'
+
+
+  br
+  = f.submit "Submit", :class => 'btn btn-primary'
+  = link_to "Cancel", admin_users_path, :class =>'btn btn-default'
