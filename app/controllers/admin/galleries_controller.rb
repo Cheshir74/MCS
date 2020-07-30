@@ -1,4 +1,4 @@
-class Admin::GalleriesController < ApplicationController
+class Admin::GalleriesController < Admin::AdminController
   before_action :set_gallery, :only => [ :edit, :update, :destroy ]
 
   def new
