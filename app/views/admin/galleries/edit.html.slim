@@ -6,7 +6,7 @@ h1.text-center.text-primary.p-2 Gallery
 
 h2 edit New Gallery
 
-= form_for @gallery do |f|
+= form_for [:admin, @gallery] do |f|
 
   - if @gallery.errors.any?
     - @gallery.errors.full_messages.each do |msg|
@@ -21,7 +21,7 @@ h2 edit New Gallery
 
   br
   = f.submit "Submit", :class => 'btn btn-primary'
-  = link_to "Cancel", galleries_path, :class =>'btn btn-default'
+  = link_to "Cancel", admin_galleries_path, :class =>'btn btn-default'
 
 h3.page-header
   | Images in #{@gallery.name}

@@ -1,8 +1,13 @@
 Rails.application.routes.draw do
-  get 'admin/index'
+  namespace :admin do
+    resources :users
+    resources :galleries, except: [:show]
+  end
+
+
   get 'homes/index'
   get 'homes/show'
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  mount RailsAdmin::Engine => '/dashboard', as: 'rails_admin'
   devise_for :users, controllers: {
       sessions: 'users/sessions',
       passwords: 'users/passwords'
@@ -19,6 +24,6 @@ Rails.application.routes.draw do
     resources :comments
   end
 
-  resources :images, :galleries
+  resources :images, :galleries, only: [:show]
   resources :pages, only: [:show]
 end

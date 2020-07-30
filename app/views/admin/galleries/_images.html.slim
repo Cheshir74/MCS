@@ -1,0 +1,11 @@
+.row id="lightgallery"
+  - if @gallery.images.present?
+    - @gallery.images.in_groups(5, false).each do |group|
+      .column
+        - group.each do |image|
+          .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
+            a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
+              = image_tag image.variant(resize_to_limit: [1000, 670])
+            span.icon-focus
+  - else
+    p There are no images
