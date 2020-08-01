@@ -1,0 +1,23 @@
+doctype html
+html
+  head
+    title TolstosheevPhoto
+    meta name="yandex-verification" content="095dc6fe5f5aa617"
+    meta name="yandex-verification" content="0a731603332d0126"
+    = csrf_meta_tags
+    = csp_meta_tag
+
+    link rel="stylesheet" type="text/css" href="/css/vendor/font-awesome.min.css"
+
+  body.d-flex.flex-column.h-100
+    - unless flash.empty?
+      = render 'layouts/notice'
+
+    = render 'layouts/header'
+
+    main role="main" class="flex-shrink-0"
+      div.container-fluid
+        = yield
+
+
+    = render 'layouts/footer'
