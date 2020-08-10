@@ -14,12 +14,12 @@ require 'mina/puma'
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :application_name, 'TolstosheevPhoto'
-set :domain, '192.168.11.248'
+set :domain, '192.168.9.95'
 #set :domain, 'projects74.ru'
-set :deploy_to, '/home/depus/app_deploy'
+set :deploy_to, '/homes/depus/app_deploy'
 set :repository, 'git@github.com:Cheshir74/MCS.git'
 set :branch, 'master'
-set :port, '2222'
+set :port, '22'
 #set :port, '9022'
 set :user, 'depus'
 set :shared_dirs,  fetch(:shared_dirs, []).push('tmp', 'log', 'public/uploads', 'public/system', 'storage')
@@ -61,7 +61,6 @@ task :deploy do
     invoke :'bundle:install'
     invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
-    command %{NODE_ENV=production RAILS_ENV=production bundle exec rails webpacker:compile}
     invoke :'deploy:cleanup'
 
 

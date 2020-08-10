@@ -15,6 +15,11 @@ h2 edit Home
     = f.text_field :body, class: 'form-control'
     = f.file_field :images, multiple: true, as: :file
 
+  h3.page-header
+    | Images in Home Page
+  div id="edit_images"
+    = render 'admin/homes/images'
+
 
   br
   = f.submit "Submit", :class => 'btn btn-primary'
