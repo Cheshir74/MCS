@@ -1,0 +1,16 @@
+h1 Home Page
+div class="buttons_panel"
+//= link_to 'New home page', new_admin_home_path, class: 'btn btn-outline-primary btn-sm'
+table class="table"
+  tbody
+    - @homes.each_with_index do |home, index|
+      tr
+        td
+          = index + 1
+        td
+          = home.title
+        td
+          = home.body
+        td
+          = link_to 'Change', edit_admin_home_path(home), class: 'btn btn-outline-primary btn-sm'
+          = link_to 'Delete', admin_home_path(home), method: :delete, data: { confirm: 'Are you really? ' }, class: 'btn btn-outline-danger btn-sm'
