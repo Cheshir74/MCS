@@ -8,6 +8,12 @@ class Users::SessionsController < Devise::SessionsController
   #   super
   # end
 
+  def new
+    respond_to do |format|
+      format.html
+      format.js
+    end
+  end
   # POST /resource/sign_in
   # def create
   #   super

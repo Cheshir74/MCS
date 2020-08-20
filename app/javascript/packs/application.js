@@ -11,7 +11,6 @@ require("turbolinks").start()
 require("@rails/activestorage").start()
 require("channels")
 require("jquery")
-
 require('lightgallery/src/js/lightgallery')
 require('lg-fullscreen/src/lg-fullscreen')
 require('lg-pager/src/lg-pager')
@@ -22,6 +21,8 @@ require('lg-hash/src/lg-hash')
 //
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
-import "bootstrap";
+
+require('bootstrap');
+
 import 'service/galleries';
 
