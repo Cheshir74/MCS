@@ -20,6 +20,11 @@ header
         li class="nav-item"
           = link_to 'About', home_path
 
+        - if current_user.present?
+          - if current_user.superadmin_role?
+            li class="nav-item"
+              = link_to 'Admin', admin_path
+
       - if current_user.nil?
         = link_to 'Sign in', new_user_session_path, { :remote => true, class: 'btn btn-outline-light' }
       - else

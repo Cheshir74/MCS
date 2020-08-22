@@ -1,1 +1,8 @@
-// app/javascript/stylesheets/applicationstyle.scss
+@import "~bootstrap/scss/bootstrap";
+
+@import "./src/galleries";
+@import "./src/login_form";
+@import "./src/homes";
+@import "./src/style";
+
+@import '~toastr/build/toastr.min';

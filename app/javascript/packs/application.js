@@ -21,8 +21,11 @@ require('lg-hash/src/lg-hash')
 //
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
+import $ from 'jquery';
+
 
 require('bootstrap');
-
 import 'service/galleries';
+
+import 'stylesheets/application'
 
