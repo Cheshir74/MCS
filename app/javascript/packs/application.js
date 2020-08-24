@@ -1,8 +1,3 @@
-// This file is automatically compiled by Webpack, along with any other files
-// present in this directory. You're encouraged to place your actual application logic in
-// a relevant structure within app/javascript and only use these pack files to reference
-// that code so it'll be compiled.
-
 import toastr from 'toastr'
 window.toastr = toastr
 
@@ -10,7 +5,7 @@ require("@rails/ujs").start()
 require("turbolinks").start()
 require("@rails/activestorage").start()
 require("channels")
-require("jquery")
+
 require('lightgallery/src/js/lightgallery')
 require('lg-fullscreen/src/lg-fullscreen')
 require('lg-pager/src/lg-pager')
@@ -21,11 +16,13 @@ require('lg-hash/src/lg-hash')
 //
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
-import $ from 'jquery';
 
-
-require('bootstrap');
+import 'bootstrap';
 import 'service/galleries';
 
 import 'stylesheets/application'
 
+import 'service/vendor/owl'
+import 'service/vendor/jquery.magnific-popup.min'
+import 'service/vendor/isotope.pkgd.min'
+import 'service/vendor/imagesloaded.pkgd.min'

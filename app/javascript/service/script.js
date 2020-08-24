@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$("#banner").ready(function(){
 	"use strict";
 
 	$(".loader").delay(400).fadeOut();
@@ -216,5 +216,5 @@ $(document).ready(function(){
 
 
 
-  
+
   
