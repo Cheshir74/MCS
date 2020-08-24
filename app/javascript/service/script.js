@@ -1,4 +1,4 @@
-$("#banner").ready(function(){
+$(document).on("turbolinks:load", function(){
 	"use strict";
 
 	$(".loader").delay(400).fadeOut();

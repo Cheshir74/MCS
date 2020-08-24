@@ -16,4 +16,3 @@ config.resolve.alias = {
 }
 
 module.exports = environment;
-
