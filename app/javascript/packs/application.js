@@ -21,8 +21,11 @@ import 'bootstrap';
 import 'service/galleries';
 
 import 'stylesheets/application'
+import '@fortawesome/fontawesome-free/js/all'
 
-import 'service/vendor/owl'
+import "lightgallery/dist/css/lightgallery.css";
+import 'owl.carousel/dist/assets/owl.carousel.css';
+import 'owl.carousel';
 import 'service/vendor/jquery.magnific-popup.min'
 import 'service/vendor/isotope.pkgd.min'
 import 'service/vendor/imagesloaded.pkgd.min'

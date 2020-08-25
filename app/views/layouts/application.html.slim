@@ -10,8 +10,6 @@ html
     = stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
 
-    link rel="stylesheet" type="text/css" href="/css/vendor/font-awesome.min.css"
-
   body.d-flex.flex-column.h-100
     - unless flash.empty?
       = render 'layouts/notice'
