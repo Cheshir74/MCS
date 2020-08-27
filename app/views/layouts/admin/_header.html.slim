@@ -1,5 +1,5 @@
 header
-  nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+  nav.navbar.navbar-expand-lg.navbar-dark.bg-white
     h5
       a.navbar-brand
         = link_to 'Dmitry Tolstosheev Photography', home_path
@@ -20,6 +20,6 @@ header
           = link_to 'Admin', admin_path, class: 'nav-link'
 
       - if current_user.nil?
-        = link_to 'Sign in', "#sign_in", :class => 'btn btn-outline-light', data: { toggle: "modal", target: "#sign_in" }
+        = link_to 'Sign in', "#sign_in", :class => 'btn btn-outline-dark', data: { toggle: "modal", target: "#sign_in" }
       - else
-        = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-light', method: :delete
+        = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-dark', method: :delete

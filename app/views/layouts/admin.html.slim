@@ -10,11 +10,9 @@ html
     = stylesheet_pack_tag 'admin', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_pack_tag 'admin', 'data-turbolinks-track': 'reload'
 
-    main role="main" class="flex-shrink-0"
-      div.container-fluid
-        - unless flash.empty?
-          = render 'layouts/notice'
+    - unless flash.empty?
+      = render 'layouts/notice'
 
-        = render 'layouts/admin/header'
-        = yield
+    = render 'layouts/admin/header'
+    = yield
 
