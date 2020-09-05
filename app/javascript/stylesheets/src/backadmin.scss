@@ -115,6 +115,9 @@ ul ul a {
   min-height: 100vh;
   transition: all 0.3s;
 }
+.main {
+  padding: 20px;
+}
 @media (max-width: 768px) {
   /* 80px and its content aligned to centre. Pushing it off the screen with the
      negative left margin
