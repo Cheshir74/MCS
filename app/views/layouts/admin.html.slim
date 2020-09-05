@@ -12,7 +12,9 @@ html
 
     - unless flash.empty?
       = render 'layouts/notice'
-
-    = render 'layouts/admin/header'
-    = yield
+    .wrapper
+      = render 'layouts/admin/sidebar'
+      .content
+        = render 'layouts/admin/header'
+        = yield
 

@@ -1,0 +1,32 @@
+nav#sidebar
+  .sidebar-header
+    a.sidebar-link.td-n href="index.html"
+      .logo
+        img alt="" src="" /
+        h5.lh-1.mB-0.logo-text
+  .mobile-toggle.sidebar-toggle
+    a.td-n href=""
+      i.ti-arrow-circle-left
+    ul.sidebar-menu.scrollable.pos-r
+      li.nav-item.mT-30.active
+        a.sidebar-link href="index.html"
+          span.icon-holder
+            i.c-blue-500.ti-home
+          span.title Dashboard
+        .list-group.list-group-flush
+          a.sidebar-link href="index.html"
+            span.icon-holder
+              i.c-blue-500.ti-home
+            span.title Dashboard
+
+          a.sidebar-link href="index.html"
+            span.icon-holder
+              i.c-blue-500.ti-home
+            span.title Users
+javascript:
+    $(document).on('turbolinks:load', function () {
+        $("#sidebarCollapse").click(function (e) {
+            e.preventDefault();
+            $("#sidebar").toggleClass("active");
+        });
+    });
