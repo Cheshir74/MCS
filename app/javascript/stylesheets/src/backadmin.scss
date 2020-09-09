@@ -6,7 +6,9 @@ body {
 
 .navbar {
   padding: 15px;
-  height: 65px;}
+  height: 65px;
+  border-bottom: 1px solid rgba(0, 0, 0, .0625);
+}
 .navbar .navbar-nav	> li > a { padding-top: 0px; padding-bottom: 0px; line-height: 38px; color:#000000 }
 
 .wrapper {
@@ -32,12 +34,17 @@ body {
   background: #ffffff;
   color: #fff;
   transition: all 0.3s;
+  border-right: 1px solid rgba(0, 0, 0, .0625);
 }
 
 #sidebar .sidebar-header {
   padding: 0px;
-  background: #2E2F30;
+  background: #FFFFFF;
   height: 65px;
+  border-bottom: 1px solid rgba(0, 0, 0, .0625);
+}
+#sidebar.active .sidebar-header {
+  border-bottom: 1px solid transparent;
 }
 
 #sidebar ul.components {
@@ -93,7 +100,6 @@ ul ul a {
 #sidebar ul li a {
   padding: 5px 15px;
   position: relative;
-  display: block;
 }
 
 #sidebar.active ul li a {
@@ -114,6 +120,11 @@ ul ul a {
 #sidebar.active ul li a .title {
   display: none;
 }
+
+#sidebar.active ul li a .logo-text {
+  display: none;
+}
+
 #sidebar.active ul li a .icon-holder {
   font-size: 17px;
   transition: all 0.3s ease;
