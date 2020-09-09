@@ -3,26 +3,29 @@ nav#sidebar
     a.sidebar-link.td-n href="index.html"
       .logo
         img alt="" src="" /
-        h5.lh-1.mB-0.logo-text
+        h5.lh-1.mB-0.logo-text My Site
   .mobile-toggle.sidebar-toggle
-    a.td-n href=""
-      i.ti-arrow-circle-left
     ul.sidebar-menu.scrollable.pos-r
       li.nav-item.mT-30.active
-        a.sidebar-link href="index.html"
+        = link_to  admin_path, class: 'sidebar-link'
           span.icon-holder
-            i.c-blue-500.ti-home
+            i.text-primary.fas.fa-home
           span.title Dashboard
-        .list-group.list-group-flush
-          a.sidebar-link href="index.html"
-            span.icon-holder
-              i.c-blue-500.ti-home
-            span.title Dashboard
 
-          a.sidebar-link href="index.html"
-            span.icon-holder
-              i.c-blue-500.ti-home
-            span.title Users
+        = link_to admin_homes_path, class: 'sidebar-link'
+          span.icon-holder
+            i.text-danger.far.fa-file
+          span.title Home page
+
+        = link_to admin_users_path, class: 'sidebar-link'
+          span.icon-holder
+            i.text-info.fas.fa-user-friends
+          span.title Users
+
+        = link_to admin_galleries_path, class: 'sidebar-link'
+          span.icon-holder
+            i.text-dark.far.fa-images
+          span.title Galleries
 javascript:
     $(document).on('turbolinks:load', function () {
         $("#sidebarCollapse").click(function (e) {

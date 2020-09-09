@@ -13,6 +13,16 @@ body {
   display: flex;
   align-items: stretch;
 }
+.mT-30 {
+  margin-top: 30px !important;
+}
+.lh-1 {
+  line-height: 1 !important;
+}
+.mB-0 {
+  margin-bottom: 0px !important;
+}
+
 
 #sidebar {
   min-width: 250px;
@@ -39,20 +49,24 @@ body {
   color: #fff;
   padding: 10px;
 }
-
-#sidebar ul li a {
-  padding: 10px;
-  font-size: 1.1em;
-  display: block;
+#sidebar ul li i {
+  font-size: 17px;
 }
+
 #sidebar ul li a:hover {
   color: #7386D5;
   background: #fff;
 }
 
 #sidebar ul li.active > a, a[aria-expanded="true"] {
-  color: #fff;
-  background: #ffffff;
+  text-align: left;
+  color: #72777a;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 5px 15px;
+  position: relative;
+  display: block;
+  font-family: Roboto, -apple-system, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Droid Sans, Helvetica Neue, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 ul ul a {
   font-size: 0.9em !important;
@@ -60,8 +74,8 @@ ul ul a {
   background: #ffffff;
 }
 #sidebar.active {
-  min-width: 80px;
-  max-width: 80px;
+  min-width: 70px;
+  max-width: 70px;
   text-align: center;
 }
 
@@ -77,20 +91,45 @@ ul ul a {
 }
 
 #sidebar ul li a {
-  text-align: left;
+  padding: 5px 15px;
+  position: relative;
+  display: block;
 }
 
 #sidebar.active ul li a {
-  padding: 20px 10px;
-  text-align: center;
-  font-size: 0.85em;
+  padding: 5px 15px;
+  font-size: 15px;
+  font-weight: 500;
+  display: block;
+  position: relative;
+  white-space: nowrap;
 }
 
 #sidebar.active ul li a i {
   margin-right:  0;
   display: block;
-  font-size: 1.8em;
+  font-size: 17px;
   margin-bottom: 5px;
+}
+#sidebar.active ul li a .title {
+  display: none;
+}
+#sidebar.active ul li a .icon-holder {
+  font-size: 17px;
+  transition: all 0.3s ease;
+}
+#sidebar ul li a .icon-holder {
+  font-size: 17px;
+  transition: all 0.3s ease;
+  display: inline-block;
+  height: 35px;
+  border-radius: 6px;
+  left: 0px;
+  line-height: 35px;
+  margin-right: 14px;
+  position: relative;
+  text-align: center;
+  width: 35px;
 }
 
 /* Same dropdown links padding*/
