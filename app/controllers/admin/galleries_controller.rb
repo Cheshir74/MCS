@@ -1,5 +1,5 @@
 class Admin::GalleriesController < Admin::AdminController
-  before_action :set_gallery, :only => [ :edit, :update, :destroy ]
+  before_action :set_gallery, :only => [ :edit, :update, :destroy, :delete_image_attachment ]
 
   def new
     @gallery = Gallery.new
@@ -43,6 +43,12 @@ class Admin::GalleriesController < Admin::AdminController
   def destroy
     @gallery.destroy
     redirect_to admin_galleries_path
+  end
+
+  def delete_image_attachment
+    attachment = @gallery.images.find(params[:format])
+    attachment.purge
+    redirect_back(fallback_location: edit_admin_gallery_path)
   end
 
   private

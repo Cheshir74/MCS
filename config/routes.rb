@@ -14,8 +14,16 @@ Rails.application.routes.draw do
   namespace :admin do
     get '/' => 'admin#index'
     resources :users
-    resources :galleries, except: [:show]
-    resources :homes, except: [:show]
+    resources :galleries, except: [:show] do
+      member do
+        delete :delete_image_attachment
+      end
+    end
+    resources :homes, except: [:show] do
+      member do
+        delete :delete_image_attachment
+      end
+    end
   end
   resources :articles do
     resources :comments

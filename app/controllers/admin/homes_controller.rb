@@ -1,5 +1,5 @@
 class Admin::HomesController < Admin::AdminController
-  before_action :set_home, :only => [ :edit, :update, :destroy ]
+  before_action :set_home, :only => [ :edit, :update, :destroy, :delete_image_attachment ]
 
 
   def index
@@ -27,6 +27,12 @@ class Admin::HomesController < Admin::AdminController
   def new
     @home = Home.new
     @homes = Home.all
+  end
+
+  def delete_image_attachment
+    attachment = @home.images.find(params[:format])
+    attachment.purge
+    redirect_back(fallback_location: edit_admin_home_path)
   end
 
 
