@@ -2,14 +2,14 @@
   - if @home.images.present?
     - @home.images.each do |image|
       .column
-        item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
-          a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
-            = image_tag image.variant(resize_to_limit: [210, 210]), class: "img-thumbnail"
-            .card-img-overlay
-              = link_to 'times', delete_image_attachment_admin_home_url(@home, image), method: :delete, class: 'btn-img'
-              button.btn-img &times
-          span.icon-focus
-          h1 this text
+        .items
+          .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
+            a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
+              = image_tag image.variant(resize_to_limit: [210, 210]), class: "img-thumbnail"
+          .card-img-overlay
+            = link_to delete_image_attachment_admin_home_url(@home, image), method: :delete, class: 'btn-img'
+              ' &times
+
   - else
     p There are no images
 

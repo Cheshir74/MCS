@@ -3,6 +3,24 @@
   padding: 0;
   box-sizing: border-box;
 }
+.items {
+  width: 210px;
+  height: 210px;
+  position: relative;
+}
+.card-img-overlay{
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1.25rem;
+  overflow: hidden;
+  border-radius: calc(0.25rem - 1px);
+}
 .img-btn {
   position: absolute;
   top: 0;
