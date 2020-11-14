@@ -35,6 +35,11 @@ class Admin::HomesController < Admin::AdminController
     redirect_back(fallback_location: edit_admin_home_path)
   end
 
+  def destroy_attach
+    attachments = ActiveStorage::Attachment.where(id: params[:delete_attach_admin_home_url])
+    attachments.map(&:purge)
+    redirect_back(fallback_location: edit_admin_home_path)
+  end
 
   def destroy
     @home.destroy

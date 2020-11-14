@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     resources :homes, except: [:show] do
       member do
         delete :delete_image_attachment
+        delete :destroy_attach
       end
     end
   end

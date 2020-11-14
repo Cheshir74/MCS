@@ -1,15 +1,20 @@
-.row id="lightgallery"
-  - if @home.images.present?
-    - @home.images.each do |image|
-      .column
-        .items
-          .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
-            a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
-              = image_tag image.variant(resize_to_limit: [210, 210]), class: "img-thumbnail"
-          .card-img-overlay
-            = link_to delete_image_attachment_admin_home_url(@home, image), method: :delete, class: 'btn-img'
-              ' &times
+= form_tag destroy_attach_admin_home_url, method: :delete do
+  = submit_tag "Delete"
+  .row id="lightgallery"
+    - if @home.images.present?
+      - @home.images.each do |image|
+        .column
+          .items
+            .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
+              a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
+                = image_tag image.variant(resize_to_limit: [210, 210]), class: "img-thumbnail"
 
-  - else
-    p There are no images
+            .card-img-overlay-l
+              = check_box_tag "delete_attach_admin_home_url[]", image.id
+            .card-img-overlay
+              = link_to delete_image_attachment_admin_home_url(@home, image), method: :delete, class: 'img-btn-edit' do
+                i.fas.fa-trash
+
+    - else
+      p There are no images
 

@@ -14,13 +14,13 @@ h2 edit Home
     = f.label :body
     = f.text_field :body, class: 'form-control'
     = f.file_field :images, multiple: true, as: :file
-
-  h3.page-header
-    | Images in Home Page
-  div id="edit_images"
-    = render 'admin/homes/images'
-
-
   br
   = f.submit "Submit", :class => 'btn btn-primary'
-  = link_to "Cancel", admin_users_path, :class =>'btn btn-default'
+  = link_to "Cancel", admin_homes_path, :class =>'btn btn-default'
+
+h3.page-header
+  | Images in Home Page
+div id="edit_images"
+  = render 'admin/homes/images'
+
+
