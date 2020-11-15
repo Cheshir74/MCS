@@ -8,10 +8,16 @@
   height: 210px;
   position: relative;
 }
-.img-btn-edit{
+.img-btn-edit {
   color: #ffffff;
   display: flex;
-  justify-content: center;
+  position: absolute;
+  bottom: 11px;
+  right: 13px;
+}
+.img-btn-edit:hover{
+  color: #ffffff;
+  text-decoration: none;
 }
 .card-img-overlay-l{
   display: block;
