@@ -52,7 +52,7 @@ class Admin::GalleriesController < Admin::AdminController
   end
 
   def destroy_attach
-    attachments = ActiveStorage::Attachment.where(id: params[:delete_attach_admin_gallery_url])
+    attachments = ActiveStorage::Attachment.where(id: params[:delete_img_ids])
     attachments.map(&:purge)
     redirect_back(fallback_location: edit_admin_gallery_path)
   end
