@@ -21,7 +21,6 @@
 }
 .box-img {
   width: 300px;
-  margin: 25px 0;
   display: flex;
   align-items: center;
   user-select: none;
@@ -34,11 +33,11 @@
   overflow: hidden;
 
   label {
+      top: 16px;
       font-size: 26px;
       color: #4D4D4D;
       position: absolute;
       z-index: 10;
-      padding-left: 50px;
       cursor: pointer;
   }
 
@@ -50,8 +49,8 @@
       &:checked {
 
           ~ .check {
-              border-color: #00EA90;
-              box-shadow: 0px 0px 0px 15px #00EA90 inset;
+              border-color: #46addd;
+              box-shadow: 0px 0px 0px 15px #5a92ac inset;
 
               &::after {
                   opacity: 1;
@@ -62,16 +61,16 @@
   }
 
   .check {
-      width: 30px;
-      height: 30px;
+      width: 25px;
+      height: 25px;
       display: flex;
       justify-content: center;
       align-items: center;
       position: relative;
       border-radius: 100px;
-      background-color: #FFF;
-      border: 2px solid #00EA90;
-      box-shadow: 0px 0px 0px 0px #00EA90 inset;
+      background-color: rgba(151, 151, 151, 0.699);
+      border: 2px solid #424e5f;
+      box-shadow: 0px 0px 0px 0px #89e5f1 inset;
       transition: all 0.15s cubic-bezier(0, 1.05, 0.72, 1.07);
 
       &::after {
