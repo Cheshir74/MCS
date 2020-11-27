@@ -1,0 +1,37 @@
+@import "dropzone/dist/min/dropzone.min.css";
+@import "dropzone/dist/min/basic.min.css";
+
+.input {
+  @apply appearance-none; 
+  @apply block; @apply w-full; @apply bg-gray-100; @apply text-gray-700; @apply border; @apply border-gray-300; @apply rounded; @apply py-3; @apply px-4; @apply leading-tight;
+}
+
+.input:focus {
+  @apply outline-none; @apply bg-white; @apply border-gray-400;
+}
+
+.label {
+  @apply block; @apply text-gray-700; @apply text-sm; @apply font-bold; @apply mb-2;
+}
+
+.select {
+  @apply appearance-none; @apply py-3; @apply px-4; @apply pr-8; @apply block; @apply w-full; @apply bg-gray-100;
+  @apply border; @apply border-gray-300; @apply text-gray-700; @apply rounded; @apply leading-tight;
+  -webkit-appearance: none;
+}
+
+.select:focus {
+  @apply outline-none; @apply bg-white; @apply border-gray-400;
+}
+
+.dropzone {
+  @apply border-2; @apply rounded-lg; @apply border-gray-400; @apply border-dashed;
+
+  &.dz-drag-hover {
+    @apply border-2; @apply rounded-lg; @apply border-gray-200; @apply border-dashed;
+
+    .dz-message {
+      opacity: 0.9;
+    }
+  }
+}
