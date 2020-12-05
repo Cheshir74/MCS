@@ -10,14 +10,14 @@ h2 edit New Gallery
 
 
   .mb-6
-    .form-group
-      = f.label :name
-      = f.text_field :name, class:'form-control'
-      .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
-        = f.file_field :images, multiple: true, as: :file, direct_upload: true, data: { target: 'dropzone.input' }
-          .dropzone-msg.dz-message.needsclick.text-gray-600
-            h3.dropzone-msg-title Drag аа here to upload or click here to browse
-            span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
+    
+    = f.label :name
+    = f.text_field :name, class:'form-control'
+    .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
+      = f.file_field :images, multiple: true, as: :file, direct_upload: true, data: { target: 'dropzone.input' }
+      .dropzone-msg.dz-message.needsclick.text-gray-600
+        h3.dropzone-msg-title Drag here to upload or click here to browse
+        span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
 
 
   br
