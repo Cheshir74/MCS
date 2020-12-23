@@ -7,4 +7,5 @@ $(document).on('turbolinks:load', function () {
         download: false,
         pager: true
     });
+    sortable
 });
