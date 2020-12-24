@@ -1,23 +1,24 @@
 = form_tag destroy_attach_admin_gallery_url, method: :delete do
   = submit_tag "Delete"
-  .row.row-cols-5 id="lightgallery"
+  .row.row-cols-5.sortable id="lightgallery"
     - if @gallery.images.present?
       - @gallery.images.each do |image|
         .column
-          .box-img
-                
-            = label_tag "delete_img_ids[#{image.id}]", nil,  class: 'checkbox-label'
-              = check_box_tag "delete_img_ids[]", image.id, false, :id => "delete_img_ids_#{image.id}", class: 'checkbox-input'
-              span.check
-          .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
-            a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
-              = image_tag image.variant(resize_to_limit: [210, 210])
-                
+          .col
+            .box-img
+                  
+              = label_tag "delete_img_ids[#{image.id}]", nil,  class: 'checkbox-label'
+                = check_box_tag "delete_img_ids[]", image.id, false, :id => "delete_img_ids_#{image.id}", class: 'checkbox-input'
+                span.check
+            .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
+              a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
+                = image_tag image.variant(resize_to_limit: [210, 210])
+                  
 
-                
-          .card-img-overlay
-            = link_to delete_image_attachment_admin_gallery_url(@gallery, image), method: :delete, class: 'img-btn-edit' do
-              i.fas.fa-trash
-          span.icon-focus
+                  
+            .card-img-overlay
+              = link_to delete_image_attachment_admin_gallery_url(@gallery, image), method: :delete, class: 'img-btn-edit' do
+                i.fas.fa-trash
+            span.icon-focus
     - else
       p There are no images
