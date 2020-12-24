@@ -1,3 +1,6 @@
+import sortable  from  "html5sortable/dist/html5sortable.cjs"
+import lightGallery from "lightgallery/dist/js/lightgallery-all"
+
 $(document).on('turbolinks:load', function () {
     $('#lightgallery').lightGallery({
         selector: '.item',
@@ -7,5 +10,9 @@ $(document).on('turbolinks:load', function () {
         download: false,
         pager: true
     });
-    sortable
+    sortable('.sortable', {
+        
+        });
+
+    
 });

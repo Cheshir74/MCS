@@ -2,9 +2,8 @@
   = submit_tag "Delete"
   .row.row-cols-5 id="lightgallery"
     - if @gallery.images.present?
-      
       - @gallery.images.each do |image|
-        .items
+        .column
           .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
             a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
               = image_tag image.variant(resize_to_limit: [210, 210])
@@ -13,7 +12,7 @@
                 
             = label_tag "delete_img_ids[#{image.id}]", nil,  class: 'checkbox-label'
               = check_box_tag "delete_img_ids[]", image.id, false, :id => "delete_img_ids_#{image.id}", class: 'checkbox-input'
-              pan.check
+              span.check
                 
           .card-img-overlay
             = link_to delete_image_attachment_admin_gallery_url(@gallery, image), method: :delete, class: 'img-btn-edit' do
