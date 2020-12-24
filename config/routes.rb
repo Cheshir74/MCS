@@ -18,7 +18,10 @@ Rails.application.routes.draw do
       member do
         delete :delete_image_attachment
         delete :destroy_attach
+        patch :sort
       end
+
+
     end
     resources :homes, except: [:show] do
       member do

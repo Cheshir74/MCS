@@ -1,5 +1,5 @@
 class Admin::GalleriesController < Admin::AdminController
-  before_action :set_gallery, :only => [ :edit, :update, :destroy, :delete_image_attachment ]
+  before_action :set_gallery, :only => [ :edit, :update, :destroy, :sort, :delete_image_attachment ]
 
   def new
     @gallery = Gallery.new
@@ -57,6 +57,15 @@ class Admin::GalleriesController < Admin::AdminController
     redirect_back(fallback_location: edit_admin_gallery_path)
   end
   
+  def sort 
+    params[:span].each_with_index do |id, position|
+      @gallery.where(id: id).update_all(position: position + 1)
+   end
+   respond_to do |format|
+       format.js
+   end
+  end
+
 
   private
 
