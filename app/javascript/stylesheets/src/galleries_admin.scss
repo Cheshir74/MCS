@@ -3,9 +3,10 @@
   padding: 0;
   box-sizing: border-box;
 }
-.items {
-  //width: 210px;
-  //height: 210px;
+.row .items {
+  overflow: hidden;
+  padding: 0 4px;
+  height: 100%;
   position: relative;
 }
 .dropzone {

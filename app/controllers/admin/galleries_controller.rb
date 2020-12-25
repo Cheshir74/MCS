@@ -58,8 +58,9 @@ class Admin::GalleriesController < Admin::AdminController
   end
   
   def sort 
-    params[:span].each_with_index do |id, position|
-      @gallery.where(id: id).update_all(position: position + 1)
+    params[:images].each_with_index do |id, position|
+      ActiveStorage::Attachment.where(id: id).update_all(position: position + 1)
+      
    end
    respond_to do |format|
        format.js

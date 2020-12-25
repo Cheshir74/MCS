@@ -16,7 +16,7 @@ $(document).on('turbolinks:load', function () {
         sortable('.sortable')[0].addEventListener('sortupdate', function(e) {
           var dataIDList = $(this).children().map(function(position){
              $(this).find( ".position" ).text(position + 1)
-             return "span[]=" + $(this).data("id");
+             return "images[]=" + $(this).data("id");
           }).get().join("&");
           Rails.ajax({
               url: "sort",
