@@ -13,8 +13,13 @@ html
   body.d-flex.flex-column.h-100
     - unless flash.empty?
       = render 'layouts/notice'
-
-    = render 'layouts/header'
+    
+    -if current_page?(home_path)
+      = render 'layouts/header_home'
+    
+    -else
+      = render 'layouts/header'
+      
     div id="modal-window" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
 
     - if current_page?(home_path)
