@@ -7,7 +7,7 @@ class Admin::HomesController < Admin::AdminController
   end
 
   def update
-    if @home.update_attributes(home_params)
+    if @home.update(home_params)
       if params[:home][:images].present?
         params[:home][:images].each do |image|
           @home.images.attach(image)

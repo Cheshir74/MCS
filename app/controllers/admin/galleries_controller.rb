@@ -15,7 +15,7 @@ class Admin::GalleriesController < Admin::AdminController
   end
 
   def update
-    if @gallery.update_attributes(gallery_params)
+    if @gallery.update(gallery_params)
       if params[:gallery][:images].present?
         params[:gallery][:images].each do |image|
           @gallery.images.attach(image)

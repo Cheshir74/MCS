@@ -14,7 +14,7 @@ require 'mina/puma'
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :application_name, 'TolstosheevPhoto'
-set :domain, '192.168.9.95'
+set :domain, '95.217.154.81'
 #set :domain, 'projects74.ru'
 set :deploy_to, '/home/depus/app_deploy'
 set :repository, 'git@github.com:Cheshir74/MCS.git'

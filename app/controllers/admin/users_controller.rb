@@ -6,7 +6,7 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def update
-    if @user.update_attributes(user_params)
+    if @user.update(user_params)
       flash[:notice] = "User updated"
       redirect_to edit_admin_user_path(params[:id])
     else
