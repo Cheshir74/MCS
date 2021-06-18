@@ -62,6 +62,8 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    airbrussh (1.4.0)
+      sshkit (>= 1.6.1, != 1.7.0)
     bcrypt (3.1.16)
     bcrypt (3.1.16-java)
     bindex (0.8.1)
@@ -70,6 +72,21 @@ GEM
     builder (3.2.4)
     byebug (11.1.3)
     cancancan (3.2.1)
+    capistrano (3.11.2)
+      airbrussh (>= 1.0.0)
+      i18n
+      rake (>= 10.0.0)
+      sshkit (>= 1.9.0)
+    capistrano-bundler (1.6.0)
+      capistrano (~> 3.1)
+    capistrano-puma (0.2.3)
+      capistrano (>= 3.0)
+    capistrano-rails (1.4.0)
+      capistrano (~> 3.1)
+      capistrano-bundler (~> 1.1)
+    capistrano-rbenv (2.1.4)
+      capistrano (~> 3.1)
+      sshkit (~> 1.3)
     capybara (3.35.3)
       addressable
       mini_mime (>= 0.1.3)
@@ -115,20 +132,15 @@ GEM
       mini_mime (>= 0.1.1)
     marcel (1.0.1)
     method_source (1.0.0)
-    mina (1.2.3)
-      open4 (~> 1.3.4)
-      rake
-    mina-nginx (0.0.3)
-      mina (~> 1)
-    mina-puma (1.1.0)
-      mina (~> 1.2.0)
-      puma (>= 2.13)
     mini_magick (4.11.0)
     mini_mime (1.0.3)
     mini_portile2 (2.5.0)
     minitest (5.14.4)
     msgpack (1.4.2)
     msgpack (1.4.2-java)
+    net-scp (3.0.0)
+      net-ssh (>= 2.6.5, < 7.0.0)
+    net-ssh (6.1.0)
     nio4r (2.5.7)
     nio4r (2.5.7-java)
     nokogiri (1.11.3)
@@ -140,7 +152,6 @@ GEM
       racc (~> 1.4)
     nokogiri (1.11.3-x86-mingw32)
       racc (~> 1.4)
-    open4 (1.3.4)
     orm_adapter (0.5.0)
     pg (1.2.3)
     pg (1.2.3-x64-mingw32)
@@ -248,6 +259,9 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     sqlite3 (1.4.2)
+    sshkit (1.21.2)
+      net-scp (>= 1.1.2)
+      net-ssh (>= 2.8.0)
     temple (0.8.2)
     thor (1.1.0)
     tilt (2.0.10)
@@ -293,15 +307,16 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   cancancan
+  capistrano (= 3.11.2)
+  capistrano-puma
+  capistrano-rails (= 1.4.0)
+  capistrano-rbenv (= 2.1.4)
   capybara (>= 2.15)
   devise
   factory_bot
   image_processing (~> 1.2)
   jbuilder (~> 2.7)
   listen (>= 3.0.5, < 3.2)
-  mina
-  mina-nginx
-  mina-puma
   pg
   puma (~> 5.2)
   rails (~> 6.1.3, >= 6.1.3.1)
