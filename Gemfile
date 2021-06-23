@@ -9,7 +9,8 @@ gem 'rails', '~> 6.1.3', '>= 6.1.3.1'
 gem 'sqlite3', '~> 1.4'
 gem 'pg'
 # Use Puma as the app server
-gem 'puma', '~> 5.2'
+#gem 'puma', '~> 5.2'
+gem "passenger", ">= 5.3.2", require: "phusion_passenger/rack_handler"
 # Use SCSS for stylesheets
 gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
@@ -49,6 +50,7 @@ group :development do
   gem 'capistrano-rails',           '1.4.0'
   gem 'capistrano-rbenv',           '2.1.4 '
   gem 'capistrano-puma'
+  gem 'capistrano-passenger'
 end
 
 group :test do
