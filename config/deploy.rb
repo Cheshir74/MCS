@@ -6,4 +6,4 @@ set :deploy_to, '/home/depus/app_deploy'
 set :repo_url, 'git@github.com:Cheshir74/MCS.git'
 set :branch, 'master'
 append :linked_files, "config/database.yml", "config/puma.rb", "config/master.key", "config/secrets.yml"
-append :linked_dirs, "log", "tmp", "public/system"
+append :linked_dirs, "log", "tmp", "public/system", "storage"
