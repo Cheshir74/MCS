@@ -3,8 +3,8 @@
     - @gallery.images.each do |image|
       .column
         .item data-src="#{ url_for(image.variant(resize_to_limit: [1500, 1000])) }"
-          a href="#{ url_for(image.variant(resize_to_limit: [270, 180])) }"
-            = image_tag image.variant(resize_to_limit: [270, 180])
+          a href="#{ url_for(image.variant(resize_to_limit: [370, 250])) }"
+            = image_tag image.variant(resize_to_limit: [370, 250])
           span.icon-focus
   - else
     p There are no images
