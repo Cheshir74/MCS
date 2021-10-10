@@ -1,0 +1,14 @@
+h1 Pages
+div class="buttons_panel"
+  = link_to 'New page', new_admin_page_path, class: 'btn btn-outline-primary btn-sm'
+table class="table"
+  tbody
+    - @pages.each_with_index do |page, index|
+      tr
+        td
+          = index + 1
+        td
+          = page.title
+        td
+          = link_to 'Change', edit_admin_page_path(page), class: 'btn btn-outline-primary btn-sm'
+          = link_to 'Delete', admin_page_path(page), method: :delete, data: { confirm: 'Are you really? ' }, class: 'btn btn-outline-danger btn-sm'

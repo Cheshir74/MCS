@@ -20,9 +20,10 @@ Rails.application.routes.draw do
         delete :destroy_attach
         patch :sort
       end
-
-
     end
+
+    resources :pages, except: [:show] 
+    
     resources :homes, except: [:show] do
       member do
         delete :delete_image_attachment
@@ -35,5 +36,4 @@ Rails.application.routes.draw do
   end
   get 'homes/show'
   resources :images, :galleries, only: [:show]
-  resources :pages, only: [:show]
 end
