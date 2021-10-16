@@ -59,7 +59,7 @@ $(document).on("turbolinks:load", function(){
     if (b.length == 1) {
 		slides.owlCarousel({
 			// stagePadding: 50,
-			loop: true,
+			//loop: false,
 			// margin: 10,
 			nav: false,
 			navText: [

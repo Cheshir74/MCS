@@ -1,29 +1,43 @@
 header
-  nav class="navbar navbar-expand-md navbar-dark navbar-collapse fixed-top" id="nav-black"
-    h5
-      a.navbar-brand
-        = link_to 'Dmitry Tolstosheev Photography', home_path
-    button.navbar-toggler aria-controls="navbarCollapse" aria-expanded="false" aria-label=("Toggle navigation") data-target="#navbarCollapse" data-toggle="collapse" type="button"
-      span.navbar-toggler-icon
-    .collapse.navbar-collapse.dark-nav id="navbarCollapse"
+  nav class="navbar navbar-light navbar-expand-md fixed-top" id="mainNav"
+    .container-fluid
+      a.navbar-brand href="#{ home_path }" Dmitry Tolstosheev Photography
+      button data-bs-toggle="collapse" class="navbar-toggler navbar-toggler-right" data-bs-target="#navbarResponsive" type="button" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" value="Menu"
+        i class="fa fa-bars"
+      div class="collapse navbar-collapse" id="navbarResponsive"
+        ul class="navbar-nav ms-auto"
+          li class="nav-item nav-link"
+            = link_to 'Home', home_path, class: 'nav-link nav-link'
+          li class="nav-item nav-link"
+            a class="nav-link" href="#about" style="font-size: 14px;" About
+          li class="nav-item nav-link" style="font-size: 14px;"
+            a class="nav-link" href="#download" style="font-size: 14px;" download
+          - @galleryNav.each do |gallery|
+            li class="nav-item nav-link"
+              = link_to gallery.name, gallery_path(gallery.id), class: 'nav-link'
+          li class="nav-item nav-link" style="font-size: 14px;"
+            = link_to 'Contact', home_path, class: 'nav-link'
+          - if current_user.present?
+            - if current_user.superadmin_role?
+              li class="nav-item nav-link"
+                = link_to 'Admin', admin_path, class: 'nav-link'
 
-      ul class="navbar-nav ml-auto"
-        li class="nav-item"
-          = link_to 'Home', home_path
-        - @galleryNav.each do |gallery|
-          li class="nav-item"
-            = link_to gallery.name, gallery_path(gallery.id)
-        li class="nav-item"
-          = link_to 'Contact', home_path
-        li class="nav-item"
-          = link_to 'About', home_path
+          - if current_user.nil?
+            li class="nav-item nav-link" style="font-size: 14px;"
+              //a class="nav-link" href="#sign_in" style="border-width: 1px;border-style: solid;font-size: 14px;" Sign in
+              = link_to 'Sign in', new_user_session_path, { :remote => true, class: 'nav-link', style: 'border-width: 1px;border-style: solid;font-size: 14px;' }
+          - else
+            li class="nav-item dropdown"
+              a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                img class="rounded-circle u-box-shadow-sm me-2" width="25" height="25" src="https://dummyimage.com/100/007bff/efefef" alt="Htmlstream" John Doe 
+                i class="fa fa-angle-down"
+                
+              div class="dropdown-menu" aria-labelledby="navbarDropdown"
+                a class="dropdown-item" href="#" Profile
+                a class="dropdown-item" href="#" Account Settings
+                a class="dropdown-item" href="#" Newsletter
+                div class="dropdown-divider"
+                a class="dropdown-item" href="#" Sign Out
+            = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-light', method: :delete
+              
 
-        - if current_user.present?
-          - if current_user.superadmin_role?
-            li class="nav-item"
-              = link_to 'Admin', admin_path
-
-      - if current_user.nil?
-        = link_to 'Sign in', new_user_session_path, { :remote => true, class: 'btn btn-outline-light' }
-      - else
-        = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-light', method: :delete

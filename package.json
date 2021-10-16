@@ -2,12 +2,14 @@
   "name": "MCS",
   "private": true,
   "dependencies": {
+    "@fontsource/lora": "^4.5.0",
     "@fortawesome/fontawesome-free": "^5.14.0",
+    "@popperjs/core": "^2.10.2",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
-    "@rails/webpacker": "4.2.2",
-    "bootstrap": "^4.5.2",
+    "@rails/webpacker": "5.4.3",
+    "bootstrap": "^5.1.3",
     "channels": "^0.0.4",
     "dropzone": "^5.7.2",
     "html5sortable": "^0.10.0",
@@ -16,15 +18,18 @@
     "lg-hash": "^1.0.4",
     "lg-pager": "^1.0.2",
     "lightgallery": "^1.7.2",
+    "node-sass": "^6.0.1",
     "owl.carousel": "^2.3.4",
     "popper.js": "^1.16.1",
     "sortablejs": "^1.12.0",
     "stimulus": "^1.1.1",
     "toastr": "^2.1.4",
-    "turbolinks": "^5.2.0"
+    "turbolinks": "^5.2.0",
+    "typeface-lora": "^1.1.13"
   },
   "version": "0.1.0",
   "devDependencies": {
-    "webpack-dev-server": "^3.11.0"
+    "@webpack-cli/serve": "^1.6.0",
+    "webpack-dev-server": "^4.3.1"
   }
 }
