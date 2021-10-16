@@ -2,6 +2,7 @@
   "name": "MCS",
   "private": true,
   "dependencies": {
+    "@fontsource/cabin": "^4.5.0",
     "@fontsource/lora": "^4.5.0",
     "@fortawesome/fontawesome-free": "^5.14.0",
     "@popperjs/core": "^2.10.2",

@@ -24,6 +24,7 @@ import 'service/galleries';
 import 'stylesheets/application'
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@fontsource/lora'
+import "@fontsource/cabin"
 
 import "lightgallery/dist/css/lightgallery.css";
 import 'owl.carousel/dist/assets/owl.carousel.css';
