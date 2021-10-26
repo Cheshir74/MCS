@@ -50,11 +50,7 @@ $(document).on("turbolinks:load", function(){
 
 	var slides = $(".full-screen"),
     b = slides.find('.item');
-    b.each(function(){
-        var e = $(this),
-        ocImg = e.find('img').attr('src');
-        e.css({'background-image': 'url(' + ocImg + ')'});
-    });
+
 
     if (b.length == 1) {
 		slides.owlCarousel({

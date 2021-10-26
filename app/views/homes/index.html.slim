@@ -2,7 +2,7 @@ section id="banner"
   div id="owl-list" class="owl-theme owl-carousel full-screen" style="min-height:700px;"
     - if Home.first.present?
       - Home.first.images.each do |image|
-        .item
+        .item 
           span style="background: url('#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }') center / cover no-repeat;"
           .overlay-bg     
         
