@@ -11,8 +11,6 @@ html
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
 
   body.d-flex.flex-column.h-100
-
-    
     -if current_page?(home_path)
       = render 'layouts/header_home'
     
@@ -21,6 +19,7 @@ html
          
     - unless flash.empty?
       = render 'layouts/notice'
+      
     div id="modal-window" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
 
     - if current_page?(home_path)
