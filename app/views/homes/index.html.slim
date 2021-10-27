@@ -28,9 +28,10 @@ section id="about" class="text-center content-section"
   section class="photo-gallery" style="background: rgb(0,0,0);"
     .container
       div class="intro"
-        h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;" My last work 
-        p class="text-center align-items-center" Nunc luctus in metus eget fringilla. Aliquam sed justo ligula. Vestibulum nibh erat, pellentesque ut laoreet vitae.
-
+        h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
+          = Home.first.title_block1
+        p class="text-center align-items-center"
+          = Home.first.body_block1
 
       div class="row photos" data-bss-baguettebox="" id="lightgallery"
         - if Gallery.first.images.present?

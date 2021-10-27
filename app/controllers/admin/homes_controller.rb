@@ -62,6 +62,6 @@ class Admin::HomesController < Admin::AdminController
   end
 
   def home_params
-    params.require(:home).permit(:title,:body)
+    params.require(:home).permit(:title,:body,:title_block1,:body_block1)
   end
 end
