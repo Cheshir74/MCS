@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       member do
         delete :delete_image_attachment
         delete :destroy_attach
+        patch :sort
       end
     end
   end

@@ -1,5 +1,5 @@
 class Admin::HomesController < Admin::AdminController
-  before_action :set_home, :only => [ :edit, :update, :destroy, :delete_image_attachment ]
+  before_action :set_home, :only => [ :edit, :update, :destroy, :delete_image_attachment, :sort ]
 
 
   def index
@@ -44,6 +44,16 @@ class Admin::HomesController < Admin::AdminController
   def destroy
     @home.destroy
     redirect_to admin_homes_path
+  end
+
+  def sort 
+    params[:images].each_with_index do |id, position|
+      ActiveStorage::Attachment.where(id: id).update_all(position: position + 1)
+      
+   end
+   respond_to do |format|
+       format.js
+   end
   end
 
   private
