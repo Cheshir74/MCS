@@ -9,9 +9,7 @@ header
           li class="nav-item nav-link" style="font-size: 14px;"
             = link_to 'Home', home_path, class: 'nav-link nav-link active' 
           li class="nav-item nav-link" style="font-size: 14px;" 
-            a class="nav-link" href="#about" style="font-size: 14px;" About
-          li class="nav-item nav-link" style="font-size: 14px;"
-            a class="nav-link" href="#download" style="font-size: 14px;" download
+            a class="nav-link" href="#about" style="font-size: 14px;" Last work
           - @galleryNav.each do |gallery|
             li class="nav-item nav-link" style="font-size: 14px;"
               = link_to gallery.name, gallery_path(gallery.id), class: 'nav-link' 
