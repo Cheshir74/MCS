@@ -4,7 +4,7 @@
       .avatar
         img src="/images/avatar.png" alt="Avatar"
       h4.modal-title Sign Up
-      button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true" &times;
+      button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"
     .modal-body
       .error id="sign_up_error"
       = form_for(User.new, url: registration_path(:user), html: {id: 'sign_up_user', :'data-type' => 'json'}, remote: true) do |f|

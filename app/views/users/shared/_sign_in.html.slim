@@ -4,7 +4,7 @@
       .avatar
         img src="/images/avatar.png" alt="Avatar"
       h4.modal-title Member Login
-      button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true" &times;
+      button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"
     .modal-body
       .error id="sign_in_error"
       = form_for(User.new, url: session_path(:user), html:{id: 'sign_in_user', :'data-type' => 'json'}, remote: true) do |f|
