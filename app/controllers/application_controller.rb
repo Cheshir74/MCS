@@ -10,6 +10,6 @@ class ApplicationController < ActionController::Base
 
   private
   def getGalleryNav
-    @galleryNav = Gallery.all
+    @galleryNav = Gallery.where(visible: true)
   end
   end
