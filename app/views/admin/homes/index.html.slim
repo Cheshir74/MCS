@@ -1,6 +1,6 @@
 h1 Home Page
 div class="buttons_panel"
-//= link_to 'New home page', new_admin_home_path, class: 'btn btn-outline-primary btn-sm'
+  = link_to 'New home page', new_admin_home_path, class: 'btn btn-outline-primary btn-sm'
 table class="table"
   tbody
     - @homes.each_with_index do |home, index|

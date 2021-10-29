@@ -4,4 +4,9 @@ class HomesController < ApplicationController
   def show
   end
 
+  def index
+    @home = Home.find_by(visible: true)
+    @gallery = Gallery.find(Home.first.gallery_id)
+  end
+
 end

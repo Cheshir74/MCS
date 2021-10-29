@@ -1,7 +1,7 @@
 section id="banner"
   div id="owl-list" class="owl-theme owl-carousel full-screen" style="min-height:700px;"
-    - if Home.first.present?
-      - Home.first.images.each do |image|
+    - if @home.present?
+      - @home.images.each do |image|
         .item
           span style="background: url('#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }') center / cover no-repeat;"
           .overlay-bg     
@@ -9,16 +9,16 @@ section id="banner"
             div class="text-start intro-tex rounded bg-faded" style="margin-top: 1px;margin-left: 42px; position: absolute; bottom: 25%;"
               h2 class="section-heading mb-4"
                 span class="section-heading-upper"
-                  = Home.first.title
+                  = @home.title
               p class="mb-3" style="max-width: 500px;" 
-                = Home.first.body
+                = @home.body
             div style="position: relative;height: 100%;"
               a class="btn btn-link align-items-end align-content-end align-self-end btn-circle" role="button" href="#about" style="position: absolute; bottom: 5%;left:50%;  transform:translate(-50%, -50%);"
                 i class="fa fa-angle-double-down animated"
 
     - else
       .item
-        img src="" alt="Slider"
+        img src=""
         .overlay-bg
         .container-fluid.d-flex.align-items-center
           .wrap-caption
@@ -26,20 +26,21 @@ section id="banner"
 
 section id="about" class="text-center content-section" 
   section class="photo-gallery" style="background: rgb(0,0,0);"
-    .container
-      div class="intro"
-        h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
-          = Home.first.title_block1
-        p class="text-center align-items-center"
-          = Home.first.body_block1
+    - if @home.present?
+      .container
+        div class="intro"
+          h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
+            = @home.title_block1
+          p class="text-center align-items-center"
+            = @home.body_block1
 
-      div class="row photos" data-bss-baguettebox="" id="lightgallery"
-        - if Gallery.first.images.present?
-          - Gallery.first.images.each do |image|
-            div class="col-sm-6 col-md-4 col-lg-3 item" data-src="#{ url_for(image.variant(resize_to_limit: [1500, 1000])) }"
-              a href="#{ url_for(image.variant(resize_to_limit: [1500, 1000])) }"
-                = image_tag image.variant(resize_to_limit: [370, 250]), class:"img-fluid"
-       
+        div class="row photos" data-bss-baguettebox="" id="lightgallery"
+          - if Gallery.find(@home.gallery_id).present?
+            - Gallery.find(@home.gallery_id).images.each do |image|
+              div class="col-sm-6 col-md-4 col-lg-3 item" data-src="#{ url_for(image.variant(resize_to_limit: [1500, 1000])) }"
+                a href="#{ url_for(image.variant(resize_to_limit: [1500, 1000])) }"
+                  = image_tag image.variant(resize_to_limit: [370, 250]), class:"img-fluid"
+        
 
 
 

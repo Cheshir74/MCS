@@ -1,7 +1,6 @@
 class Admin::HomesController < Admin::AdminController
   before_action :set_home, :only => [ :edit, :update, :destroy, :delete_image_attachment, :sort ]
 
-
   def index
     @homes = Home.all
   end
@@ -13,20 +12,33 @@ class Admin::HomesController < Admin::AdminController
           @home.images.attach(image)
         end
       end
-      flash[:notice] = "Gallery updated"
+      flash[:notice] = "Home updated"
       redirect_to edit_admin_home_path(params[:id])
     else
       render 'edit'
     end
   end
 
+  def create
+    @home = Home.new(home_params)
+    if @home.save
+      flash[:notice] = "Home Created"
+      redirect_to admin_homes_path
+    else
+      @homes = Home.all
+      render 'new'
+    end
+  end
+
   def edit
     @homes = Home.all
+    @galleries = Gallery.all
   end
 
   def new
     @home = Home.new
     @homes = Home.all
+    @galleries = Gallery.all
   end
 
   def delete_image_attachment
@@ -57,11 +69,14 @@ class Admin::HomesController < Admin::AdminController
   end
 
   private
+
   def set_home
     @home = Home.find(params[:id])
   end
 
+  
+
   def home_params
-    params.require(:home).permit(:title,:body,:title_block1,:body_block1)
+    params.require(:home).permit(:title,:body,:title_block1,:body_block1,:gallery_id,:visible)
   end
 end
