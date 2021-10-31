@@ -1,5 +1,31 @@
 = form_tag destroy_attach_admin_gallery_url, method: :delete do
   = submit_tag "Delete"
+  section id="gallery"
+    div.container-gallery
+      .d-flex.flex-row.flex-wrap.justify-content-center id="lightgallery"   
+        - if @gallery.images.present?
+          - @gallery.images.in_groups(4, false).each do |group|
+            .div class='d-flex flex-column'
+              - group.each do |image|
+                .column data-id='#{image.id}'
+                  .box-img
+                        
+                    = label_tag "delete_img_ids[#{image.id}]", nil,  class: 'checkbox-label'
+                      = check_box_tag "delete_img_ids[]", image.id, false, :id => "delete_img_ids_#{image.id}", class: 'checkbox-input'
+                      span.check
+                  .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
+                    a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
+                      = image_tag image.variant(resize_to_limit: [210, 210])
+                          
+
+                          
+                  .card-img-overlay
+                    = link_to delete_image_attachment_admin_gallery_url(@gallery, image), method: :delete, class: 'img-btn-edit' do
+                      i.fas.fa-trash
+        - else
+          p There are no images
+
+
   .row.row-cols-5.sortable id="lightgallery"
     - if @gallery.images.present?
       - @gallery.images.each do |image|

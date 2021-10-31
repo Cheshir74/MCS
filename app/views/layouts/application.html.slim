@@ -10,7 +10,7 @@ html
     = stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
 
-  body.d-flex.flex-column.h-100
+  body
     -if current_page?(home_path)
       = render 'layouts/header_home'
     

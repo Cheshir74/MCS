@@ -1,44 +1,35 @@
-*{
-  margin:0;
-  padding: 0;
-  box-sizing: border-box;
-}
-h1{
-  font-weight: 800;
-}
-p{
-  font-weight: 500;
-}
-.row{
-  display: flex;
-  flex-wrap: wrap;
-  //width: 100%;
-}
-.row .column{
- // flex: 16.6%; /*three columns*/
-  width: auto;
-  overflow: hidden;
-  padding: 0 4px;
-  height: 100%;
-}
-.row .column img{
-  margin-top: 2%;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
+#gallery .container {
+  background: #f9f9f9;
 }
 
-@media only screen and (max-width: 800px) {
-  .row .column {
-    flex: 50%;
+#gallery .flex-column {
+    max-width: 340px;
   }
-}
-@media only screen and (max-width: 600px){
-  .row .column{
-    flex: 100%;
+
+  #gallery  img {
+    margin: 5px;
   }
-}
-.navbar.scrolled {
-background: #000;
-opacity: 70%;
-}
+
+  #gallery .scale {
+    transform: scaleY(1.05);
+    padding-top: 5px; 
+  }
+
+  #gal body {
+    padding: 40px;
+    background-image: linear-gradient(#e8f0ff 0%, white 52.08%);
+    color: #0e3481;
+    min-height: 100vh;
+  }
+  
+  #gal .header .lead {
+    max-width: 620px;
+  }
+  
+  /** Below CSS is completely optional **/
+  
+  #gal .gallery-item {
+    width: 200px;
+    padding: 5px;
+  }
+  

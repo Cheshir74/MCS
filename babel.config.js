@@ -17,6 +17,15 @@ module.exports = function(api) {
 
   return {
     presets: [
+      moduleExists('@babel/preset-react') && [
+        '@babel/preset-react',
+        {
+          development: isDevelopmentEnv || isTestEnv,
+          useBuiltIns: true,
+          runtime: 'automatic',
+          importSource: '@emotion/react',
+        },
+      ],
       isTestEnv && [
         '@babel/preset-env',
         {

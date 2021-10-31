@@ -1,10 +1,10 @@
-.row.row-cols-5 id="lightgallery"
-  - if @gallery.images.present?
-    - @gallery.images.each do |image|
-      .column
-        .item data-src="#{ url_for(image.variant(resize_to_limit: [1500, 1000])) }"
-          a href="#{ url_for(image.variant(resize_to_limit: [370, 250])) }"
-            = image_tag image.variant(resize_to_limit: [370, 250])
-          span.icon-focus
-  - else
-    p There are no images
+section id="gallery"
+  div.container-gallery
+    .d-flex.flex-row.flex-wrap.justify-content-center id="lightgallery"   
+      - if @gallery.images.present?
+        - @gallery.images.in_groups(4, false).each do |group|
+          .div class='d-flex flex-column'
+            - group.each do |image|
+              = image_tag image.variant(resize_to_limit: [370, 250])
+      - else
+        p There are no images
