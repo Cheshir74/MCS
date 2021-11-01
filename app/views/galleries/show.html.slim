@@ -1,4 +1,5 @@
-= render 'galleries/imr'
+div id="app"
+    = javascript_pack_tag 'gallery_react'
 javascript:
     $(window).scroll(function(){
      $('navbar').toggleClass('scrolled', $(this).scrollTop() > 200 ); 

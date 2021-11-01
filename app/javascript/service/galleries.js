@@ -3,8 +3,6 @@ import lightGallery from "lightgallery/dist/js/lightgallery-all"
 import Rails from '@rails/ujs'
 
 $(document).on('turbolinks:load', function () {
-  
-
     $('#lightgallery').lightGallery({
         selector: '.item',
         escKey: true,
