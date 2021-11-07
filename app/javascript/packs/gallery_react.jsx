@@ -6,7 +6,7 @@ import axios from "axios";
 
 function App(node) {
     const [isLoading, setLoading] = useState(true);
-    const [images,setImages]=useState();
+    const [photos,setImages]=useState();
     const url = node.link;
     const [currentImage, setCurrentImage] = useState(0);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
@@ -31,11 +31,11 @@ function App(node) {
     if (isLoading) {
         return <div className="App"> Loading... </div>;
     }
-
+    console.log(photos);
     return (
         <div>
             
-            <Gallery photos={images} onClick={openLightbox} direction={"column"} />
+            <Gallery photos={photos} onClick={openLightbox} direction={"column"} />
             <ModalGateway>
                 {viewerIsOpen ? (
                 <Modal onClose={closeLightbox}>
@@ -54,10 +54,6 @@ function App(node) {
         );
     
   }
-
-
-/* popout the browser and maximize to see more columns! -> */
-/*render(<App />, document.getElementById("app"));*/
 
 $(document).on('turbolinks:load', function () {
     const node = document.getElementById('app')
