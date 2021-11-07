@@ -35,14 +35,11 @@ section id="about" class="text-center content-section"
             = @home.body_block1
 
         div class="row photos" data-bss-baguettebox="" id="lightgallery"
-          - if Gallery.find(@home.gallery_id).present?
-            - Gallery.find(@home.gallery_id).images.each do |image|
-              div class="col-sm-6 col-md-4 col-lg-3 item" data-src="#{ url_for(image.variant(resize_to_limit: [1500, 1000])) }"
-                a href="#{ url_for(image.variant(resize_to_limit: [1500, 1000])) }"
-                  = image_tag image.variant(resize_to_limit: [370, 250]), class:"img-fluid"
-        
-
-
+          = content_tag :div,
+            id: "app",
+            data: { url_path: gallery_path(@home.gallery_id) }
+            = javascript_pack_tag 'gallery_react'
+            
 
 
 

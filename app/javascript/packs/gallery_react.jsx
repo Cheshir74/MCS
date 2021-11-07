@@ -1,13 +1,13 @@
 import React,{useState,useEffect, useCallback } from "react";
 import { render } from "react-dom";
 import Gallery from "react-photo-gallery";
-import photos from "./images.json"
 import Carousel, { Modal, ModalGateway } from "react-images";
 import axios from "axios";
 
-function App() {
+function App(node) {
     const [isLoading, setLoading] = useState(true);
     const [images,setImages]=useState();
+    const url = node.link;
     const [currentImage, setCurrentImage] = useState(0);
   const [viewerIsOpen, setViewerIsOpen] = useState(false);
 
@@ -21,8 +21,8 @@ function App() {
     setViewerIsOpen(false);
   };
     
-    useEffect(()=>{
-        axios.get("2.json").then(response => {
+    useEffect((id)=>{
+        axios.get(url).then(response => {
             setImages(response.data)
             setLoading(false);
         });
@@ -57,4 +57,11 @@ function App() {
 
 
 /* popout the browser and maximize to see more columns! -> */
-render(<App />, document.getElementById("app"));
+/*render(<App />, document.getElementById("app"));*/
+
+$(document).on('turbolinks:load', function () {
+    const node = document.getElementById('app')
+    const link = node.getAttribute('data-url-path')
+    const url = link+'.json';
+    render(<App link={url} /> , document.getElementById("app"))
+  })
