@@ -1,6 +1,13 @@
 $(document).on("turbolinks:load", function(){
 	"use strict";
 
+	$(function () {
+		$(document).scroll(function () {
+		  var $nav = $(".navbar");
+		  $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
+		});
+	  });
+
 	$(".loader").delay(400).fadeOut();
     $(".animationload").delay(400).fadeOut("fast");
 

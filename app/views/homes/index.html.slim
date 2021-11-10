@@ -37,7 +37,7 @@ section id="about" class="text-center content-section"
         div class="row photos" data-bss-baguettebox="" id="lightgallery"
           = content_tag :div,
             id: "app",
-            data: { url_path: gallery_path(@home.gallery_id) }
+            data: { url_path: gallery_path(@home.gallery_id), direction: "row" }
             = javascript_pack_tag 'gallery_react'
             
 

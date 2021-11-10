@@ -6,6 +6,7 @@ import Carousel, { Modal, ModalGateway } from "react-images";
 function App() {
     const node = document.getElementById('app')
     const url = node.getAttribute('data-url-path')+'.json';
+    const direction = node.getAttribute('data-direction');
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [photos, setItems] = useState([]);
@@ -50,7 +51,7 @@ function App() {
     } else {
       return (
         <div>
-          <Gallery photos={photos} onClick={openLightbox} direction={"column"} />
+          <Gallery photos={photos} onClick={openLightbox} direction={direction} />
             <ModalGateway>
               {viewerIsOpen ? (
                 <Modal onClose={closeLightbox}>
@@ -70,6 +71,4 @@ function App() {
     }
   }
 
-
 render(<App /> , document.getElementById("app"))
-

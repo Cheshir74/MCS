@@ -1,6 +1,6 @@
 = content_tag :div,
     id: "app",
-    data: { url_path: gallery_path }
+    data: { url_path: gallery_path, direction: "column" }
     = javascript_pack_tag 'gallery_react'
 javascript:
     $(window).scroll(function(){
