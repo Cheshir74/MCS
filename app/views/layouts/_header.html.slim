@@ -9,12 +9,14 @@ header
           li class="nav-item nav-link" style="font-size: 14px;"
             = link_to 'Home', home_path, class: 'nav-link nav-link active' 
           li class="nav-item nav-link" style="font-size: 14px;" 
-            a class="nav-link" href="#{ home_path }#about" style="font-size: 14px;" Last work
+            a class="nav-link" href="#{ home_path }#lastwork" style="font-size: 14px;" Last work
           - @galleryNav.each do |gallery|
             li class="nav-item nav-link" style="font-size: 14px;"
               = link_to gallery.name, gallery_path(gallery.id), class: 'nav-link' 
           li class="nav-item nav-link" style="font-size: 14px;"
-            = link_to 'Contact', home_path, class: 'nav-link'  
+            a class="nav-link" href="#{ home_path }#contacts" style="font-size: 14px;" Contacts
+          li class="nav-item nav-link" style="font-size: 14px;"
+            a class="nav-link" href="#{ home_path }#about" style="font-size: 14px;" About me  
           - if current_user.nil?
             li class="nav-item nav-link" style="font-size: 14px;"
               //a class="nav-link" href="#sign_in" style="border-width: 1px;border-style: solid;font-size: 14px;" Sign in

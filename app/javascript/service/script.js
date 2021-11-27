@@ -25,36 +25,6 @@ $(document).on("turbolinks:load", function(){
     	e.css({'width': t + '%'});
     });
 	
-
-	var top = jQuery(document).scrollTop();
-	var batas = 200;
-	var navbar = jQuery('.navbar-main');
-	var navbarnav = jQuery('.navbar-nav');
-	var header = jQuery('.header');
-	
-	
-	if ( top > batas ) {
-		navbar.addClass('stiky');
-		navbarnav.addClass('ml-auto');
-	}
-	jQuery(window).scroll(function () {
-		top = jQuery(document).scrollTop();
-
-		
-		if ( top > batas ) {
-			navbar.addClass('stiky');
-		}else {
-			navbar.removeClass('stiky'); 
-			if(header.hasClass('header-2')){
-				navbarnav.removeClass('ml-auto');
-			}
-			if(header.hasClass('header-5')){
-				navbarnav.removeClass('ml-auto');
-			}
-		}
-
-	});
-
 	var slides = $(".full-screen"),
     b = slides.find('.item');
 

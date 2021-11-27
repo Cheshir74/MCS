@@ -24,7 +24,7 @@ section id="banner"
           .wrap-caption
             h1.caption-heading.text-primary
 
-section id="about" class="text-center content-section" 
+section id="lastwork" class="text-center content-section" 
   section class="photo-gallery" style="background: rgb(0,0,0);"
     - if @home.present?
       .container
@@ -39,6 +39,28 @@ section id="about" class="text-center content-section"
             id: "app",
             data: { url_path: gallery_path(@home.gallery_id), direction: "row" }
             = javascript_pack_tag 'gallery_react'
+
+section id="about" class="text-center content-section" 
+  section class="photo-gallery" style="background: rgb(0,0,0);"
+    - if @home.present?
+      .container
+        div class="intro"
+          h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
+            = @home.title_block1
+
+  div class="container-fluid py-5" id="about"
+    div class="container"
+
+            
+      div class="row align-items-center"
+        div class="col-lg-5 pb-4 pb-lg-0"
+          = image_tag @home.images.first, class: "img-fluid rounded w-100"
+                
+        div class="col-lg-7"
+          = @home.body_block1
+
+
+section id="contacts" class="text-center content-section" 
             
 
 

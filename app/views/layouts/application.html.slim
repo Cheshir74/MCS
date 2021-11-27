@@ -11,11 +11,7 @@ html
     = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
 
   body
-    -if current_page?(home_path)
-      = render 'layouts/header_home'
-    
-    -else
-      = render 'layouts/header'
+    = render 'layouts/header'
          
     - unless flash.empty?
       = render 'layouts/notice'

@@ -51,7 +51,7 @@ function App() {
     } else {
       return (
         <div>
-          <Gallery photos={photos} onClick={openLightbox} direction={direction} />
+          <Gallery photos={photos} margin={10} onClick={openLightbox} direction={direction} />
             <ModalGateway>
               {viewerIsOpen ? (
                 <Modal onClose={closeLightbox}>

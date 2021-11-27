@@ -64,7 +64,6 @@ body {
 
 .content-section {
   padding-top: 20px;
-  padding-bottom: 20px;
 }
 
 .photo-gallery {
@@ -276,4 +275,14 @@ body {
 
 #toast-container{
   top: 72px;
+}
+
+.img-fluid{
+  max-height: 300px;
+}
+.about-block{
+  text-align: center;
+  vertical-align: middle;
+  line-height: 90px;
+  height: auto;
 }
