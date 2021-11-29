@@ -278,7 +278,9 @@ body {
 }
 
 .img-fluid{
-  max-height: 300px;
+  width: 300px;
+  height: 337px;
+  object-fit: contain;
 }
 .about-block{
   text-align: center;
