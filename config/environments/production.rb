@@ -68,7 +68,7 @@ Rails.application.configure do
       ssl:   'true',
       user_name:      Rails.application.secrets.mail_username,
       password:       Rails.application.secrets.mail_password,
-      domain:         'tolstosheev.ru',
+      domain:         'tolstosheevphoto.ru',
       address:       'smtp.yandex.ru',
       port:          '465',
       authentication: :plain,
