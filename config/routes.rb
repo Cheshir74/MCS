@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   root 'homes#index', as: 'home'
   get "upload" => "images#new", :as => "upload"
   get 'about' => 'pages#about'
+  get 'message' => 'messages#new'
+  post 'message' => 'messages#create'
   namespace :admin do
     get '/' => 'admin#index'
     resources :users

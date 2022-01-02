@@ -1,20 +1,30 @@
-import React from "react";
+import React, {useState, useRef} from "react";
 import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
 
 
-function App() {
+const UserForm = props => {
   const {
     register,
-    formState: { errors },
-    handleSubmit
+    formState: { errors } 
   } = useForm({
     criteriaMode: "all"
   });
-  const onSubmit = (data) => console.log(data);
+
+    const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const form = useRef(null)
+
+    const submit = e => {
+      e.preventDefault()
+      const data = new FormData(form.current)
+      fetch('/message', { method: 'POST', body: data })
+        .then(res => res.json())
+        .then(json => setUser(json.name))
+    }
 
   return (
-    <form className="contact100-form" onSubmit={handleSubmit(onSubmit)}>
+    <form className="contact100-form" ref={form} onSubmit={submit} >
+      <input type='hidden' name='authenticity_token' value={csrfToken} />
       <div className="wrap-input100">
 				<input {...register('name', { required: true, minLength: 2 })}
         className="input100 true-validate" placeholder="Full Name"/>
@@ -39,14 +49,14 @@ function App() {
 
 			<div className="wrap-input100 validate-input" data-validate = "Please enter your message">
 				<textarea 
-          {...register("message", { required: true, minLength: 10 })}
-        className="input100" name="message" placeholder="Your Message"></textarea>
-        {errors.message && errors.message.type === "required" && <p>This is required</p> }      
-        {errors.message && errors.message.type === "minLength" && <p>At least 10 characters</p> }
+          {...register("body", { required: true, minLength: 10 })}
+        className="input100" name="body" placeholder="Your Message"></textarea>
+        {errors.body && errors.body.type === "required" && <p>This is required</p> }      
+        {errors.body && errors.body.type === "minLength" && <p>At least 10 characters</p> }
 			</div>
 
 			<div className="container-contact100-form-btn">
-				<button className="contact100-form-btn">
+				<button className="contact100-form-btn" type='submit' >
 					Send Email
 				</button>
 			</div>
@@ -55,4 +65,4 @@ function App() {
 }
 
 const rootElement = document.getElementById("contact-form");
-ReactDOM.render(<App />, rootElement);
+ReactDOM.render(<UserForm />, rootElement);
