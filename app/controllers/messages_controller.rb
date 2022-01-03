@@ -10,6 +10,7 @@ class MessagesController < ApplicationController
         email = params[:email]
         body = params[:body]
         MessageMailer.contact_email(name, email, body).deliver
+        render :json => {:status => "ok"}
     end
 
 end
