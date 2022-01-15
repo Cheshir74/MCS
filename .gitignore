@@ -27,6 +27,8 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+/config/deploy
+
 /config/deploy.rb.bk
 /config/database*
 /config/secrets*
