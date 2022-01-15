@@ -40,13 +40,13 @@ const UserForm = props => {
         <input type='hidden' name='authenticity_token' value={csrfToken} />
         <div className="wrap-input100">
           <input {...register('name', { required: true, minLength: 2 })}
-          className="input100 true-validate" placeholder="Full Name"/>
+          className="input100 true-validate" autoComplete="off" placeholder="Full Name"/>
           {errors.name && errors.name.type === "required" && <p>This is required</p> }      
           {errors.name && errors.name.type === "minLength" && <p>At least 2 characters</p> }
         </div>
         
 
-        <div className="wrap-input100 validate-input" data-validate = "Please enter email: e@a.x">
+        <div className="wrap-input100 validate-input"  data-validate = "Please enter email: e@a.x">
           <input {...register("email", {
             required: true,
             pattern: {
@@ -56,11 +56,11 @@ const UserForm = props => {
           })}
           type="email"
         
-          className="input100" name="email" placeholder="Email"/>     
+          className="input100" autoComplete="off" name="email" placeholder="Email"/>     
           {errors.email && <p>Please enter a valid email</p> }
         </div>
 
-        <div className="wrap-input100 validate-input" data-validate = "Please enter your message">
+        <div className="wrap-input100 validate-input"  data-validate = "Please enter your message">
           <textarea 
             {...register("body", { required: true, minLength: 10 })}
           className="input100" name="body" placeholder="Your Message"></textarea>

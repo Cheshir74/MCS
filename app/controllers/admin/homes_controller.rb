@@ -1,5 +1,5 @@
 class Admin::HomesController < Admin::AdminController
-  before_action :set_home, :only => [ :edit, :update, :destroy, :delete_image_attachment, :sort ]
+  before_action :set_home, :only => [ :edit, :update, :destroy, :delete_image_attachment, :delete_photo_attachment, :sort ]
 
   def index
     @homes = Home.all
@@ -47,6 +47,12 @@ class Admin::HomesController < Admin::AdminController
     redirect_back(fallback_location: edit_admin_home_path)
   end
 
+  def delete_photo_attachment
+    attachment = @home.image
+    attachment.purge
+    redirect_back(fallback_location: edit_admin_home_path)
+  end
+
   def destroy_attach
     attachments = ActiveStorage::Attachment.where(id: params[:delete_img_ids])
     attachments.map(&:purge)
@@ -77,6 +83,6 @@ class Admin::HomesController < Admin::AdminController
   
 
   def home_params
-    params.require(:home).permit(:title,:body,:title_block1,:body_block1,:gallery_id,:visible)
+    params.require(:home).permit(:title,:body,:title_block1,:body_block1,:gallery_id,:visible,:image)
   end
 end

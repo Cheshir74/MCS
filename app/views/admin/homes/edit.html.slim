@@ -9,23 +9,31 @@ h2 edit Home
       .alert.alert-danger = msg
 
   .mb-6
-    
+    h3 Primary block
     = f.label :title
     = f.text_field :title, class:'form-control'
     = f.label :body
     = f.text_field :body, class: 'form-control'
+    h3 About block
     = f.label :title_block1
     = f.text_field :title_block1, class: 'form-control'
     = f.label :body_block1
     = f.text_field :body_block1, class: 'form-control'
+    .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
+      = f.file_field :image, as: :file, direct_upload: true, data: { target: 'dropzone.input' }
+      .dropzone-msg.dz-message.needsclick.text-gray-600
+        h3.dropzone-msg-title Drag here to upload or click here to browse
+        span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
     = f.label :visible
     = f.check_box :visible
+    h3 Gallery block first
     .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
       = f.file_field :images, multiple: true, as: :file, direct_upload: true, data: { target: 'dropzone.input' }
       .dropzone-msg.dz-message.needsclick.text-gray-600
         h3.dropzone-msg-title Drag here to upload or click here to browse
         span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
-      
+
+    h3 Gallery last work  
     = f.select 'gallery_id', options_for_select(@galleries.collect{ |g| [g.name, g.id] }), class: 'form-select'
 
 
@@ -33,6 +41,22 @@ h2 edit Home
 
   = f.submit "Submit", :class => 'btn btn-primary'
   = link_to "Cancel", admin_homes_path, :class =>'btn btn-default'
+h3 Image Photo 
+.row.row-cols-5.sortable id="lightgallery"
+  - if @home.image.attached?
+    .column
+      .box-img
+        = label_tag "delete_img_ids", nil,  class: 'checkbox-label'
+          = check_box_tag "delete_img_ids[]", @home.image.id, false, :id => "delete_img_ids", class: 'checkbox-input'
+            span.check
+      .item data-src="#{ url_for(@home.image.variant(resize_to_limit: [2000, 1200])) }"
+        a href="#{ url_for(@home.image.variant(resize_to_limit: [1000, 670])) }"
+          = image_tag @home.image.variant(resize_to_limit: [210, 210])
+          
+      .card-img-overlay
+        = link_to delete_photo_attachment_admin_home_url(@home, @home.image), method: :delete, class: 'img-btn-edit' do
+          i.fas.fa-trash
+      span.icon-focus
 
 h3.page-header
   | Images in Home Page

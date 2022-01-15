@@ -7,7 +7,7 @@ class GalleriesController < ApplicationController
 
   private
   def set_gallery
-    @gallery = Gallery.find_by(id: params[:id],visible: true)
+    @gallery = Gallery.find_by(id: params[:id])
   end
 
 end

@@ -54,7 +54,8 @@ section id="about" class="text-center content-section"
             
       div class="row align-items-center"
         div class="col-lg-5 pb-4 pb-lg-0"
-          = image_tag @home.images.first, class: "img-fluid rounded w-100"
+          - if @home.image.attached?
+            = image_tag @home.image, class: "img-fluid rounded w-100"
                 
         div class="col-lg-7"
           = @home.body_block1
