@@ -34,5 +34,5 @@ require "capistrano/passenger"
 Dir.glob("lib/capistrano/tasks/*.rake").each { |r| import r }
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.6.5'
+set :rbenv_ruby, '2.7.5'
 
