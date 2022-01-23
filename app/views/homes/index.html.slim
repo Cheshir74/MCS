@@ -35,10 +35,11 @@ section id="lastwork" class="text-center content-section"
             = @home.body_block1
 
         div class="row photos" data-bss-baguettebox="" id="lightgallery"
-          = content_tag :div,
-            id: "app",
-            data: { url_path: gallery_path(@home.gallery_id), direction: "row" }
-            = javascript_pack_tag 'gallery_react'
+          - if @home.gallery_id.present?
+            = content_tag :div,
+              id: "app",
+              data: { url_path: gallery_path(@home.gallery_id), direction: "row" }
+              = javascript_pack_tag 'gallery_react'
 
 section id="about" class="text-center content-section" 
   section class="photo-gallery" style="background: rgb(0,0,0);"
