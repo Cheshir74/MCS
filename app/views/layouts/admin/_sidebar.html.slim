@@ -27,6 +27,11 @@ nav#sidebar
           span.icon-holder
             i.text-dark.far.fa-images
           span.title Galleries
+
+        = link_to admin_pages_path, class: 'sidebar-link'
+          span.icon-holder
+            i.text-dark.far.fa-images
+          span.title Pages
 javascript:
     $(document).on('turbolinks:load', function () {
         $("#sidebarCollapse").click(function (e) {

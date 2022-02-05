@@ -1,6 +1,13 @@
 $(document).on("turbolinks:load", function(){
 	"use strict";
 
+	$(function () {
+		$(document).scroll(function () {
+		  var $nav = $(".navbar");
+		  $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
+		});
+	  });
+
 	$(".loader").delay(400).fadeOut();
     $(".animationload").delay(400).fadeOut("fast");
 
@@ -18,48 +25,14 @@ $(document).on("turbolinks:load", function(){
     	e.css({'width': t + '%'});
     });
 	
-
-	var top = jQuery(document).scrollTop();
-	var batas = 200;
-	var navbar = jQuery('.navbar-main');
-	var navbarnav = jQuery('.navbar-nav');
-	var header = jQuery('.header');
-	
-	
-	if ( top > batas ) {
-		navbar.addClass('stiky');
-		navbarnav.addClass('ml-auto');
-	}
-	jQuery(window).scroll(function () {
-		top = jQuery(document).scrollTop();
-
-		
-		if ( top > batas ) {
-			navbar.addClass('stiky');
-		}else {
-			navbar.removeClass('stiky'); 
-			if(header.hasClass('header-2')){
-				navbarnav.removeClass('ml-auto');
-			}
-			if(header.hasClass('header-5')){
-				navbarnav.removeClass('ml-auto');
-			}
-		}
-
-	});
-
 	var slides = $(".full-screen"),
     b = slides.find('.item');
-    b.each(function(){
-        var e = $(this),
-        ocImg = e.find('img').attr('src');
-        e.css({'background-image': 'url(' + ocImg + ')'});
-    });
+
 
     if (b.length == 1) {
 		slides.owlCarousel({
 			// stagePadding: 50,
-			loop: true,
+			//loop: false,
 			// margin: 10,
 			nav: false,
 			navText: [

@@ -17,11 +17,14 @@ require('lg-hash/src/lg-hash')
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
 
-import 'bootstrap';
+import 'bootstrap' 
+
 import 'service/galleries';
 
 import 'stylesheets/application'
 import '@fortawesome/fontawesome-free/css/all.css'
+import '@fontsource/lora'
+import "@fontsource/cabin"
 
 import "lightgallery/dist/css/lightgallery.css";
 import 'owl.carousel/dist/assets/owl.carousel.css';

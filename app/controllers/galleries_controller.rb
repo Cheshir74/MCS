@@ -3,12 +3,11 @@ class GalleriesController < ApplicationController
   before_action :set_gallery, only: :show
 
   def show
-    @galleries = Gallery.all
   end
 
   private
   def set_gallery
-    @gallery = Gallery.find(params[:id])
+    @gallery = Gallery.find_by(id: params[:id])
   end
 
 end

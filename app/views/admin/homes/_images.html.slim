@@ -1,23 +1,22 @@
 = form_tag destroy_attach_admin_home_url, method: :delete do
   = submit_tag "Delete"
-  .row id="lightgallery"
+  .row.row-cols-5.sortable id="lightgallery"
     - if @home.images.present?
       - @home.images.each do |image|
-        .column
-          .items
-            .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
-              a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
-                = image_tag image.variant(resize_to_limit: [210, 210]), class: "img-thumbnail"
-
-            .box-img
-              = label_tag "delete_img_ids[#{image.id}]", nil,  class: 'checkbox-label'
-                = check_box_tag "delete_img_ids[]", image.id, false, :id => "delete_img_ids_#{image.id}", class: 'checkbox-input'
-                span.check
-
-            .card-img-overlay
-              = link_to delete_image_attachment_admin_home_url(@home, image), method: :delete, class: 'img-btn-edit' do
-                i.fas.fa-trash
-
+        .column data-id='#{image.id}'
+          .box-img
+                
+            = label_tag "delete_img_ids[#{image.id}]", nil,  class: 'checkbox-label'
+              = check_box_tag "delete_img_ids[]", image.id, false, :id => "delete_img_ids_#{image.id}", class: 'checkbox-input'
+              span.check
+          .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
+            a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
+              = image_tag image.variant(resize_to_limit: [210, 210])
+                  
+                  
+          .card-img-overlay
+            = link_to delete_image_attachment_admin_gallery_url(@home, image), method: :delete, class: 'img-btn-edit' do
+              i.fas.fa-trash
+          span.icon-focus
     - else
       p There are no images
-

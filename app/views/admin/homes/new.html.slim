@@ -1,0 +1,37 @@
+h1.text-center.text-primary.p-2 Home
+
+h2 edit Home
+
+= form_for [:admin, @home] do |f|
+
+  - if @home.errors.any?
+    - @home.errors.full_messages.each do |msg|
+      .alert.alert-danger = msg
+
+  .mb-6
+    
+    = f.label :title
+    = f.text_field :title, class:'form-control'
+    = f.label :body
+    = f.text_field :body, class: 'form-control'
+    = f.label :title_block1
+    = f.text_field :title_block1, class: 'form-control'
+    = f.label :body_block1
+    = f.text_field :body_block1, class: 'form-control'
+    = f.label :visible
+    = f.check_box :visible
+    .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
+      = f.file_field :images, multiple: true, as: :file, direct_upload: true, data: { target: 'dropzone.input' }
+      .dropzone-msg.dz-message.needsclick.text-gray-600
+        h3.dropzone-msg-title Drag here to upload or click here to browse
+        span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
+      
+    = f.select 'gallery_id', options_for_select(@galleries.collect{ |g| [g.name, g.id] }), class: 'form-select'
+
+
+  br
+
+  = f.submit "Submit", :class => 'btn btn-primary'
+  = link_to "Cancel", admin_homes_path, :class =>'btn btn-default'
+
+

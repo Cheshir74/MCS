@@ -1,26 +1,78 @@
-.banner id="oc-fullslider"
-  .owl-carousel.owl-theme.full-screen
-    - if Home.first.present?
-      - Home.first.images.each do |image|
+section id="banner"
+  div id="owl-list" class="owl-theme owl-carousel full-screen" style="min-height:700px;"
+    - if @home.present?
+      - @home.images.each do |image|
         .item
-          img src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }" alt="Slider"
-          .overlay-bg
-          .container-fluid.d-flex.align-items-center
-            .wrap-caption
-              h1.caption-heading.text-primary
-                = Home.first.title
-                p = Home.first.body
+          span style="background: url('#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }') center / cover no-repeat;"
+          .overlay-bg     
+        
+            div class="text-start intro-tex rounded bg-faded" style="margin-top: 1px;margin-left: 42px; position: absolute; bottom: 25%;"
+              h2 class="section-heading mb-4"
+                span class="section-heading-upper"
+                  = @home.title
+              p class="mb-3" style="max-width: 500px;" 
+                = @home.body
+            div style="position: relative;height: 100%;"
+              a class="btn btn-link align-items-end align-content-end align-self-end btn-circle" role="button" href="#about" style="position: absolute; bottom: 5%;left:50%;  transform:translate(-50%, -50%);"
+                i class="fa fa-angle-double-down animated"
+
     - else
       .item
-        img src="" alt="Slider"
+        img src=""
         .overlay-bg
         .container-fluid.d-flex.align-items-center
           .wrap-caption
             h1.caption-heading.text-primary
 
-  .owl-theme.banner-nav
-    .owl-controls
-      .custom-nav.owl-nav
+section id="lastwork" class="text-center content-section" 
+  section class="photo-gallery" style="background: rgb(0,0,0);"
+    - if @home.present?
+      .container
+        div class="intro"
+          h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
+            = @home.title_block1
+          p class="text-center align-items-center"
+            = @home.body_block1
+
+        div class="row photos" data-bss-baguettebox="" id="lightgallery"
+          - if @home.gallery_id.present?
+            = content_tag :div,
+              id: "app",
+              data: { url_path: gallery_path(@home.gallery_id), direction: "row" }
+              = javascript_pack_tag 'gallery_react'
+
+section id="about" class="text-center content-section" 
+  section class="photo-gallery" style="background: rgb(0,0,0);"
+    - if @home.present?
+      .container
+        div class="intro"
+          h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
+            = @home.title_block1
+
+  div class="container-fluid py-5" id="about"
+    div class="container"
+
+    - if @home.present?        
+      div class="row align-items-center"
+        div class="col-lg-5 pb-4 pb-lg-0"
+          - if @home.image.attached?
+            = image_tag @home.image, class: "img-fluid rounded w-100"
+                
+        div class="col-lg-7"
+          = @home.body_block1
+
+
+section id="contacts" class="text-center content-section" 
+  .container
+    div class="intro title-contacts"
+      h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;" Contact Me
+          
+  div class="container-contact100"
+    div class="wrap-contact100" id="contact-form"
+      = javascript_pack_tag 'check_email'
+
+
+
 
 
 

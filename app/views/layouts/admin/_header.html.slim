@@ -1,18 +1,20 @@
-nav.navbar.navbar-expand-lg.bg-white
+nav.navbar.navbar-light.bg-light
   .container-fluid
-    ul.navbar-nav.ml-md-auto
-      li.nav-item
-        a.nav-link.px-1.mx-1.py-3.my-n2#sidebarCollapse href=""
-          i.fas.fa-bars
+  ul.navbar-nav.ml-md-auto
+    li.nav-item
+      a.nav-link.px-1.mx-1.py-3.my-n2#sidebarCollapse href=""
+        i.fas.fa-bars
 
     //far.fa-times-circle
-    .collapse.navbar-collapse.dark-nav id="navbarSupportedContent"
+    //.collapse.navbar-collapse.dark-nav id="navbarSupportedContent"
+  form class="d-flex"
 
-      ul class="navbar-nav ml-auto"
-        li class="nav-item"
-          = link_to 'Home', home_path, class: 'nav-link'
-
-      - if current_user.nil?
-        = link_to 'Sign in', "#sign_in", :class => 'btn btn-outline-dark', data: {toggle: "modal", target: "#sign_in"}
-      - else
-        = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-dark', method: :delete
+    ul class="navbar-nav ml-auto"
+      li class="nav-item"
+        = link_to 'Home', home_path, class: 'nav-link'
+        
+      
+    - if current_user.nil?
+      = link_to 'Sign in', "#sign_in", :class => 'btn btn-outline-dark', data: {toggle: "modal", target: "#sign_in"}
+    - else
+      = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-dark', method: :delete

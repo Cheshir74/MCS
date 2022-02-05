@@ -1,5 +1,6 @@
 = form_tag destroy_attach_admin_gallery_url, method: :delete do
   = submit_tag "Delete"
+
   .row.row-cols-5.sortable id="lightgallery"
     - if @gallery.images.present?
       - @gallery.images.each do |image|

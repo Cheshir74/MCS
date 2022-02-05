@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   root 'homes#index', as: 'home'
   get "upload" => "images#new", :as => "upload"
   get 'about' => 'pages#about'
+  get 'message' => 'messages#new'
+  post 'message' => 'messages#create'
   namespace :admin do
     get '/' => 'admin#index'
     resources :users
@@ -20,13 +22,16 @@ Rails.application.routes.draw do
         delete :destroy_attach
         patch :sort
       end
-
-
     end
+
+    resources :pages, except: [:show] 
+    
     resources :homes, except: [:show] do
       member do
         delete :delete_image_attachment
+        delete :delete_photo_attachment
         delete :destroy_attach
+        patch :sort
       end
     end
   end
@@ -35,5 +40,4 @@ Rails.application.routes.draw do
   end
   get 'homes/show'
   resources :images, :galleries, only: [:show]
-  resources :pages, only: [:show]
 end

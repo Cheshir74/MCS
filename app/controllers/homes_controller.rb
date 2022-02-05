@@ -4,4 +4,8 @@ class HomesController < ApplicationController
   def show
   end
 
+  def index
+    @home = Home.find_by(visible: true)
+  end
+
 end
