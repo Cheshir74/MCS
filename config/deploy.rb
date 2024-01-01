@@ -1,5 +1,5 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.11.2"
+lock "~> 3.18.0"
 
 set :application, 'TolstosheevPhoto'
 set :deploy_to, '/home/depus/app_deploy'
