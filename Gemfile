@@ -22,7 +22,7 @@ gem 'jbuilder', '~> 2.7'
 
 
 # Use Active Storage variant
- gem 'image_processing', '~> 1.2'
+ gem 'image_processing', '>= 1.2'
 
 gem 'devise'
 gem 'cancancan'
@@ -41,11 +41,11 @@ group :development do
   gem 'listen'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-watcher-listen', '>= 2.0.0'
   # For deploy
-  gem 'capistrano',                 '3.11.2'
-  gem 'capistrano-rails',           '1.4.0'
-  gem 'capistrano-rbenv',           '2.1.4 '
+  gem 'capistrano',                 '>=3.11.2'
+  gem 'capistrano-rails',           '>=1.4.0'
+  gem 'capistrano-rbenv',           '>=2.1.4 '
   gem 'capistrano-puma'
 end
 
