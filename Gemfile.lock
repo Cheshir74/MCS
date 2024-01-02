@@ -188,7 +188,7 @@ GEM
     nokogiri (1.16.0-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
-    passenger (5.3.7)
+    passenger (6.0.19)
       rack
       rake (>= 0.8.1)
     pg (1.5.4)
@@ -360,7 +360,7 @@ DEPENDENCIES
   factory_bot
   image_processing (>= 1.2)
   jbuilder (>= 2.7)
-  passenger
+  passenger (~> 6.0.19)
   pg
   rails (~> 7.1.2)
   rails-controller-testing

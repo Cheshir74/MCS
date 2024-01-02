@@ -8,7 +8,7 @@ gem 'rails', '~> 7.1.2'
 gem 'pg'
 # Use Puma as the app server
 #gem 'puma', '~> 5.2'
-gem "passenger"
+gem "passenger", "~> 6.0.19"
 
 #gem "passenger", "~> 5.3.2", require: "phusion_passenger/rack_handler"
 
