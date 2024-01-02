@@ -41,12 +41,12 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-      ssl:   'true',
-      user_name:      Rails.application.secrets.mail_username,
-      password:       Rails.application.secrets.mail_password,
-      domain:         'yandex.ru',
-      address:       'smtp.yandex.ru',
-      port:          '465',
+      ssl:  Rails.application.credentials.mailer.mail_ssl,
+      tls:  Rails.application.credentials.mailer.mail_tls,
+      user_name:      Rails.application.credentials.mailer.mail_username,
+      password:       Rails.application.credentials.mailer.mail_password,
+      address:       Rails.application.credentials.mailer.mail_address,
+      port:          Rails.application.credentials.mailer.mail_port,
       authentication: :plain,
       enable_starttls_auto: true
   }
