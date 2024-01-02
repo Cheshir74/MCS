@@ -6,8 +6,10 @@ ruby '3.3.0'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 7.1.2'
 gem 'pg'
+gem 'ffi'
 # Use Puma as the app server
 #gem 'puma', '~> 5.2'
+
 gem "passenger", "~> 6.0.19"
 
 #gem "passenger", "~> 5.3.2", require: "phusion_passenger/rack_handler"
