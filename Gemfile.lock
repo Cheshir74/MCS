@@ -358,7 +358,6 @@ DEPENDENCIES
   capybara (>= 2.15)
   devise
   factory_bot
-  ffi
   image_processing (>= 1.2)
   jbuilder (>= 2.7)
   passenger (~> 6.0.19)
