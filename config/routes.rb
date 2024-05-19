@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'hello/world'
   devise_for :users, controllers: {
     sessions: 'users/sessions',
     passwords: 'users/passwords',

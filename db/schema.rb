@@ -19,7 +19,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_15_184817) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.integer "position", default: 0
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -74,7 +74,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_15_184817) do
     t.string "title_block1"
     t.string "body_block1"
     t.integer "gallery_id"
-    t.boolean "visible"
   end
 
   create_table "images", force: :cascade do |t|
@@ -122,8 +121,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_15_184817) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.string "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
