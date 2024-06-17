@@ -39,7 +39,8 @@ section id="lastwork" class="text-center content-section"
             = content_tag :div,
               id: "app",
               data: { url_path: gallery_path(@home.gallery_id), direction: "row" }
-              = javascript_pack_tag 'gallery_react'
+              = javascript_include_tag "gallery_react"
+              
 
 section id="about" class="text-center content-section" 
   section class="photo-gallery" style="background: rgb(0,0,0);"
@@ -69,7 +70,7 @@ section id="contacts" class="text-center content-section"
           
   div class="container-contact100"
     div class="wrap-contact100" id="contact-form"
-      = javascript_pack_tag 'check_email'
+      = javascript_include_tag "check_email"
 
 
 

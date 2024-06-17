@@ -16,13 +16,13 @@
     "bootstrap": "^5.1.3",
     "channels": "^0.0.4",
     "dropzone": "^5.7.2",
+    "esbuild": "^0.21.5",
     "html5sortable": "^0.10.0",
     "jquery": "^3.5.1",
     "lg-fullscreen": "^1.2.1",
     "lg-hash": "^1.0.4",
     "lg-pager": "^1.0.2",
     "lightgallery": "^1.7.2",
-    "node-sass": "^7.0.0",
     "owl.carousel": "^2.3.4",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
@@ -30,7 +30,6 @@
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.20.5",
     "react-images": "^1.2.0-beta.7",
-    "react-photo-gallery": "^8.0.0",
     "sortablejs": "^1.12.0",
     "stimulus": "^1.1.1",
     "toastr": "^2.1.4",
@@ -41,5 +40,8 @@
   "devDependencies": {
     "@webpack-cli/serve": "^1.6.0",
     "webpack-dev-server": "^4.3.1"
+  },
+  "scripts": {
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
   }
 }

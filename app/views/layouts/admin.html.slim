@@ -8,12 +8,12 @@ html
     = csp_meta_tag
 
     = stylesheet_pack_tag 'admin', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_pack_tag 'admin', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag "admin", "data-turbo-track": "reload", defer: 'true'
 
     - unless flash.empty?
       = render 'layouts/notice'
     .wrapper
-      = render 'layouts/admin/sidebar'
+      = render 'layouts/admin/sidebar'v
       .content
         = render 'layouts/admin/header'
         .main

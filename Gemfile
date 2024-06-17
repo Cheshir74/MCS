@@ -8,6 +8,8 @@ gem 'rails'
 gem 'pg'
 # Use Puma as the app server
 gem 'puma'
+gem 'jsbundling-rails'
+
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '>= 6'
