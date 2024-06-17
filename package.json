@@ -2,26 +2,25 @@
   "name": "MCS",
   "private": true,
   "dependencies": {
-    "@babel/preset-react": "^7.16.0",
     "@fontsource/cabin": "^4.5.0",
     "@fontsource/lora": "^4.5.0",
     "@fortawesome/fontawesome-free": "^5.14.0",
-    "@popperjs/core": "^2.10.2",
+    "@popperjs/core": "^2.11.8",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
     "axios": "^0.24.0",
-    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
-    "bootstrap": "^5.1.3",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "channels": "^0.0.4",
     "dropzone": "^5.7.2",
     "esbuild": "^0.21.5",
     "html5sortable": "^0.10.0",
-    "jquery": "^3.5.1",
     "lg-fullscreen": "^1.2.1",
     "lg-hash": "^1.0.4",
     "lg-pager": "^1.0.2",
     "lightgallery": "^1.7.2",
+    "nodemon": "^3.1.3",
     "owl.carousel": "^2.3.4",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
@@ -29,6 +28,7 @@
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.20.5",
     "react-images": "^1.2.0-beta.7",
+    "sass": "^1.77.5",
     "sortablejs": "^1.12.0",
     "stimulus": "^1.1.1",
     "toastr": "^2.1.4",
@@ -36,11 +36,14 @@
     "typeface-lora": "^1.1.13"
   },
   "version": "0.1.0",
-  "devDependencies": {
-    "@webpack-cli/serve": "^1.6.0",
-    "webpack-dev-server": "^4.3.1"
-  },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets"
-  }
+    "build": "esbuild app/javascript/*.* --bundle --minify  --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build:css:compile": "sass --style compressed ./app/assets/stylesheets/application.bootstrap.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
+    "build:css": "yarn build:css:compile",
+    "watch:css": "nodemon --watch ./app/assets/stylesheets/ --ext scss --exec \"yarn build:css\""
+  },
+  "packageManager": "yarn@4.3.0",
+  "browserslist": [
+    "defaults"
+  ]
 }

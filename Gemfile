@@ -9,7 +9,11 @@ gem 'pg'
 # Use Puma as the app server
 gem 'puma'
 gem 'jsbundling-rails'
+gem 'cssbundling-rails'
 gem 'stimulus-rails'
+gem 'sprockets-rails'
+
+gem 'rails-i18n'
 
 
 # Use SCSS for stylesheets

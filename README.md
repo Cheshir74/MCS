@@ -23,6 +23,3 @@ Things you may want to cover:
 
 * ...
 
-* require Webpack yarn
-apt install yarn, nodejs
-* rails webpack
