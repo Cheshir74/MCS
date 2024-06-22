@@ -1,0 +1,35 @@
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-icons/font/bootstrap-icons';
+
+@import "./src/login_form";
+@import "./src/homes";
+@import "./src/style";
+@import "./src/footer.scss";
+@import "./src/header.scss";
+@import "./src/galleries.scss";
+
+//@import '~toastr/build/toastr.min';
+
+@import "./src/css/vendor/animate.min";
+
+@import "@fortawesome/fontawesome-free/css/all";
+
+@font-face {
+    font-family: 'cabin-latin';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("cabin-latin.woff2") format('woff2');
+  };
+
+@font-face {
+    font-family: 'lora-latin';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("lora-latin.woff2") format('woff2');
+};
+
+@import 'lightgallery/css/lightgallery-bundle';
+@import 'owl.carousel/dist/assets/owl.carousel';
+//@import 'owl.carousel';

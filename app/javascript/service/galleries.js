@@ -1,5 +1,5 @@
 import sortable  from  "html5sortable/dist/html5sortable.cjs"
-import lightGallery from "lightgallery/dist/js/lightgallery-all"
+import lightGallery from "lightgallery"
 import Rails from '@rails/ujs'
 
 $(document).on('turbolinks:load', function () {

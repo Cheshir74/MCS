@@ -15,9 +15,8 @@ require("jquery")
 import "dropzone/dist/min/dropzone.min.css";
 import "dropzone/dist/min/basic.min.css";
 import "controllers"
-import "lightgallery/dist/css/lightgallery.css";
+//import "lightgallery/css/lightgallery.css";
 import "bootstrap";
 import 'stylesheets/admin'
 
 import 'service/galleries';
-import '@fortawesome/fontawesome-free/css/all.css'

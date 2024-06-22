@@ -12,6 +12,7 @@ gem 'jsbundling-rails'
 gem 'cssbundling-rails'
 gem 'stimulus-rails'
 gem 'sprockets-rails'
+gem 'turbolinks'
 
 gem 'rails-i18n'
 
