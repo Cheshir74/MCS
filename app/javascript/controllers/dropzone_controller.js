@@ -7,7 +7,7 @@ import {
   findElement,
   removeElement,
   insertAfter
-} from "helpers";
+} from "../helpers";
 
 export default class extends Controller {
   static targets = ["input"];

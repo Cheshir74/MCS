@@ -4,7 +4,7 @@
 
 import { application } from "./application"
 
-import DropzoneController from "./dropzone_controller"
+import DropzoneController from "./dropzone_controller.js"
 application.register("dropzone", DropzoneController)
 
 import HelloController from "./hello_controller"

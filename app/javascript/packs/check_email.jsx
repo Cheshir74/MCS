@@ -1,7 +1,6 @@
 import React, {useState, useRef} from "react";
-import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
-
+import { createRoot } from "react-dom/client";
 
 const UserForm = props => {
   const [isSended, setIsSended] = useState(false);
@@ -80,4 +79,4 @@ const UserForm = props => {
 }
 
 const rootElement = document.getElementById("contact-form");
-ReactDOM.render(<UserForm />, rootElement);
+createRoot(rootElement).render(<UserForm />);

@@ -21,13 +21,3 @@
     .modal-footer
       = link_to 'Sign up', new_user_registration_path, { :remote => true }
 
-javascript:
-  $(document).ready(function () {
-      return $("#sign_in_user").on("ajax:error", function (event) {
-          let data, ref, status, xhr;
-          ref = event.detail, data = ref[0], status = ref[1], xhr = ref[2];
-          let messageObj = JSON.parse(xhr.response);
-
-          return $("#sign_in_error").empty().append(messageObj.error);
-      });
-  });
