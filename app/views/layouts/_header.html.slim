@@ -18,10 +18,10 @@ header
           li class="nav-item nav-link" style="font-size: 14px;"
             a class="nav-link" href="#{ home_path }#about" style="font-size: 14px;" About me  
           - if current_user.nil?
-            li class="nav-item nav-link" style="font-size: 14px;"
-              //a class="nav-link" href="#sign_in" style="border-width: 1px;border-style: solid;font-size: 14px;" Sign in
-              = link_to 'Sign in', new_user_session_path, { :remote => true, class: 'nav-link', style: 'border-width: 1px;border-style: solid;font-size: 14px;' }
+            li class="nav-item nav-link" style="font-size: 14px;"            
+              = link_to "Login", new_user_session_path, class: "nav-link", data: { turbo_frame: 'modal' }
           - else
+
             li class="nav-item nav-link dropdown" style="font-size: 14px;"
               a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                 img class="rounded-circle u-box-shadow-sm me-2" width="25" height="25" src="https://dummyimage.com/100/007bff/efefef" alt="Htmlstream" John Doe 
@@ -34,7 +34,7 @@ header
                 - if current_user.present?
                   - if current_user.superadmin_role?
                     = link_to 'Admin', admin_path, class: 'dropdown-item'
-                div class="dropdown-divider"
-                = link_to 'Log out', destroy_user_session_path, :class => 'dropdown-item', method: :delete
+                div class="dropdown-divider"  
+                = link_to 'Log out', destroy_user_session_path, :class => 'dropdown-item', data: { turbo_method: :delete }
                 
 

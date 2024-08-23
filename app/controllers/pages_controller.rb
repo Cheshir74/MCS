@@ -6,6 +6,10 @@ class PagesController < ApplicationController
     @pages = Page.all
   end
 
+  def index
+    @pages = Page.all
+  end
+
   private
   def set_page
     @page = Page.find(params[:id])

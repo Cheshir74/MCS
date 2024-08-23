@@ -4,6 +4,8 @@ html
     title TolstosheevPhoto
     meta name="yandex-verification" content="095dc6fe5f5aa617"
     meta name="yandex-verification" content="0a731603332d0126"
+    meta name="turbo-visit-control" content="reload"
+
     = csrf_meta_tags
     = csp_meta_tag
 
@@ -13,11 +15,13 @@ html
 
   body
     = render 'layouts/header'
+    = turbo_frame_tag "modal"
+    
          
     - unless flash.empty?
       = render 'layouts/notice'
-      
-    div id="modal-window" class="modal hide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+
+    
 
     - if current_page?(home_path)
 

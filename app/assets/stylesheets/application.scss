@@ -1,14 +1,13 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
 
-@import "./src/login_form";
 @import "./src/homes";
 @import "./src/style";
 @import "./src/footer.scss";
 @import "./src/header.scss";
 @import "./src/galleries.scss";
 
-//@import '~toastr/build/toastr.min';
+@import "toastr/toastr";
 
 @import "./src/css/vendor/animate.min";
 

@@ -5,5 +5,9 @@ class CreateHomes < ActiveRecord::Migration[6.0]
       t.text :body
       t.timestamps
     end
+    add_column :homes, :gallery_id, :integer
+    add_column :galleries, :visible, :boolean
+    add_column :homes, :visible, :boolean
+
   end
 end
