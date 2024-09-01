@@ -1,13 +1,8 @@
 - if @gallery.images.present?
-    = content_tag :div,
-        id: "app",
-        data: { url_path: gallery_path, direction: "column" }
-        = javascript_include_tag "gallery_react"
-javascript:
-    $(window).scroll(function(){
-     $('navbar').toggleClass('scrolled', $(this).scrollTop() > 200 ); 
-
-    });
+  = content_tag :div,
+    id: "app_gallery",
+    data: { url_path: gallery_path, direction: "column" }
+    div data-controller="gallery_react"
 
 
 

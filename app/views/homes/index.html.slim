@@ -47,10 +47,9 @@ section id="lastwork" class="text-center content-section"
         div class="row photos" data-bss-baguettebox="" id="lightgallery"
           - if @home.gallery_id.present?
             = content_tag :div,
-              id: "app",
+              id: "app_gallery",
               data: { url_path: gallery_path(@home.gallery_id), direction: "row" }
-              // div data-react-component="gallery_react"
-              // = javascript_include_tag "gallery_react"
+              div data-controller="gallery_react"
               
 
 section id="about" class="text-center content-section" 
@@ -79,7 +78,7 @@ section id="contacts" class="text-center content-section"
     div class="intro title-contacts"
       h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;" Contact Me
   div class="container-contact100"
-    div data-react-component="check_email" class="wrap-contact100" id="contact-form"
+    div data-controller="check_email" class="wrap-contact100" id="contact-form"
 
 
 

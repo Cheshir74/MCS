@@ -19,4 +19,4 @@ import "controllers"
 import "bootstrap";
 import 'stylesheets/admin'
 
-import 'service/galleries';
+import 'service/galleries'

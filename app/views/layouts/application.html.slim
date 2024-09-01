@@ -9,7 +9,6 @@ html
     = csrf_meta_tags
     = csp_meta_tag
 
-    //= stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag "application", "data-turbo-track": "reload", type: "module"
     = stylesheet_link_tag 'application', media: 'all'
 
@@ -32,6 +31,5 @@ html
           div.container-fluid id="general"
 
             = yield
-
 
     = render 'layouts/footer'

@@ -2,7 +2,6 @@
 // Run that command whenever you add a new controller or create them with
 // ./bin/rails generate stimulus controllerName
 
-import Swiper from "swiper"
 import { application } from "./application"
 
 import DropzoneController from "./dropzone_controller.js"
@@ -16,3 +15,9 @@ application.register("modal", ModalController)
 
 import SwiperController from "./swiper_controller"
 application.register("swiper", SwiperController)
+
+import CheckEmailController from "./check_email_controller"
+application.register("check_email", CheckEmailController)
+
+import GalleryController from "./gallery_react_controller.jsx"
+application.register("gallery_react", GalleryController)

@@ -771,6 +771,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-hook-form: "npm:^7.52.0"
     react-images: "npm:^1.2.0-beta.7"
+    react-photo-gallery: "npm:^8.0.0"
     react_ujs: "npm:^3.2.1"
     sass: "npm:^1.77.5"
     sortablejs: "npm:^1.15.2"
@@ -3372,7 +3373,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.5.8, prop-types@npm:^15.6.2":
+"prop-types@npm:^15.5.8, prop-types@npm:^15.6.2, prop-types@npm:~15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
   dependencies:
@@ -3567,6 +3568,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-photo-gallery@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "react-photo-gallery@npm:8.0.0"
+  dependencies:
+    prop-types: "npm:~15.7.2"
+    resize-observer-polyfill: "npm:^1.5.0"
+  peerDependencies:
+    react: ^16.8.0
+    react-dom: ^16.8.0
+  checksum: 10c0/2e70b6004c7a94d2a0f8762d3bdb81366c3c74db8ee8c4149d5d6f698dd18c8764f7db122238cf32f9c938b8388b7917bc48047d380d33a63af1e03e280f30e6
+  languageName: node
+  linkType: hard
+
 "react-property@npm:2.0.0":
   version: 2.0.0
   resolution: "react-property@npm:2.0.0"
@@ -3735,6 +3749,13 @@ __metadata:
   version: 1.5.0
   resolution: "resize-observer-polyfill@npm:1.5.0"
   checksum: 10c0/5112173d546f4c6c74b39dc53544544a6358d758abd1458bf70411de0601f3a3ca3e10e8dde1fecf4aaa282684ef5a80667d23337d87ff1b472464c4129bc040
+  languageName: node
+  linkType: hard
+
+"resize-observer-polyfill@npm:^1.5.0":
+  version: 1.5.1
+  resolution: "resize-observer-polyfill@npm:1.5.1"
+  checksum: 10c0/5e882475067f0b97dc07e0f37c3e335ac5bc3520d463f777cec7e894bb273eddbfecb857ae668e6fb6881fd6f6bb7148246967172139302da50fa12ea3a15d95
   languageName: node
   linkType: hard
 
