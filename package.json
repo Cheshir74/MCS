@@ -25,7 +25,6 @@
     "lg-pager": "^1.0.2",
     "lightgallery": "^2.7.2",
     "nodemon": "^3.1.3",
-    "owl.carousel": "^2.3.4",
     "popper.js": "^1.16.1",
     "postcss": "^8.4.40",
     "postcss-cli": "^11.0.0",
@@ -38,6 +37,7 @@
     "sass": "^1.77.5",
     "sortablejs": "^1.15.2",
     "stimulus": "^3.2.2",
+    "swiper": "^11.1.12",
     "toastr": "^2.1.4",
     "turbolinks": "^5.2.0",
     "typeface-lora": "^1.1.13"

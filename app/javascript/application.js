@@ -20,6 +20,8 @@ import "./packs/check_email"
 import toastr from 'toastr'
 window.toastr = toastr
 
+
+
 //require('lightgallery')
 //require('lg-fullscreen/src/lg-fullscreen')
 //require('lg-pager/src/lg-pager')
