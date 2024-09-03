@@ -1,8 +1,10 @@
 // @import "~bootstrap/scss/bootstrap";
-// @import "./src/galleries_admin";
+@import "./src/galleries_admin";
 // @import '~toastr/build/toastr.min';
-// @import "./src/backadmin";
+@import "./src/backadmin";
 // @import "~@fortawesome/fontawesome-free";
 
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
+@import 'dropzone/dist/dropzone';
+@import 'dropzone/dist/basic';

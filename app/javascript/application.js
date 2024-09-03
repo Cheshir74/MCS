@@ -3,6 +3,7 @@ import * as bootstrap from "bootstrap"
 import "./controllers"
 
 import "./add_jquery"
+import "./packs/admin"
 
 var ReactRailsUJS = require("react_ujs");
 
