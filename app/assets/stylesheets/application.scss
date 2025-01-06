@@ -3,8 +3,8 @@
 
 @import "./src/homes";
 @import "./src/style";
-@import "./src/footer.scss";
-@import "./src/header.scss";
+
+
 @import "./src/galleries.scss";
 
 @import "toastr/toastr";
@@ -21,6 +21,7 @@
     src: url("cabin-latin.woff2") format('woff2');
   };
 
+
 @font-face {
     font-family: 'lora-latin';
     font-style: normal;
@@ -28,6 +29,8 @@
     font-display: swap;
     src: url("lora-latin.woff2") format('woff2');
 };
+
+
 
 .swiper-button-next,
 .swiper-button-prev {
@@ -38,4 +41,5 @@
 
 
 @import 'lightgallery/css/lightgallery-bundle';
-@import 'swiper/swiper-bundle.min'
+@import 'swiper/swiper-bundle.min';
+

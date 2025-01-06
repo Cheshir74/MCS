@@ -1,24 +1,33 @@
-h1.text-center.text-primary.p-2 User
+div class="page-header"
+  h3 class="mb-0" Edit home page
+    
+form
 
-h2 edit User
+  div class="row"
+    div class="col-sm-12"
+      div class="card"
+        .card-header Primary block
+        .card-body
 
-= form_for [:admin, @user] do |f|
+          = form_for [:admin, @user] do |f|
 
-  - if @user.errors.any?
-    - @user.errors.full_messages.each do |msg|
-      .alert.alert-danger = msg
+            - if @user.errors.any?
+              - @user.errors.full_messages.each do |msg|
+                .alert.alert-danger = msg
+
+            .mb-6
+              .form-group.form-check
+                div.superadmin
+                  = f.label :superadmin_role
+                  = f.check_box :superadmin_role, class:'form-check-input'
+                div.supervisor
+                  = f.label :supervisor_role
+                  = f.check_box :supervisor_role, class: 'form-check-input'
+                div.userrole
+                  = f.label :user_role
+                  = f.check_box :user_role, class: 'form-check-input'
 
 
-  .form-group.form-check
-
-    = f.label :superadmin_role
-    = f.check_box :superadmin_role, class:'form-check-input'
-    = f.label :supervisor_role
-    = f.check_box :supervisor_role, class: 'form-check-input'
-    = f.label :user_role
-    = f.check_box :user_role, class: 'form-check-input'
-
-
-  br
-  = f.submit "Submit", :class => 'btn btn-primary'
-  = link_to "Cancel", admin_users_path, :class =>'btn btn-default'
+              .form-group
+                = f.submit "Submit", :class => 'btn btn-primary'
+                = link_to "Cancel", admin_users_path, :class =>'btn btn-default'

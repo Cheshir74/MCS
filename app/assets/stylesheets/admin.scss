@@ -1,10 +1,68 @@
 // @import "~bootstrap/scss/bootstrap";
+
 @import "./src/galleries_admin";
+
 // @import '~toastr/build/toastr.min';
-@import "./src/backadmin";
+//@import "./src/backadmin";
+@import "./src/backadmin.scss";
+@import "./src/style_ad";
 // @import "~@fortawesome/fontawesome-free";
 
-@import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-icons/font/bootstrap-icons';
+//@import "@mdi/font/css/materialdesignicons";
+@import "./src/materialdesignicons.css";
+
+@font-face {
+  font-family: "Material Design Icons";
+  src: url("../../../assets/materialdesignicons-webfont.eot");
+  src: url("../../../assets/materialdesignicons-webfont.woff2") format("woff2"), url("../../../assets/materialdesignicons-webfont.woff") format("woff"), url("../../../assets/materialdesignicons-webfont.ttf") format("truetype");
+};
+
+//@import 'bootstrap/scss/bootstrap';
+//@import 'bootstrap-icons/font/bootstrap-icons';
+
 @import 'dropzone/dist/dropzone';
 @import 'dropzone/dist/basic';
+
+/* Fonts */
+@font-face {
+    font-family: "Rubik";
+    src: url("../../../assets/rubik/Rubik-Light.eot");
+    src: url("../../../assets/rubik/Rubik-Light.woff2") format("woff2"), url("../../../assets/rubik/Rubik-Light.woff") format("woff"), url("../../../assets/rubik/Rubik-Light.ttf") format("truetype");
+    font-weight: 300;
+    font-style: normal;
+  };
+  @font-face {
+    font-family: "Rubik";
+    src: url("../../../assets/rubik/Rubik-Regular.eot");
+    src: url("../../../assets/rubik/Rubik-Regular.woff2") format("woff2"), url("../../../assets/rubik/Rubik-Regular.woff") format("woff"), url("../../../assets/rubik/Rubik-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+  };
+  @font-face {
+    font-family: "Rubik";
+    src: url("../../../assets/rubik/Rubik-Medium.eot");
+    src: url("../../../assets/rubik/Rubik-Medium.woff2") format("woff2"), url("../../../assets/rubik/Rubik-Medium.woff") format("woff"), url("../../../assets/rubik/Rubik-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+  };
+  @font-face {
+    font-family: "Rubik";
+    src: url("../../../assets/rubik/Rubik-Bold.eot");
+    src: url("../../../assets/rubik/Rubik-Bold.woff2") format("woff2"), url("../../../assets/rubik/Rubik-Bold.woff") format("woff"), url("../../../assets/rubik/Rubik-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+  };
+
+
+@font-face {
+    font-family: "Rubik";
+    src: url("../../../assets/rubik/Rubik-Bold.eot");
+    src: url("../../../assets/rubik/Rubik-Bold.woff2") format("woff2"), url("../../../assets/rubik/Rubik-Bold.woff") format("woff"), url("../../../assets/rubik/Rubik-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+  };
+  
+  .edit_user {
+    padding-left: 30px;
+  }
+

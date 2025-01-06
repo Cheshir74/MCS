@@ -1,32 +1,39 @@
-h1.text-center.text-primary.p-2 Gallery
-
-h2 edit New Gallery
-
-= form_for [:admin, @gallery] do |f|
-
-  - if @gallery.errors.any?
-    - @gallery.errors.full_messages.each do |msg|
-      .alert.alert-danger = msg
-
-
-  .mb-6
+div class="page-header"
+  h3 class="mb-0" Edit home page
     
-    = f.label :name
-    = f.text_field :name, class:'form-control'
-    = f.label :visible
-    = f.check_box :visible
-    .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
-      = f.file_field :images, multiple: true, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
-      .dropzone-msg.dz-message.needsclick.text-gray-600
-        h3.dropzone-msg-title Drag here to upload or click here to browse
-        span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
+form
+
+  div class="row"
+    div class="col-sm-12"
+      div class="card"
+        .card-header Primary block
+        .card-body
+
+          = form_for [:admin, @gallery] do |f|
+
+            - if @gallery.errors.any?
+              - @gallery.errors.full_messages.each do |msg|
+                .alert.alert-danger = msg
 
 
-  br
-  = f.submit "Submit", :class => 'btn btn-primary'
-  = link_to "Cancel", admin_galleries_path, :class =>'btn btn-default'
+            .mb-6
+                  
+              = f.label :name
+              = f.text_field :name, class:'form-control'
+              = f.label :visible
+              = f.check_box :visible
+              .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
+                = f.file_field :images, multiple: true, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
+                .dropzone-msg.dz-message.needsclick.text-gray-600
+                  h3.dropzone-msg-title Drag here to upload or click here to browse
+                  span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
 
-h3.page-header
-  | Images in #{@gallery.name}
-div id="edit_images"
-  = render 'admin/galleries/images'
+
+            br
+            = f.submit "Submit", :class => 'btn btn-primary'
+            = link_to "Cancel", admin_galleries_path, :class =>'btn btn-default'
+
+          h3.page-header
+            | Images in #{@gallery.name}
+          div id="edit_images"
+            = render 'admin/galleries/images'

@@ -3,6 +3,7 @@ import * as bootstrap from "bootstrap"
 import "./controllers"
 
 import "./add_jquery"
+import "./misc"
 
 var ReactRailsUJS = require("react_ujs");
 
@@ -18,6 +19,8 @@ import "@fortawesome/fontawesome-free/js/all"
 
 import toastr from 'toastr'
 window.toastr = toastr
+
+
 
 
 

@@ -12,10 +12,12 @@ html
 
     - unless flash.empty?
       = render 'layouts/notice'
-    .wrapper
+    div class="container-scroller"
       = render 'layouts/admin/sidebar'
-      .content
+      div class="container-fluid page-body-wrapper"
         = render 'layouts/admin/header'
-        .main
-          = yield
+        div class='main-panel'
+          div class="content-wrapper"
+            = yield
+          = render 'layouts/admin/footer'
 

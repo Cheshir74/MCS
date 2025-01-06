@@ -2,6 +2,8 @@ import React,{useState,useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import Gallery from "react-photo-gallery";
 import Carousel, { Modal, ModalGateway } from "react-images";
+import SelectedImage from "./SelectedImage";
+
 
 import {
   Controller
@@ -11,6 +13,12 @@ export default class extends Controller {
   connect() {
 
     function App() {
+      const [selectAll, setSelectAll] = useState(false);
+
+      const toggleSelectAll = () => {
+        setSelectAll(!selectAll);
+      };
+
         const node = document.getElementById('app_gallery')
         const url = node.getAttribute('data-url-path')+'.json';
         const direction = node.getAttribute('data-direction');
@@ -28,6 +36,20 @@ export default class extends Controller {
           setCurrentImage(0);
           setViewerIsOpen(false);
         };
+        const imageRenderer = useCallback(
+          ({ index, left, top, key, photo }) => (
+            <SelectedImage
+              selected={selectAll ? true : false}
+              key={key}
+              margin={"2px"}
+              index={index}
+              photo={photo}
+              left={left}
+              top={top}
+            />
+          ),
+          [selectAll]
+        );
 
         useEffect(() => {
           const controller = new AbortController();
@@ -58,6 +80,9 @@ export default class extends Controller {
         } else {
           return (
             <div>
+              <p>
+                <button onClick={toggleSelectAll}>toggle select all</button>
+              </p>
               <Gallery photos={photos} margin={10} onClick={openLightbox} direction={direction} />
                 <ModalGateway>
                   {viewerIsOpen ? (

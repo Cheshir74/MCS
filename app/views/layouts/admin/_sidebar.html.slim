@@ -1,34 +1,43 @@
-nav#sidebar
-  .sidebar-header
-    a.sidebar-link.td-n href=""
-      .logo
-        img alt="" src="" /
-        h5.lh-1.mB-0.logo-text My Site
-  .mobile-toggle.sidebar-toggle
-    ul.sidebar-menu.scrollable.pos-r
-      li.nav-item.mT-30.active
+nav class="sidebar sidebar-offcanvas" id="sidebar"
+  div class="text-center sidebar-brand-wrapper d-flex align-items-center"
+    a class="sidebar-brand brand-logo" href="../index.html"
+      img src="../../assets/test_logo_1.png"
+    a class="sidebar-brand brand-logo-mini ps-4 pt-3" href="../index.html"
+      img src="../../../assets/logo-mini.png"
+  br
+  ul class="nav"
+    br
 
-        = link_to admin_path, class: 'sidebar-link'
-          span.icon-holder
-            i.text-primary.fas.fa-home
-          span.title Dashboard
+    li class="nav-item"
+      = link_to admin_path, class: 'nav-link'
+        i class="mdi mdi-home menu-icon"
+        span class="menu-title" Dashboard
+      
+    li class="nav-item"
+      = link_to admin_homes_path, class: 'nav-link'
+        i class="mdi mdi-crosshairs-gps menu-icon"
+        span class="menu-title" Home
+        i class="menu-arrow"
 
-        = link_to admin_homes_path, class: 'sidebar-link'
-          span.icon-holder
-            i.text-danger.far.fa-file
-          span.title Home page
+    li class="nav-item"
+      = link_to admin_users_path, class: 'nav-link'
+        //a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons"
+        i class="mdi mdi-contacts menu-icon"
+        span class="menu-title" Users
+        i class="menu-arrow"
 
-        = link_to admin_users_path, class: 'sidebar-link'
-          span.icon-holder
-            i.text-info.fas.fa-user-friends
-          span.title Users
+    li class="nav-item"
+      = link_to admin_galleries_path, class: 'nav-link'
+        //a class="nav-link" data-bs-toggle="collapse" href="#forms" aria-expanded="false" aria-controls="forms"
+        i class="mdi mdi-format-list-bulleted menu-icon"
+        span class="menu-title" Galleries
+        i class="menu-arrow"
 
-        = link_to admin_galleries_path, class: 'sidebar-link'
-          span.icon-holder
-            i.text-dark.far.fa-images
-          span.title Galleries
+    li class="nav-item sidebar-actions"
+      div class="nav-link"
+        div class="mt-4"
+          div class="border-none"
+            //p class="text-black" Notification
 
-        = link_to admin_pages_path, class: 'sidebar-link'
-          span.icon-holder
-            i.text-dark.far.fa-images
-          span.title Pages
+          ul class="mt-4 ps-0"
+            li Sign Out

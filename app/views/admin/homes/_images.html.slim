@@ -1,6 +1,6 @@
 = form_tag destroy_attach_admin_home_url, method: :delete do
-  = submit_tag "Delete"
-  .row.row-cols-5.sortable id="lightgallery"
+  = submit_tag "Delete images", class: 'btn btn-danger me-2'
+  .row.row-cols-2.sortable id="lightgallery"
     - if @home.images.present?
       - @home.images.each do |image|
         .column data-id='#{image.id}'
@@ -15,7 +15,7 @@
                   
                   
           .card-img-overlay
-            = link_to delete_image_attachment_admin_gallery_url(@home, image), method: :delete, class: 'img-btn-edit' do
+            = link_to delete_image_attachment_admin_gallery_url(@home, image), data: { turbo_method: :delete, turbo_confirm: 'Are you really? ' }, class: 'img-btn-edit' do
               i.fas.fa-trash
           span.icon-focus
     - else

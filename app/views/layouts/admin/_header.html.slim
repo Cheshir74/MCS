@@ -1,20 +1,35 @@
-nav.navbar.navbar-light.bg-light
-  .container-fluid
-  ul.navbar-nav.ml-md-auto
-    li.nav-item
-      a.nav-link.px-1.mx-1.py-3.my-n2#sidebarCollapse href=""
-        i.fas.fa-bars
+nav class="navbar col-lg-12 col-12 p-lg-0 fixed-top d-flex flex-row"
+  div class="navbar-menu-wrapper d-flex align-items-stretch justify-content-between"
+    a class="navbar-brand brand-logo-mini align-self-center d-lg-none" href="../index.html"
+      img src="../../../assets/logo-mini.svg" alt="logo"
+    
+    button class="navbar-toggler navbar-toggler align-self-center me-2" type="button" data-toggle="minimize"
+      i class="mdi mdi-menu"
 
-    //far.fa-times-circle
-    //.collapse.navbar-collapse.dark-nav id="navbarSupportedContent"
-  form class="d-flex"
 
-    ul class="navbar-nav ml-auto"
-      li class="nav-item"
-        = link_to 'Home', home_path, class: 'nav-link'
-        
-      
-    - if current_user.nil?
-      = link_to 'Sign in', "#sign_in", :class => 'btn btn-outline-dark', data: {toggle: "modal", target: "#sign_in"}
-    - else
-      = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-dark', method: :delete
+
+    ul class="navbar-nav navbar-nav-right ml-lg-auto"
+      li class="nav-item dropdown d-none d-xl-flex border-0"
+        a class="nav-link dropdown-toggle" id="languageDropdown" href="#" data-bs-toggle="dropdown"
+          i class="mdi mdi-earth" English
+        div class="dropdown-menu navbar-dropdown" aria-labelledby="languageDropdown"
+          a class="dropdown-item" href="#" Russian
+
+
+      li class="nav-item  nav-profile dropdown border-0"
+        a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown"
+          img class="nav-profile-img me-2" alt="" src="../../../assets/face_default.svg"
+          span class="profile-name" Current User
+
+        div class="dropdown-menu navbar-dropdown w-100" aria-labelledby="profileDropdown"
+          a class="dropdown-item" href="#"
+            i class="mdi mdi-cached me-2 text-success" Activity Log
+          a class="dropdown-item" href="#"
+            i class="mdi mdi-logout me-2 text-primary" Signout
+
+            - if current_user.nil?
+            - else
+              = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-dark', data: { turbo_method: :delete }
+
+    button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"
+      span class="mdi mdi-menu"

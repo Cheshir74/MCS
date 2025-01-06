@@ -1,6 +1,14 @@
 = form_tag destroy_attach_admin_gallery_url, method: :delete do
   = submit_tag "Delete"
 
+
+  //- if @gallery.images.present?
+    = content_tag :div,
+      id: "app_gallery",
+      data: { url_path: gallery_path, direction: "column" }
+      div data-controller="gallery_react"
+      
+
   .row.row-cols-5.sortable id="lightgallery"
     - if @gallery.images.present?
       - @gallery.images.each do |image|
@@ -17,7 +25,7 @@
 
                   
           .card-img-overlay
-            = link_to delete_image_attachment_admin_gallery_url(@gallery, image), method: :delete, class: 'img-btn-edit' do
+            = link_to delete_image_attachment_admin_gallery_url(@gallery, image), data: { turbo_method: :delete }, class: 'img-btn-edit' do
               i.fas.fa-trash
           span.icon-focus
     - else

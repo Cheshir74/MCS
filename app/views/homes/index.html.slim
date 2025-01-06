@@ -38,12 +38,6 @@ section id="lastwork" class="text-center content-section"
   section class="photo-gallery" style="background: rgb(0,0,0);"
     - if @home.present?
       .container
-        div class="intro"
-          h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
-            = @home.title_block1
-          p class="text-center align-items-center"
-            = @home.body_block1
-
         div class="row photos" data-bss-baguettebox="" id="lightgallery"
           - if @home.gallery_id.present?
             = content_tag :div,
