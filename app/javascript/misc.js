@@ -1,4 +1,4 @@
-(function($) {
+(function($) {"turbo:load",
   'use strict';
   $(function() {
     var body = $('body');

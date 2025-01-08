@@ -2,6 +2,17 @@ import sortable  from  "html5sortable/dist/html5sortable.cjs"
 import lightGallery from "lightgallery"
 import Rails from '@rails/ujs'
 
+
+$(document).on("turbolinks:load", function(){
+
+		$(window).scroll(function () {
+		  var $nav = $(".navbar");
+		  $nav.toggleClass('scrolled', $(this).scrollTop() > $nav.height());
+		});
+
+	$(".loader").delay(400).fadeOut();
+  $(".animationload").delay(400).fadeOut("fast"); });
+
 $(document).on('turbolinks:load', function () {
     $('#lightgallery').lightGallery({
         selector: '.item',
