@@ -4,16 +4,21 @@ footer id="footerpad"
       col-md-6.col-lg-8.mx-auto
         ul class="list-inline text-center"
           li class="list-inline-item"
-            a href="https://www.facebook.com/dreamingcheshir"
-              span class="fa-stack fa-lg"
-                i class="fab fa-facebook-f fa-stack-1x"
+            - if @site_setting.fb_url.present?
+              = link_to @site_setting.fb_url, target: "_blank", rel: "noopener" do
+                span class="fa-stack fa-lg" 
+                  i class="fab fa-facebook-f fa-stack-1x"
           li class="list-inline-item"
-            a href="https://vk.com/dreamingcheshir"
-              span class="fa-stack fa-lg"
-                i class="fab fa-vk fa-stack-1x"
+            - if @site_setting.vk_url.present?
+              = link_to @site_setting.vk_url, target: "_blank", rel: "noopener" do
+                span class="fa-stack fa-lg"
+                  i class="fab fa-vk fa-stack-1x"
           li class="list-inline-item"
-            a href="https://www.instagram.com/dreamingcheshir"
-              span class="fa-stack fa-lg"
-                i class="fab fcircle fa-instagram fa-stack-1x"
+            - if @site_setting.inst_url.present?
+              = link_to @site_setting.inst_url, target: "_blank", rel: "noopener" do
+                span class="fa-stack fa-lg"
+                  i class="fab fcircle fa-instagram fa-stack-1x"
   
-        p class="copyright text-muted text-center" Copyright © 2024  Dmitry Tolstosheev. All Rights Reserved.
+        p class="copyright text-muted text-center" 
+          - if @site_setting.name_site.present?
+            = @site_setting.footer

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   post 'message' => 'messages#create'
   namespace :admin do
     get '/' => 'admin#index'
+    resources :site_settings
     resources :users
     resources :galleries, except: [:show] do
       member do

@@ -1,7 +1,7 @@
 div class="page-header"
   h3 class="mb-0" Edit home page
     
-form
+= form_with(model: @site_setting, url: admin_site_setting_path(@site_setting), local: true) do |f|
 
   div class="row"
     div class="col-sm-6"
@@ -11,26 +11,61 @@ form
           div class="forms-sample"
             div class="form-group"
               div class="mb-3"
-                label for="exampleInputEmail1" class="form-label" Name site
-                input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                = f.label :name_site
+                = f.text_field :name_site, class:'form-control'
 
             div class="form-group"
               div class="mb-3"
-                label for="exampleInputEmail1" class="form-label" Footer copyright
-                input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                = f.label :footer
+                = f.text_field :footer, class:'form-control'
             
             div class="form-group"
               div class="mb-3"
-                label for="exampleInputEmail1" class="form-label" Yandex verification
-                input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                = f.label :yn_verification_pri
+                = f.text_field :yn_verification_pri, class:'form-control'
+            
+            div class="form-group"
+              div class="mb-3"
+                = f.label :yn_verification_sec
+                = f.text_field :yn_verification_sec, class:'form-control'
         
         .card-header Email notifications 
         div class="card-body"
           div class="forms-sample"
             div class="form-group"
               div class="mb-3"
-                label for="exampleInputEmail1" class="form-label" Email for contact
-                input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                = f.label :email_contact
+                = f.text_field :email_contact, class:'form-control'
+        .card-header Email server settings 
+        div class="card-body"
+          div class="forms-sample"
+            div class="mb-3"
+              //login.yandex.ru
+              = f.label :email_login
+              = f.text_field :email_login, class:'form-control'
+            div class="mb-3"
+              = f.label :email_password
+              = f.text_field :email_password, class:'form-control'
+            div class="mb-3"
+              //yandex.ru
+              = f.label :email_domain
+              = f.text_field :email_domain, class:'form-control'
+            div class="mb-3"
+              //smtp.yandex.ru
+              = f.label :email_address
+              = f.text_field :email_address, class:'form-control'
+            div class="mb-3"
+              = f.label :email_port
+              = f.text_field :email_port, class:'form-control'
+            
+            div class="mb-6"
+              .form-group.form-check
+                = f.label :mail_ssl
+                = f.check_box :mail_ssl, class:'form-check-input'
+            div class="mb-6"
+              .form-group.form-check
+                = f.label :mail_tls
+                = f.check_box :mail_tls, class:'form-check-input'
 
         
 
@@ -55,15 +90,24 @@ form
         .card-header Social links
         .card-body  
           div.forms-sample
-              
             div class="form-group"
               div class="mb-3"
-                label for="exampleInputEmail1" class="form-label" Email address
-                input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
-                
+                = f.label :fb_url
+                = f.text_field :fb_url, class:'form-control'
+
+            div class="form-group"
+              div class="mb-3"
+                = f.label :inst_url
+                = f.text_field :inst_url, class:'form-control'
+
+            div class="form-group"
+              div class="mb-3"
+                = f.label :vk_url
+                = f.text_field :vk_url, class:'form-control'
+              
 
             .form-group
-              button type="submit" class="btn btn-primary" Submit
+              = f.submit "Submit", :class => 'btn btn-primary'
               //= link_to "Cancel", admin_homes_path, :class =>'btn btn-default'
 
 

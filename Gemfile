@@ -14,7 +14,7 @@ gem 'stimulus-rails'
 gem 'sprockets-rails'
 gem 'turbolinks'
 gem 'turbo-rails'
-
+gem 'bcrypt'
 gem 'rails-i18n'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder

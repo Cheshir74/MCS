@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_06_16_082758) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_15_184817) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -93,6 +93,27 @@ ActiveRecord::Schema[7.2].define(version: 2024_06_16_082758) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "site_settings", force: :cascade do |t|
+    t.string "name_site", default: "My Site Photography", null: false
+    t.string "footer", default: "Copyright © 2025 Dmitry Tolstosheev. All rights reserved.", null: false
+    t.string "yn_verification_pri", default: "", null: false
+    t.string "yn_verification_sec", default: "", null: false
+    t.string "fb_url", default: "", null: false
+    t.string "inst_url", default: "", null: false
+    t.string "vk_url", default: "", null: false
+    t.boolean "fb_visible", default: false
+    t.boolean "vk_visible", default: false
+    t.boolean "inst_visible", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "email_login"
+    t.string "email_domain"
+    t.string "email_contact"
+    t.string "email_address"
+    t.string "email_port"
+    t.string "email_password"
   end
 
   create_table "users", force: :cascade do |t|

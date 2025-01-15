@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
+  before_action :getglobalset
   before_action :authenticate_user!
   before_action :getGalleryNav
   before_action :turbo_frame_request_variant
@@ -21,6 +22,10 @@ class ApplicationController < ActionController::Base
   private
   def getGalleryNav
     @galleryNav = Gallery.where(visible: true)
+  end
+
+  def getglobalset
+    @site_setting = SiteSetting.first || SiteSetting.create!
   end
   
 
