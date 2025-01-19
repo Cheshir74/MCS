@@ -1,6 +1,10 @@
 require "active_support/core_ext/integer/time"
 
+
 Rails.application.configure do
+
+ 
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded any time
@@ -9,7 +13,8 @@ Rails.application.configure do
   config.enable_reloading = true
 
   # Do not eager load code on boot.
-  config.eager_load = false
+  config.eager_load = true  
+
 
   # Show full error reports.
   config.consider_all_requests_local = true
@@ -42,16 +47,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-      ssl:  Rails.application.credentials.mailer.mail_ssl,
-      tls:  Rails.application.credentials.mailer.mail_tls,
-      user_name:      Rails.application.credentials.mailer.mail_username,
-      password:       Rails.application.credentials.mailer.mail_password,
-      address:       Rails.application.credentials.mailer.mail_address,
-      port:          Rails.application.credentials.mailer.mail_port,
-      authentication: :plain,
-      enable_starttls_auto: true
-  }
+  
 
 
   config.action_mailer.perform_caching = false

@@ -18,11 +18,13 @@ class Admin::SiteSettingsController < ApplicationController
   end
 
   private
+
+
     def set_site_setting
       @site_setting = SiteSetting.first || SiteSetting.create!
     end
 
     def site_setting_params
-      params.require(:site_setting).permit(:name_site, :fb_url, :inst_url, :vk_url, :yn_verification_pri, :yn_verification_sec, :email_contact, :email_login, :email_domain, :email_password, :email_address, :email_port, :email_tls, :email_ssl)
+      params.require(:site_setting).permit(:name_site, :fb_url, :inst_url, :vk_url, :yn_verification_pri, :yn_verification_sec, :footer, :email_contact, :email_login, :email_domain, :email_password, :email_address, :email_port, :email_tls, :email_ssl)
     end
 end

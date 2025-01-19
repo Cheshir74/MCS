@@ -6,5 +6,7 @@ class AddEmailSettingsToSiteSettings < ActiveRecord::Migration[7.2]
     add_column :site_settings, :email_address, :string
     add_column :site_settings, :email_port, :string
     add_column :site_settings, :email_password, :string
+    add_column :site_settings, :email_ssl, :boolean
+    add_column :site_settings, :email_tls, :boolean
   end
 end

@@ -114,6 +114,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_15_184817) do
     t.string "email_address"
     t.string "email_port"
     t.string "email_password"
+    t.boolean "email_ssl"
+    t.boolean "email_tls"
   end
 
   create_table "users", force: :cascade do |t|
