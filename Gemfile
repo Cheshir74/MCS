@@ -38,14 +38,14 @@ end
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'web-console'
-  gem 'listen'
+  gem 'listen', '~> 3.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   # For deploy
-  gem 'capistrano',                 '3.11.2'
-  gem 'capistrano-rails',           '1.4.0'
-  gem 'capistrano-rbenv',           '2.1.4 '
+  gem 'capistrano', '~> 3.17.0'
+  gem 'capistrano-rails', '~> 1.6.0'
+  gem 'capistrano-rbenv', '~> 2.2.0'
   gem 'capistrano-puma'
 end
 
