@@ -26,7 +26,27 @@ class SiteSetting < ApplicationRecord
   end
 
   def self.get_value(key, default = nil)
-    setting = first # Поскольку предполагается, что есть только одна строка с настройками
+      # Проверяем, существует ли таблица site_settings
+    unless ActiveRecord::Base.connection.table_exists?('site_settings')
+      Rails.logger.warn("Таблица 'site_settings' отсутствует в базе данных.")
+      return default
+    end
+
+    # Получаем первую запись настроек
+    setting = self.first # Используем self.first для вызова метода модели
+
+    # Проверяем, существует ли объект setting
+    if setting.nil?
+      Rails.logger.warn("Настройки не найдены в таблице 'site_settings'.")
+      return default
+    end
+
+    # Проверяем, существует ли метод или атрибут key в setting
+    unless setting.respond_to?(key)
+      Rails.logger.warn("Метод или атрибут '#{key}' отсутствует в модели SiteSetting.")
+      return default
+    end
+
     value = setting&.send(key)
 
     # Если значение существует и его нужно интерпретировать как булевое
