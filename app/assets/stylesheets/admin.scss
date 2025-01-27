@@ -13,8 +13,8 @@
 
 @font-face {
   font-family: "Material Design Icons";
-  src: url("../../../assets/materialdesignicons-webfont.eot");
-  src: url("../../../assets/materialdesignicons-webfont.woff2") format("woff2"), url("../../../assets/materialdesignicons-webfont.woff") format("woff"), url("../../../assets/materialdesignicons-webfont.ttf") format("truetype");
+  src: asset-url("materialdesignicons-webfont.eot");
+  src: asset-url("materialdesignicons-webfont.woff2") format("woff2"), asset-url("materialdesignicons-webfont.woff") format("woff"), asset-url("materialdesignicons-webfont.ttf") format("truetype");
 };
 
 //@import 'bootstrap/scss/bootstrap';
@@ -26,8 +26,8 @@
 /* Fonts */
 @font-face {
     font-family: "Rubik";
-    src: url("../../../assets/rubik/Rubik-Light.eot");
-    src: url("../../../assets/rubik/Rubik-Light.woff2") format("woff2"), url("../../../assets/rubik/Rubik-Light.woff") format("woff"), url("../../../assets/rubik/Rubik-Light.ttf") format("truetype");
+    src: url("../../assets/rubik/Rubik-Light.eot");
+    src: url("../../assets/rubik/Rubik-Light.woff2") format("woff2"), url("../../assets/rubik/Rubik-Light.woff") format("woff"), url("../../../assets/rubik/Rubik-Light.ttf") format("truetype");
     font-weight: 300;
     font-style: normal;
   };

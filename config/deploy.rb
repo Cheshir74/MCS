@@ -1,7 +1,7 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.17.3"
 
-set :application, 'TolstosheevPhoto'
+set :application, 'Photohub'
 set :deploy_to, '/home/depus/app_deploy'
 set :repo_url, 'git@github.com:Cheshir74/MCS.git'
 append :linked_files, "config/database.yml", "config/master.key", "config/secrets.yml"
@@ -16,14 +16,17 @@ namespace :deploy do
       end
     end
   
-    desc 'Compile assets'
-    task :precompile do
-      on roles(:app) do
+    desc 'Run jsbundling-rails build'
+    task :build_js_assets do
+      on roles(:web) do
         within release_path do
-          execute :rake, 'assets:precompile'
+          execute :yarn, 'install --immutable'
+          execute :yarn, 'run build'
         end
       end
     end
+
+    after 'deploy:updated', 'deploy:build_js_assets'
   end
   
   # Правильная последовательность выполнения задач

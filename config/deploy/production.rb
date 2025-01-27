@@ -4,6 +4,9 @@
 # You can define all roles on a single server, or split them:
 server "95.217.154.81", user: "depus", port: "22", roles: %w{app db web}
 set :branch, 'master'
+set :rails_env, 'production'
+set :default_env, { 'RAILS_ENV' => 'production' }
+
 
 
 # server "example.com", user: "deploy", roles: %w{app db web}, my_property: :my_value
