@@ -16,6 +16,7 @@ gem 'turbolinks'
 gem 'turbo-rails'
 gem 'bcrypt'
 gem 'rails-i18n'
+gem 'sassc-rails'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.7'
