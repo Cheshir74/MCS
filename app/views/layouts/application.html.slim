@@ -1,9 +1,9 @@
 doctype html
 html
   head
-    title TolstosheevPhoto
+    title =@site_setting.name_site
     meta name="yandex-verification" content=@site_setting.yn_verification_pri
-    meta name="yandex-verification" content="0a731603332d0126"
+    meta name="yandex-verification" content=@site_setting.yn_verification_sec
     meta name="turbo-visit-control" content="reload"
 
     = csrf_meta_tags
