@@ -1,21 +1,38 @@
 class Admin::HomesController < Admin::AdminController
-  before_action :set_home, :only => [ :edit, :update, :destroy, :delete_image_attachment, :delete_photo_attachment, :sort ]
+  before_action :set_home, only: [:edit, :update, :destroy, :delete_image_attachment, :delete_photo_attachment, :sort]
+  before_action :load_resources, only: [:edit, :new]  # Опционально, если @homes и @galleries нужны
 
   def index
     @homes = Home.all
   end
 
   def update
-    if @home.update(home_params)
-      if params[:home][:images].present?
-        params[:home][:images].each do |image|
+    # Сначала удаляем выбранные изображения
+    if params[:delete_img_ids].present?
+      ActiveStorage::Attachment.where(
+        id: params[:delete_img_ids],
+        record_type: 'Home',
+        record_id: @home.id,
+        name: 'images'
+      ).destroy_all
+    end
+  
+    # Получаем параметры без изображений
+    params_without_images = home_params.except(:images)
+    
+    # Сначала обновляем параметры без изображений
+    if @home.update(params_without_images)
+      # Затем прикрепляем новые изображения, если они есть
+      if home_params[:images].present?
+        home_params[:images].each do |image|
           @home.images.attach(image)
         end
       end
-      flash[:notice] = "Home updated"
-      redirect_to edit_admin_home_path(params[:id])
+      
+      flash[:notice] = "Домашняя страница обновлена"
+      redirect_to edit_admin_home_path(@home)
     else
-      render 'edit'
+      render :edit
     end
   end
 
@@ -25,38 +42,45 @@ class Admin::HomesController < Admin::AdminController
       flash[:notice] = "Home Created"
       redirect_to admin_homes_path
     else
-      @homes = Home.all
-      render 'new'
+      load_resources  # Или render :new без повторной загрузки
+      render :new
     end
   end
 
   def edit
-    @homes = Home.all
-    @galleries = Gallery.all
+  
   end
 
   def new
     @home = Home.new
-    @homes = Home.all
-    @galleries = Gallery.all
   end
 
   def delete_image_attachment
-    attachment = @home.images.find(params[:format])
-    attachment.purge
-    redirect_back(fallback_location: edit_admin_home_path)
+    @home.images.find(params[:image_id]).purge # Изменено с params[:format] на params[:image_id]
+    redirect_back(fallback_location: edit_admin_home_path(@home))
   end
 
   def delete_photo_attachment
-    attachment = @home.image
-    attachment.purge
-    redirect_back(fallback_location: edit_admin_home_path)
+    @home.image.purge
+    redirect_back(fallback_location: edit_admin_home_path(@home))
   end
 
   def destroy_attach
-    attachments = ActiveStorage::Attachment.where(id: params[:delete_img_ids])
-    attachments.map(&:purge)
-    redirect_back(fallback_location: edit_admin_home_path)
+    if params[:delete_img_ids].blank?
+      return redirect_back(fallback_location: edit_admin_home_path(@home), alert: "No images selected")
+    end
+  
+    # Удаляем только выбранные вложения
+    attachments = ActiveStorage::Attachment.where(
+      record_type: 'Home',
+      record_id: @home.id,
+      name: 'images',
+      id: params[:delete_img_ids]
+    )
+  
+    attachments.each(&:purge) # Изменено с purge на each(&:purge)
+  
+    redirect_back(fallback_location: edit_admin_home_path(@home), notice: "Selected images deleted successfully")
   end
 
   def destroy
@@ -64,14 +88,15 @@ class Admin::HomesController < Admin::AdminController
     redirect_to admin_homes_path
   end
 
-  def sort 
+  def sort
+    return head :bad_request unless params[:images]
+
     params[:images].each_with_index do |id, position|
       ActiveStorage::Attachment.where(id: id).update_all(position: position + 1)
-      
-   end
-   respond_to do |format|
-       format.js
-   end
+    end
+    respond_to do |format|
+      format.js
+    end
   end
 
   private
@@ -80,9 +105,19 @@ class Admin::HomesController < Admin::AdminController
     @home = Home.find(params[:id])
   end
 
-  
+  def load_resources
+    @homes = Home.all
+    @galleries = Gallery.all
+  end
+
+  def attach_images
+    params[:home][:images].each { |image| @home.images.attach(image) }
+  end
 
   def home_params
-    params.require(:home).permit(:title,:body,:title_block1,:body_block1,:gallery_id,:visible,:image)
+    params.require(:home).permit(
+      :title, :body, :title_block1, :body_block1,
+      :gallery_id, :visible, images: []
+)
   end
 end

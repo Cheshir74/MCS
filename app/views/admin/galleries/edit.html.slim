@@ -1,39 +1,36 @@
 div class="page-header"
   h3 class="mb-0" Edit home page
     
-form
+div class="row"
+  div class="col-sm-12"
+    div class="card"
+      .card-header Primary block
+      .card-body
+        = form_for [:admin, @gallery] do |f|
+          - if @gallery.errors.any?
+            - @gallery.errors.full_messages.each do |msg|
+              .alert.alert-danger = msg
 
-  div class="row"
-    div class="col-sm-12"
-      div class="card"
-        .card-header Primary block
-        .card-body
+          .mb-3
+            = f.label :name
+            = f.text_field :name, class: 'form-control'
 
-          = form_for [:admin, @gallery] do |f|
+          .mb-3
+            = f.label :visible
+            = f.check_box :visible
 
-            - if @gallery.errors.any?
-              - @gallery.errors.full_messages.each do |msg|
-                .alert.alert-danger = msg
+          .mb-3
+            .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
+              = f.file_field :images, multiple: true, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
+              .dropzone-msg.dz-message.needsclick.text-gray-600
+                h3.dropzone-msg-title Drag here to upload or click here to browse
+                span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
 
+          .mb-3
+            = f.submit "Submit", class: 'btn btn-primary'
+            = link_to "Cancel", admin_galleries_path, class: 'btn btn-default'
 
-            .mb-6
-                  
-              = f.label :name
-              = f.text_field :name, class:'form-control'
-              = f.label :visible
-              = f.check_box :visible
-              .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
-                = f.file_field :images, multiple: true, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
-                .dropzone-msg.dz-message.needsclick.text-gray-600
-                  h3.dropzone-msg-title Drag here to upload or click here to browse
-                  span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
-
-
-            br
-            = f.submit "Submit", :class => 'btn btn-primary'
-            = link_to "Cancel", admin_galleries_path, :class =>'btn btn-default'
-
-          h3.page-header
-            | Images in #{@gallery.name}
-          div id="edit_images"
-            = render 'admin/galleries/images'
+h3.page-header
+  | Images in #{@gallery.name}
+div id="edit_images"
+  = render 'admin/galleries/images'
