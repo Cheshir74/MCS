@@ -33,7 +33,7 @@
 /config/database*
 /config/secrets*
 /config/puma*
-/config/credentials*
+/config/credentials.yml.enc
 .idea
 .DS_Store
 /public/packs

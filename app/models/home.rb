@@ -5,6 +5,8 @@ class Home < ApplicationRecord
 
   def dup_check
     self.class.where('id != ?', self.id).update_all("visible = 'false'")
+    self.class.where('id != ?', self.id).update_all("visible_cf = 'false'")
+
   end
 
 

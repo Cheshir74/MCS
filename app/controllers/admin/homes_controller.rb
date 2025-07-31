@@ -61,8 +61,16 @@ class Admin::HomesController < Admin::AdminController
   end
 
   def delete_photo_attachment
-    @home.image.purge
-    redirect_back(fallback_location: edit_admin_home_path(@home))
+    begin
+      # Находим и удаляем конкретное изображение
+      attachment = @home.images.find(params[:image_id])
+      attachment.purge
+      
+      # Редирект с сообщением
+      redirect_back(fallback_location: edit_admin_home_path(@home), notice: "Изображение удалено")
+    rescue ActiveRecord::RecordNotFound
+      redirect_back(fallback_location: edit_admin_home_path(@home), alert: "Изображение не найдено")
+    end
   end
 
   def destroy_attach
@@ -117,7 +125,7 @@ class Admin::HomesController < Admin::AdminController
   def home_params
     params.require(:home).permit(
       :title, :body, :title_block1, :body_block1,
-      :gallery_id, :visible, images: []
+      :gallery_id, :visible, :visible_cf, images: []
 )
   end
 end

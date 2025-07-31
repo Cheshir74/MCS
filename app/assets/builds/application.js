@@ -27497,9 +27497,9 @@ var require_animation_bus = __commonJS({
   }
 });
 
-// node_modules/react-view-pager/node_modules/resize-observer-polyfill/dist/ResizeObserver.js
+// node_modules/resize-observer-polyfill/dist/ResizeObserver.js
 var require_ResizeObserver = __commonJS({
-  "node_modules/react-view-pager/node_modules/resize-observer-polyfill/dist/ResizeObserver.js"(exports2, module2) {
+  "node_modules/resize-observer-polyfill/dist/ResizeObserver.js"(exports2, module2) {
     (function(global2, factory) {
       typeof exports2 === "object" && typeof module2 !== "undefined" ? module2.exports = factory() : typeof define === "function" && define.amd ? define(factory) : global2.ResizeObserver = factory();
     })(exports2, function() {
@@ -28796,14 +28796,14 @@ var require_stepper = __commonJS({
 var require_performance_now = __commonJS({
   "node_modules/performance-now/lib/performance-now.js"(exports2, module2) {
     (function() {
-      var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
+      var getNanoSeconds, hrtime, loadTime;
       if (typeof performance !== "undefined" && performance !== null && performance.now) {
         module2.exports = function() {
           return performance.now();
         };
       } else if (typeof process !== "undefined" && process !== null && process.hrtime) {
         module2.exports = function() {
-          return (getNanoSeconds() - nodeLoadTime) / 1e6;
+          return (getNanoSeconds() - loadTime) / 1e6;
         };
         hrtime = process.hrtime;
         getNanoSeconds = function() {
@@ -28811,9 +28811,7 @@ var require_performance_now = __commonJS({
           hr = hrtime();
           return hr[0] * 1e9 + hr[1];
         };
-        moduleLoadTime = getNanoSeconds();
-        upTime = process.uptime() * 1e9;
-        nodeLoadTime = moduleLoadTime - upTime;
+        loadTime = getNanoSeconds();
       } else if (Date.now) {
         module2.exports = function() {
           return Date.now() - loadTime;

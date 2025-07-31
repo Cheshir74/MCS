@@ -54,6 +54,11 @@
                   = f.label "Visible this page on main", class:'form-check-label'
 
               .form-group
+                .form-check.form-switch
+                  = f.check_box :visible_cf, class: 'form-check-input'
+                  = f.label "Visible contact form on main", class:'form-check-label'
+
+              .form-group
                 = f.select 'gallery_id', options_for_select(@galleries.collect{ |g| [g.name, g.id] }), {}, {class: "form-select"}
 
   

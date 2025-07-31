@@ -11,9 +11,9 @@
             = image_tag image.variant(resize_to_limit: [210, 210])
         
         .card-img-overlay
-          = link_to delete_image_attachment_admin_home_path(@home, format: image.id), 
+          = link_to delete_image_attachment_admin_home_path(@home, image_id: image.id), 
                     method: :delete, 
-                    data: { turbo_confirm: 'Are you sure?' }, 
+                    data: { turbo_confirm: 'Are you sure?', turbo_method: :delete }, 
                     class: 'img-btn-edit' do
             i.fas.fa-trash
         span.icon-focus
