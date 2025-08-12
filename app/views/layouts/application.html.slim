@@ -9,13 +9,12 @@ html
     = csrf_meta_tags
     = csp_meta_tag
 
-    = javascript_include_tag "application", "data-turbo-track": "reload", type: "module"
+    = javascript_include_tag "application", "data-turbo-track": "reload"
     = stylesheet_link_tag 'application', media: 'all'
 
   body
     = render 'layouts/header'
     = turbo_frame_tag "modal"
-    
          
     - unless flash.empty?
       = render 'layouts/notice'
@@ -31,5 +30,8 @@ html
           div.container-fluid id="general"
 
             = yield
+    
+    #react-modal-root
 
     = render 'layouts/footer'
+

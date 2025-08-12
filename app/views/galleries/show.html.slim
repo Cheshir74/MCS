@@ -1,8 +1,5 @@
 - if @gallery.images.present?
-  = content_tag :div,
-    id: "app_gallery",
-    data: { url_path: gallery_path, direction: "column" }
-    div data-controller="gallery_react"
-
-
-
+  #app_gallery[data-url-path=gallery_path data-direction="column"]
+      div data-controller="gallery"
+  
+  

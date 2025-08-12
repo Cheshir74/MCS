@@ -30,7 +30,11 @@
     src: url("lora-latin.woff2") format('woff2');
 };
 
-
+// Скрыть текстовый "0" внутри fslightbox
+.fslightbox-container {
+  font-size: 0 !important;
+  > * { font-size: initial; }
+}
 
 .swiper-button-next,
 .swiper-button-prev {

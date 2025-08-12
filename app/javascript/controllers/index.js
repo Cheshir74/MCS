@@ -19,5 +19,9 @@ application.register("swiper", SwiperController)
 import CheckEmailController from "./check_email_controller"
 application.register("check_email", CheckEmailController)
 
-import GalleryController from "./gallery_react_controller.jsx"
-application.register("gallery_react", GalleryController)
+//import GalleryController from "./gallery_react_controller.jsx"
+//application.register("gallery_react", GalleryController)
+
+import GalleryController from "./gallery_controller"
+application.register("gallery", GalleryController)
+

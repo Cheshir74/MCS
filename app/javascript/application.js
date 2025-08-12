@@ -2,6 +2,13 @@ import "@hotwired/turbo-rails"
 import * as bootstrap from "bootstrap"
 import "./controllers"
 
+import React from "react"
+import ReactDOM from "react-dom"
+
+// Глобальные переменные для react-rails
+window.React = React
+window.ReactDOM = ReactDOM
+
 import "./add_jquery"
 import "./packs/admin"
 
@@ -20,6 +27,7 @@ import "@fortawesome/fontawesome-free/js/all"
 import toastr from 'toastr'
 window.toastr = toastr
 
+window.global = window;
 
 
 
