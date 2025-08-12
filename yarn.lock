@@ -1011,7 +1011,6 @@ __metadata:
     react: "npm:^19.1.1"
     react-dom: "npm:^19.1.1"
     react-hook-form: "npm:^7.52.0"
-    react-image-gallery: "npm:^1.4.0"
     react-image-lightbox: "npm:^5.1.4"
     react-images: "npm:^1.2.0-beta.7"
     react-photo-gallery: "npm:^8.0.0"
@@ -1024,7 +1023,6 @@ __metadata:
     turbolinks: "npm:^5.2.0"
     typeface-lora: "npm:^1.1.13"
     yarn: "npm:^1.22.22"
-    yet-another-react-lightbox: "npm:^3.25.0"
   languageName: unknown
   linkType: soft
 
@@ -3862,15 +3860,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-image-gallery@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "react-image-gallery@npm:1.4.0"
-  peerDependencies:
-    react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/0b30dcbc3be2d783021bdffda30719df106e002626789f481065e5f7296e9cd265d0e7e5b761ca9eca3ef20a33c36635f6ce31a6c263a2e4db51f59bc45005fa
-  languageName: node
-  linkType: hard
-
 "react-image-lightbox@npm:^5.1.4":
   version: 5.1.4
   resolution: "react-image-lightbox@npm:5.1.4"
@@ -4816,22 +4805,5 @@ __metadata:
     yarn: bin/yarn.js
     yarnpkg: bin/yarn.js
   checksum: 10c0/8c77198c93d7542e7f4e131c63b66de357b7076ecfbcfe709ec0d674115c2dd9edaa45196e5510e6e9366d368707a802579e3402071002e1c9d9a99d491478de
-  languageName: node
-  linkType: hard
-
-"yet-another-react-lightbox@npm:^3.25.0":
-  version: 3.25.0
-  resolution: "yet-another-react-lightbox@npm:3.25.0"
-  peerDependencies:
-    "@types/react": ^16 || ^17 || ^18 || ^19
-    "@types/react-dom": ^16 || ^17 || ^18 || ^19
-    react: ^16.8.0 || ^17 || ^18 || ^19
-    react-dom: ^16.8.0 || ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    "@types/react-dom":
-      optional: true
-  checksum: 10c0/c2e41c19e4cf3bd1d762c8f135e2f72fc0e6355628e6e2604d11f19286c03f44bac44fee3fc9fd42ff7105f464b28c147979bb5e9cd445999bf7417f6d55d39d
   languageName: node
   linkType: hard

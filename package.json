@@ -38,7 +38,6 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.52.0",
-    "react-image-gallery": "^1.4.0",
     "react-image-lightbox": "^5.1.4",
     "react-images": "^1.2.0-beta.7",
     "react-photo-gallery": "^8.0.0",
@@ -50,8 +49,7 @@
     "toastr": "^2.1.4",
     "turbolinks": "^5.2.0",
     "typeface-lora": "^1.1.13",
-    "yarn": "^1.22.22",
-    "yet-another-react-lightbox": "^3.25.0"
+    "yarn": "^1.22.22"
   },
   "version": "0.1.0",
   "scripts": {

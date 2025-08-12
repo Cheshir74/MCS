@@ -85758,13 +85758,6 @@ function createDropZone(controller) {
   });
 }
 
-// app/javascript/controllers/hello_controller.js
-var hello_controller_default = class extends Controller {
-  connect() {
-    this.element.textContent = "Hello World!";
-  }
-};
-
 // app/javascript/controllers/modal_controller.js
 var modal_controller_default = class extends Controller {
   connect() {
@@ -91701,7 +91694,6 @@ var gallery_controller_default = class extends Controller {
 
 // app/javascript/controllers/index.js
 application.register("dropzone", dropzone_controller_default);
-application.register("hello", hello_controller_default);
 application.register("modal", modal_controller_default);
 application.register("swiper", swiper_controller_default);
 application.register("check_email", check_email_controller_default);
