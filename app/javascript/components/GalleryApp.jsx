@@ -22,26 +22,37 @@ export default function GalleryApp({ photos }) {
       <div
         className="gallery"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 10,
-          width: "100%",
-          margin: 0
+          columns: 3,
+          columnGap: "10px",
+          width: "100%"
         }}
       >
-        {hasPhotos &&
-          photos.map((photo, i) => (
+        {hasPhotos && photos.map((photo, i) => (
+          <div 
+            key={i} 
+            style={{ 
+              breakInside: "avoid",
+              marginBottom: "10px",
+              borderRadius: "8px",
+              overflow: "hidden"
+            }}
+          >
             <img
-              key={i}
               src={photo.src}
-              alt={photo.alt !== undefined ? photo.alt : ""}
-              style={{ width: "100%", cursor: "pointer", display: "block" }}
+              alt={photo.alt || ""}
+              style={{
+                width: "100%",
+                height: "auto",
+                display: "block",
+                cursor: "pointer"
+              }}
               onClick={() => {
                 setSlide(i + 1);
-                setToggler(t => !t); // Меняем на противоположное
+                setToggler(t => !t);
               }}
             />
-          ))}
+          </div>
+        ))}
       </div>
       {hasPhotos && (
         <FsLightbox
