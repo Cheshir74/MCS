@@ -35839,7 +35839,7 @@ var require_react_development2 = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect(create, deps) {
+        function useEffect2(create, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useEffect(create, deps);
         }
@@ -35851,7 +35851,7 @@ var require_react_development2 = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useLayoutEffect(create, deps);
         }
-        function useCallback(callback, deps) {
+        function useCallback2(callback, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useCallback(callback, deps);
         }
@@ -36618,11 +36618,11 @@ var require_react_development2 = __commonJS({
         exports2.memo = memo;
         exports2.startTransition = startTransition;
         exports2.unstable_act = act;
-        exports2.useCallback = useCallback;
+        exports2.useCallback = useCallback2;
         exports2.useContext = useContext;
         exports2.useDebugValue = useDebugValue;
         exports2.useDeferredValue = useDeferredValue;
-        exports2.useEffect = useEffect;
+        exports2.useEffect = useEffect2;
         exports2.useId = useId;
         exports2.useImperativeHandle = useImperativeHandle;
         exports2.useInsertionEffect = useInsertionEffect;
@@ -62270,7 +62270,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
             }
           }
         }
-        function useCallback(callback, deps) {
+        function useCallback2(callback, deps) {
           return useMemo(function() {
             return callback;
           }, deps);
@@ -62317,7 +62317,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
           useState: useState3,
           useInsertionEffect: noop2,
           useLayoutEffect,
-          useCallback,
+          useCallback: useCallback2,
           // useImperativeHandle is not run in the server environment
           useImperativeHandle: noop2,
           // Effects are not run in the server environment.
@@ -67610,7 +67610,7 @@ var require_react_dom_server_browser_development = __commonJS({
             }
           }
         }
-        function useCallback(callback, deps) {
+        function useCallback2(callback, deps) {
           return useMemo(function() {
             return callback;
           }, deps);
@@ -67657,7 +67657,7 @@ var require_react_dom_server_browser_development = __commonJS({
           useState: useState3,
           useInsertionEffect: noop2,
           useLayoutEffect,
-          useCallback,
+          useCallback: useCallback2,
           // useImperativeHandle is not run in the server environment
           useImperativeHandle: noop2,
           // Effects are not run in the server environment.
@@ -91616,68 +91616,261 @@ var import_client2 = __toESM(require_client());
 
 // app/javascript/components/GalleryApp.jsx
 var import_react3 = __toESM(require_react());
+var import_prop_types = __toESM(require_prop_types());
 var import_fslightbox_react = __toESM(require_fslightbox_react());
 function exitFullscreen() {
   if (document.fullscreenElement) {
     document.exitFullscreen();
   }
 }
-function GalleryApp({ photos }) {
+function GalleryApp({ photos, direction = "column" }) {
   const [toggler, setToggler] = (0, import_react3.useState)(false);
   const [slide2, setSlide] = (0, import_react3.useState)(1);
+  const [photoData, setPhotoData] = (0, import_react3.useState)([]);
+  const [columns, setColumns] = (0, import_react3.useState)(3);
+  const [rowGroups, setRowGroups] = (0, import_react3.useState)([]);
+  const [windowWidth, setWindowWidth] = (0, import_react3.useState)(typeof window !== "undefined" ? window.innerWidth : 1200);
   const hasPhotos = Array.isArray(photos) && photos.length > 0;
-  const handleClose = () => {
-    setTimeout(exitFullscreen, 100);
-  };
-  return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement(
-    "div",
-    {
-      className: "gallery",
-      style: {
-        columns: 3,
-        columnGap: "10px",
-        width: "100%"
-      }
+  const handleClose = () => setTimeout(exitFullscreen, 100);
+  const MAX_CONTAINER_WIDTH = 1320;
+  const ROW_GAP = 10;
+  const MOBILE_BREAKPOINT = 768;
+  const TABLET_BREAKPOINT = 1024;
+  const DESKTOP_BREAKPOINT = 1200;
+  const getLayoutParams = (0, import_react3.useCallback)(() => {
+    if (windowWidth < MOBILE_BREAKPOINT) {
+      return {
+        maxPhotosPerRow: 2,
+        rowHeight: 180,
+        portraitRowHeight: 150,
+        containerWidth: windowWidth - 40
+      };
+    } else if (windowWidth < TABLET_BREAKPOINT) {
+      return {
+        maxPhotosPerRow: 3,
+        rowHeight: 200,
+        portraitRowHeight: 170,
+        containerWidth: windowWidth - 80
+      };
+    } else if (windowWidth < DESKTOP_BREAKPOINT) {
+      return {
+        maxPhotosPerRow: 3,
+        rowHeight: 220,
+        portraitRowHeight: 190,
+        containerWidth: windowWidth - 80
+      };
+    } else {
+      return {
+        maxPhotosPerRow: 3,
+        rowHeight: 250,
+        portraitRowHeight: 215,
+        containerWidth: Math.min(windowWidth, MAX_CONTAINER_WIDTH) - 80
+      };
+    }
+  }, [windowWidth]);
+  const getColumnsForWidth = (0, import_react3.useCallback)(
+    (width) => {
+      if (direction === "row") return 3;
+      if (width < MOBILE_BREAKPOINT) return 1;
+      if (width < TABLET_BREAKPOINT) return 2;
+      return 3;
     },
-    hasPhotos && photos.map((photo, i) => /* @__PURE__ */ import_react3.default.createElement(
+    [direction]
+  );
+  const groupPhotosIntoRows = (0, import_react3.useCallback)(
+    (photos2) => {
+      if (direction !== "row") return [];
+      const { maxPhotosPerRow } = getLayoutParams();
+      const rows = [];
+      let currentRow = [];
+      let rowHasPortrait = false;
+      photos2.forEach((photo) => {
+        const shouldCloseRow = !rowHasPortrait && currentRow.length >= maxPhotosPerRow || rowHasPortrait && currentRow.length >= maxPhotosPerRow + 1;
+        if (shouldCloseRow) {
+          rows.push({ photos: currentRow, hasPortrait: rowHasPortrait });
+          currentRow = [];
+          rowHasPortrait = false;
+        }
+        currentRow.push(photo);
+        if (photo.orientation === "portrait") rowHasPortrait = true;
+      });
+      if (currentRow.length > 0) {
+        rows.push({ photos: currentRow, hasPortrait: rowHasPortrait });
+      }
+      return rows;
+    },
+    [direction, getLayoutParams]
+  );
+  const preloadImages = (0, import_react3.useCallback)(() => {
+    if (!hasPhotos) return;
+    let loaded = 0;
+    const data = [];
+    photos.forEach((p, idx) => {
+      if (!p.src) {
+        loaded++;
+        return;
+      }
+      const img = new Image();
+      img.src = p.src;
+      img.onload = () => {
+        data[idx] = {
+          ...p,
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          ratio: img.naturalWidth / img.naturalHeight,
+          orientation: img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
+        };
+        loaded++;
+        if (loaded === photos.length) {
+          setPhotoData(data.filter(Boolean));
+        }
+      };
+      img.onerror = () => {
+        loaded++;
+        if (loaded === photos.length) {
+          setPhotoData(data.filter(Boolean));
+        }
+      };
+    });
+  }, [photos, hasPhotos]);
+  (0, import_react3.useEffect)(() => {
+    preloadImages();
+  }, [preloadImages]);
+  (0, import_react3.useEffect)(() => {
+    if (photoData.length > 0) {
+      setRowGroups(groupPhotosIntoRows(photoData));
+    }
+  }, [photoData, groupPhotosIntoRows]);
+  (0, import_react3.useEffect)(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      setColumns(getColumnsForWidth(window.innerWidth));
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [getColumnsForWidth]);
+  const calculateLightboxIndex = (0, import_react3.useCallback)(
+    (rowIndex, photoIndex) => {
+      return rowGroups.slice(0, rowIndex).reduce((sum, row) => sum + row.photos.length, photoIndex) + 1;
+    },
+    [rowGroups]
+  );
+  const galleryStyle = direction === "row" ? {
+    display: "flex",
+    flexDirection: "column",
+    gap: `${ROW_GAP}px`,
+    width: "100%",
+    maxWidth: `${MAX_CONTAINER_WIDTH}px`,
+    margin: "0 auto"
+  } : {
+    columns,
+    columnGap: `${ROW_GAP}px`,
+    width: "100%"
+  };
+  return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("div", { className: "gallery", style: galleryStyle }, direction === "row" ? rowGroups.map((row, rowIndex) => {
+    const { rowHeight, portraitRowHeight, containerWidth } = getLayoutParams();
+    const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
+    const totalRowWidth = row.photos.reduce((sum, photo) => sum + photo.ratio * currentRowHeight, 0);
+    const availableWidth = containerWidth - (row.photos.length - 1) * ROW_GAP;
+    const scaleFactor = Math.min(availableWidth / totalRowWidth, 1);
+    return /* @__PURE__ */ import_react3.default.createElement(
       "div",
       {
-        key: i,
+        key: rowIndex,
         style: {
-          breakInside: "avoid",
-          marginBottom: "10px",
-          borderRadius: "8px",
-          overflow: "hidden"
+          display: "flex",
+          gap: `${ROW_GAP}px`,
+          width: "100%",
+          maxWidth: `${containerWidth}px`,
+          margin: "0 auto",
+          justifyContent: "flex-start",
+          overflowX: "hidden"
         }
       },
-      /* @__PURE__ */ import_react3.default.createElement(
-        "img",
-        {
-          src: photo.src,
-          alt: photo.alt || "",
-          style: {
-            width: "100%",
-            height: "auto",
-            display: "block",
-            cursor: "pointer"
+      row.photos.map((photo, photoIndex) => {
+        const width = photo.ratio * currentRowHeight * scaleFactor;
+        return /* @__PURE__ */ import_react3.default.createElement(
+          "div",
+          {
+            key: `${rowIndex}-${photoIndex}`,
+            style: {
+              borderRadius: "8px",
+              overflow: "hidden",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#000",
+              height: `${currentRowHeight}px`,
+              width: `${width}px`,
+              flexShrink: 0,
+              flexGrow: 0
+            },
+            onClick: () => {
+              setSlide(calculateLightboxIndex(rowIndex, photoIndex));
+              setToggler((t) => !t);
+            }
           },
-          onClick: () => {
-            setSlide(i + 1);
-            setToggler((t) => !t);
-          }
-        }
-      )
-    ))
-  ), hasPhotos && /* @__PURE__ */ import_react3.default.createElement(
+          /* @__PURE__ */ import_react3.default.createElement(
+            "img",
+            {
+              src: photo.src,
+              alt: photo.alt || "",
+              style: {
+                height: "100%",
+                width: "100%",
+                objectFit: "contain",
+                maxWidth: "100%"
+              }
+            }
+          )
+        );
+      })
+    );
+  }) : photoData.map((photo, i) => /* @__PURE__ */ import_react3.default.createElement(
+    "div",
+    {
+      key: i,
+      style: {
+        breakInside: "avoid",
+        marginBottom: `${ROW_GAP}px`,
+        borderRadius: "8px",
+        overflow: "hidden",
+        cursor: "pointer"
+      },
+      onClick: () => {
+        setSlide(i + 1);
+        setToggler((t) => !t);
+      }
+    },
+    /* @__PURE__ */ import_react3.default.createElement(
+      "img",
+      {
+        src: photo.src,
+        alt: photo.alt || "",
+        style: { width: "100%", height: "auto", objectFit: "contain" }
+      }
+    )
+  ))), hasPhotos && /* @__PURE__ */ import_react3.default.createElement(
     import_fslightbox_react.default,
     {
       toggler,
-      sources: photos.map((photo) => photo.src),
+      sources: photos.map((p) => p.src),
       slide: slide2,
       onClose: handleClose
     }
   ));
 }
+GalleryApp.propTypes = {
+  photos: import_prop_types.default.arrayOf(
+    import_prop_types.default.shape({
+      src: import_prop_types.default.string.isRequired,
+      alt: import_prop_types.default.string
+    })
+  ).isRequired,
+  direction: import_prop_types.default.oneOf(["column", "row"])
+};
 
 // app/javascript/controllers/gallery_controller.js
 var gallery_controller_default = class extends Controller {

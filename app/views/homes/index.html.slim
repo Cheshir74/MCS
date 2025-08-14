@@ -38,10 +38,11 @@ section id="lastwork" class="text-center content-section"
   section class="photo-gallery" style="background: rgb(0,0,0);"
     - if @home.present?
       .container
-        div class="row photos" data-bss-baguettebox="" id="lightgallery"
+        .row.photos[data-bss-baguettebox id="lightgallery"]
           - if @home.gallery_id.present?
             #app_gallery[data-url-path="#{gallery_path(@home.gallery_id)}" data-direction="row"]
               div data-controller="gallery"
+
 
 section id="about" class="text-center content-section" 
   section class="photo-gallery" style="background: rgb(0,0,0);"
