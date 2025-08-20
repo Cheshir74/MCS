@@ -1,5 +1,5 @@
 class Admin::UsersController < Admin::AdminController
-  before_action :set_user, :only => [ :edit, :update, :destroy ]
+  before_action :set_user, :only => [ :edit, :change_password, :update, :destroy ]
 
   def index
     @users = User.all
@@ -13,6 +13,21 @@ class Admin::UsersController < Admin::AdminController
       render 'edit'
     end
   end
+
+  def change_password
+    @user = User.find(params[:id])
+
+    if @user.valid_password?(params[:current_password])
+      if @user.update(password: params[:new_password], password_confirmation: params[:new_password_confirmation])
+        render json: { message: "Пароль успешно изменён" }, status: :ok
+      else
+        render json: { error: @user.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "Неверный текущий пароль" }, status: :unauthorized
+    end
+  end
+
 
   def edit
 

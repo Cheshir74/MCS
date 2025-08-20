@@ -18,7 +18,11 @@ Rails.application.routes.draw do
   namespace :admin do
     get '/' => 'admin#index'
     resources :site_settings
-    resources :users
+    resources :users do
+      member do
+        patch :change_password
+      end
+    end
     resources :galleries, except: [:show] do
       member do
         delete :delete_image_attachment

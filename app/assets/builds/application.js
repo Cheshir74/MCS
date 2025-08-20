@@ -1893,7 +1893,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React6 = require_react(), Internals = {
+      var React8 = require_react(), Internals = {
         d: {
           f: noop2,
           r: function() {
@@ -1911,7 +1911,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -3453,7 +3453,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React6.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React8.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -17035,14 +17035,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React6 = require_react(), ReactDOM3 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React8 = require_react(), ReactDOM4 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
       Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
       Symbol.for("react.legacy_hidden");
       Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
       Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React6.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM3.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM4.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -19764,7 +19764,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React6.version;
+        var isomorphicReactPackageVersion = React8.version;
         if ("19.1.1" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.1.1\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -35827,7 +35827,7 @@ var require_react_development2 = __commonJS({
           }
           return dispatcher.useContext(Context2);
         }
-        function useState3(initialState) {
+        function useState4(initialState) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useState(initialState);
         }
@@ -36630,7 +36630,7 @@ var require_react_development2 = __commonJS({
         exports2.useMemo = useMemo;
         exports2.useReducer = useReducer;
         exports2.useRef = useRef2;
-        exports2.useState = useState3;
+        exports2.useState = useState4;
         exports2.useSyncExternalStore = useSyncExternalStore;
         exports2.useTransition = useTransition;
         exports2.version = ReactVersion;
@@ -37126,9 +37126,9 @@ var require_react_dom_development2 = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React6 = require_react2();
+        var React8 = require_react2();
         var Scheduler = require_scheduler2();
-        var ReactSharedInternals = React6.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -38733,7 +38733,7 @@ var require_react_dom_development2 = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React6.Children.forEach(props.children, function(child) {
+                React8.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -58242,9 +58242,9 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React6 = require_react2();
+        var React8 = require_react2();
         var ReactVersion = "18.3.1";
-        var ReactSharedInternals = React6.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function warn(format) {
           {
             {
@@ -60139,7 +60139,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
         }
         function flattenOptionChildren(children) {
           var content = "";
-          React6.Children.forEach(children, function(child) {
+          React8.Children.forEach(children, function(child) {
             if (child == null) {
               return;
             }
@@ -62132,7 +62132,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
         function basicStateReducer(state, action) {
           return typeof action === "function" ? action(state) : action;
         }
-        function useState3(initialState) {
+        function useState4(initialState) {
           {
             currentHookNameInDev = "useState";
           }
@@ -62314,7 +62314,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
           useMemo,
           useReducer,
           useRef: useRef2,
-          useState: useState3,
+          useState: useState4,
           useInsertionEffect: noop2,
           useLayoutEffect,
           useCallback: useCallback2,
@@ -63600,9 +63600,9 @@ var require_react_dom_server_browser_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React6 = require_react2();
+        var React8 = require_react2();
         var ReactVersion = "18.3.1";
-        var ReactSharedInternals = React6.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function warn(format) {
           {
             {
@@ -65543,7 +65543,7 @@ var require_react_dom_server_browser_development = __commonJS({
         }
         function flattenOptionChildren(children) {
           var content = "";
-          React6.Children.forEach(children, function(child) {
+          React8.Children.forEach(children, function(child) {
             if (child == null) {
               return;
             }
@@ -67472,7 +67472,7 @@ var require_react_dom_server_browser_development = __commonJS({
         function basicStateReducer(state, action) {
           return typeof action === "function" ? action(state) : action;
         }
-        function useState3(initialState) {
+        function useState4(initialState) {
           {
             currentHookNameInDev = "useState";
           }
@@ -67654,7 +67654,7 @@ var require_react_dom_server_browser_development = __commonJS({
           useMemo,
           useReducer,
           useRef: useRef2,
-          useState: useState3,
+          useState: useState4,
           useInsertionEffect: noop2,
           useLayoutEffect,
           useCallback: useCallback2,
@@ -69200,11 +69200,11 @@ var require_fromRequireContextsWithGlobalFallback = __commonJS({
 // node_modules/react_ujs/react_ujs/src/supportsRootApi.js
 var require_supportsRootApi = __commonJS({
   "node_modules/react_ujs/react_ujs/src/supportsRootApi.js"(exports2, module2) {
-    var ReactDOM3 = require_react_dom2();
+    var ReactDOM4 = require_react_dom2();
     var reactMajorVersion;
     var supportsRootApi3;
-    if (typeof ReactDOM3 != "undefined") {
-      reactMajorVersion = ReactDOM3.version.split(".")[0] || 16;
+    if (typeof ReactDOM4 != "undefined") {
+      reactMajorVersion = ReactDOM4.version.split(".")[0] || 16;
       supportsRootApi3 = reactMajorVersion >= 18;
     } else {
       supportsRootApi3 = false;
@@ -69304,8 +69304,8 @@ var init_renderHelpers = __esm({
 // node_modules/react_ujs/react_ujs/index.js
 var require_react_ujs = __commonJS({
   "node_modules/react_ujs/react_ujs/index.js"(exports2, module2) {
-    var React6 = require_react2();
-    var ReactDOM3 = require_react_dom2();
+    var React8 = require_react2();
+    var ReactDOM4 = require_react_dom2();
     var ReactDOMServer = require_server_browser();
     var detectEvents = require_detect();
     var constructorFromGlobal = require_fromGlobal();
@@ -69381,7 +69381,7 @@ var require_react_ujs = __commonJS({
       // using the specified `renderFunction` from `react-dom/server`.
       serverRender: function(renderFunction, componentName, props) {
         var componentClass = this.getConstructor(componentName);
-        var element = React6.createElement(componentClass, props);
+        var element = React8.createElement(componentClass, props);
         return ReactDOMServer[renderFunction](element);
       },
       // Within `searchSelector`, find nodes which should have React components
@@ -69407,7 +69407,7 @@ var require_react_ujs = __commonJS({
           } else {
             var component = this.components[cacheId];
             if (component === void 0) {
-              component = React6.createElement(constructor2, props);
+              component = React8.createElement(constructor2, props);
               if (turbolinksPermanent) {
                 this.components[cacheId] = component;
               }
@@ -69430,7 +69430,7 @@ var require_react_ujs = __commonJS({
           if (supportsRootApi3) {
             this.unmountRoot(node);
           } else {
-            ReactDOM3.unmountComponentAtNode(node);
+            ReactDOM4.unmountComponentAtNode(node);
           }
         }
       },
@@ -91899,15 +91899,111 @@ var gallery_controller_default = class extends Controller {
   }
 };
 
+// app/javascript/controllers/change_password_controller.js
+var import_react6 = __toESM(require_react());
+var import_client3 = __toESM(require_client());
+
+// app/javascript/components/ChangePasswordModal.jsx
+var import_react5 = __toESM(require_react());
+function ChangePasswordModal({ url, show, onClose }) {
+  const [currentPassword, setCurrentPassword] = (0, import_react5.useState)("");
+  const [newPassword, setNewPassword] = (0, import_react5.useState)("");
+  const [confirmPassword, setConfirmPassword] = (0, import_react5.useState)("");
+  const [error2, setError] = (0, import_react5.useState)(null);
+  const [success, setSuccess] = (0, import_react5.useState)(null);
+  if (!show) return null;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+    if (newPassword !== confirmPassword) {
+      setError("\u041F\u0430\u0440\u043E\u043B\u0438 \u043D\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0430\u044E\u0442");
+      return;
+    }
+    try {
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector("meta[name=csrf-token]").content
+        },
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: newPassword,
+          new_password_confirmation: confirmPassword
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setSuccess(data.message);
+        onClose();
+      } else {
+        setError(data.error);
+      }
+    } catch {
+      setError("\u041E\u0448\u0438\u0431\u043A\u0430 \u0441\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u044F");
+    }
+  };
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal fade show d-block", tabIndex: "-1", role: "dialog" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-dialog", role: "document" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-content" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "modal-title" }, "\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn-close", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-body" }, error2 && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-danger" }, error2), success && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-success" }, success), /* @__PURE__ */ import_react5.default.createElement("form", { onSubmit: handleSubmit }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react5.default.createElement("label", { className: "form-label" }, "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement(
+    "input",
+    {
+      type: "password",
+      className: "form-control",
+      value: currentPassword,
+      onChange: (e) => setCurrentPassword(e.target.value),
+      required: true
+    }
+  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react5.default.createElement("label", { className: "form-label" }, "\u041D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement(
+    "input",
+    {
+      type: "password",
+      className: "form-control",
+      value: newPassword,
+      onChange: (e) => setNewPassword(e.target.value),
+      required: true
+    }
+  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react5.default.createElement("label", { className: "form-label" }, "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043F\u0430\u0440\u043E\u043B\u044F"), /* @__PURE__ */ import_react5.default.createElement(
+    "input",
+    {
+      type: "password",
+      className: "form-control",
+      value: confirmPassword,
+      onChange: (e) => setConfirmPassword(e.target.value),
+      required: true
+    }
+  )), /* @__PURE__ */ import_react5.default.createElement("button", { type: "submit", className: "btn btn-primary" }, "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C"), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn btn-secondary ms-2", onClick: onClose }, "\u041E\u0442\u043C\u0435\u043D\u0430"))))));
+}
+
+// app/javascript/controllers/change_password_controller.js
+var change_password_controller_default = class extends Controller {
+  connect() {
+    this.root = import_client3.default.createRoot(this.element);
+    this.url = this.element.dataset.url;
+    this.render(false);
+  }
+  open() {
+    this.render(true);
+  }
+  close() {
+    this.render(false);
+  }
+  render(show) {
+    this.root.render(
+      /* @__PURE__ */ import_react6.default.createElement(ChangePasswordModal, { url: this.url, show, onClose: () => this.close() })
+    );
+  }
+};
+
 // app/javascript/controllers/index.js
 application.register("dropzone", dropzone_controller_default);
 application.register("modal", modal_controller_default);
 application.register("swiper", swiper_controller_default);
 application.register("check_email", check_email_controller_default);
 application.register("gallery", gallery_controller_default);
+application.register("change-password", change_password_controller_default);
 
 // app/javascript/application.js
-var import_react5 = __toESM(require_react());
+var import_react7 = __toESM(require_react());
 var import_react_dom2 = __toESM(require_react_dom());
 
 // app/javascript/add_jquery.js
@@ -97226,7 +97322,7 @@ window.$ = import_jquery.default;
 
 // app/javascript/application.js
 var import_toastr = __toESM(require_toastr());
-window.React = import_react5.default;
+window.React = import_react7.default;
 window.ReactDOM = import_react_dom2.default;
 var ReactRailsUJS = require_react_ujs();
 var skipFirstCall = false;

@@ -1,16 +1,13 @@
-div class="page-header"
-  h3 class="mb-0" Edit home page
-    
-form
+.div.page-header
+  h3.mb-0 Edit home page
 
-  div class="row"
-    div class="col-sm-12"
-      div class="card"
+form
+  .row
+    .col-sm-12
+      .card
         .card-header Primary block
         .card-body
-
           = form_for [:admin, @user] do |f|
-
             - if @user.errors.any?
               - @user.errors.full_messages.each do |msg|
                 .alert.alert-danger = msg
@@ -27,7 +24,14 @@ form
                   = f.label :user_role
                   = f.check_box :user_role, class: 'form-check-input'
 
+            .form-group
+              = f.submit "Submit", class: 'btn btn-primary'
+              = link_to "Cancel", admin_users_path, class: 'btn btn-default'
 
-              .form-group
-                = f.submit "Submit", :class => 'btn btn-primary'
-                = link_to "Cancel", admin_users_path, :class =>'btn btn-default'
+= button_tag "Сменить пароль",
+  type: "button",
+  class: "btn btn-warning mt-3",
+  onclick: "Stimulus.getControllerForElementAndIdentifier(document.getElementById('change_password_modal'), 'change-password').open()"
+
+
+#change_password_modal[data-controller="change-password" data-url=change_password_admin_user_path(@user)]

@@ -22,3 +22,5 @@ application.register("check_email", CheckEmailController)
 import GalleryController from "./gallery_controller"
 application.register("gallery", GalleryController)
 
+import ChangePasswordController from "./change_password_controller"
+application.register("change-password", ChangePasswordController)
