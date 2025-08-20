@@ -4,7 +4,7 @@ lock "~> 3.17.3"
 set :application, 'Photohub'
 set :deploy_to, '/home/depus/app_deploy'
 set :repo_url, 'git@github.com:Cheshir74/MCS.git'
-append :linked_files, "config/database.yml", "config/master.key", "config/secrets.yml"
+append :linked_files, "config/database.yml", "config/master.key", "config/secrets.yml", "config/credentials.yml.enc"
 append :linked_dirs, "log", "tmp", "public/system", "storage"
 namespace :deploy do
     desc 'Run migrations'
