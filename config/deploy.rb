@@ -6,7 +6,7 @@ set :repo_url, 'git@github.com:Cheshir74/MCS.git'
 set :deploy_to, '/home/depus/app_deploy'
 
 # Linked files and dirs
-append :linked_files, "config/database.yml", "config/master.key", "config/credentials/production.key"
+append :linked_files, "config/database.yml", "config/master.key", "config/credentials.yml.enc"
 append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system", "storage"
 
 # Ruby environment
@@ -15,7 +15,7 @@ set :rbenv_ruby, '3.3.0'
 
 # Default environment variables
 set :default_env, {
-  'RAILS_MASTER_KEY' => File.read("#{shared_path}/config/master.key").strip
+  'RAILS_MASTER_KEY' => ENV['RAILS_MASTER_KEY']
 }
 
 # Puma settings
@@ -31,7 +31,52 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true
 
 namespace :deploy do
-  desc 'Run DB migrations'
+  desc "🔑 Check master.key and credentials.yml.enc existence"
+  task :check_keys do
+    on roles(:app) do
+      within shared_path do
+        info "---- 🔑 Checking master.key ----"
+        if test("[ -f #{shared_path}/config/master.key ]")
+          key = capture(:cat, "#{shared_path}/config/master.key").strip
+          info "✅ master.key exists"
+          info "   Content: #{key}"
+        else
+          error "❌ master.key missing"
+          exit 1
+        end
+
+        info "---- 📜 Checking credentials.yml.enc ----"
+        if test("[ -f #{shared_path}/config/credentials.yml.enc ]")
+          info "✅ credentials.yml.enc exists"
+        else
+          error "❌ credentials.yml.enc missing"
+          exit 1
+        end
+      end
+    end
+  end
+
+  desc "🔓 Show decrypted credentials (after release is ready)"
+  task :show_credentials do
+    on roles(:app) do
+      if test("[ -d #{release_path} ]")
+        within release_path do
+          with rails_env: fetch(:rails_env) do
+            creds = capture(:bundle, "exec rails credentials:show || true")
+            if creds.strip.empty?
+              warn "⚠️ Failed to decrypt credentials (check master.key)"
+            else
+              info "🔓 credentials decrypted:\n#{creds}"
+            end
+          end
+        end
+      else
+        warn "⚠️ release_path not found — skipping credentials:show"
+      end
+    end
+  end
+
+  desc '📦 Run DB migrations'
   task :migrate do
     on roles(:app) do
       within release_path do
@@ -42,7 +87,7 @@ namespace :deploy do
     end
   end
 
-  desc 'Build JS assets'
+  desc '🛠️ Build JS assets'
   task :build_js_assets do
     on roles(:web) do
       within release_path do
@@ -52,7 +97,7 @@ namespace :deploy do
     end
   end
 
-  desc 'Restart Puma'
+  desc '🔄 Restart Puma'
   task :restart do
     on roles(:app) do
       invoke 'puma:restart'
@@ -61,6 +106,8 @@ namespace :deploy do
 end
 
 # Hooks sequence
+before 'deploy:updated', 'deploy:check_keys'
+before 'deploy:assets:precompile', 'deploy:show_credentials'
 after 'deploy:updated', 'deploy:migrate'
 after 'deploy:updated', 'deploy:build_js_assets'
 after 'deploy:migrate', 'deploy:assets:precompile'
