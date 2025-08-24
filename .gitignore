@@ -32,7 +32,6 @@
 /config/deploy.rb.bk
 /config/database*
 /config/secrets*
-/config/puma*
 /config/credentials.yml.enc
 .idea
 .DS_Store
