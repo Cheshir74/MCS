@@ -1,5 +1,5 @@
 app_dir = File.expand_path("../..", __FILE__)
-shared_dir = "#{app_dir}"
+shared_dir = "/home/depus/app_deploy/shared"
 
 threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
 threads threads_count, threads_count
