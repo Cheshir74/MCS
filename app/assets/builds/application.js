@@ -91628,6 +91628,7 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
   const [visiblePhotos, setVisiblePhotos] = (0, import_react3.useState)([]);
   const [rowGroups, setRowGroups] = (0, import_react3.useState)([]);
   const [windowWidth, setWindowWidth] = (0, import_react3.useState)(typeof window !== "undefined" ? window.innerWidth : 1200);
+  const [visibleSet, setVisibleSet] = (0, import_react3.useState)(/* @__PURE__ */ new Set());
   const MAX_CONTAINER_WIDTH = 1320;
   const ROW_GAP = 10;
   const handleClose = () => setTimeout(exitFullscreen, 100);
@@ -91673,9 +91674,17 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     if (!photoData.length) return;
     setVisiblePhotos(photoData.slice(0, batchSize));
   }, [photoData, batchSize]);
-  const loadMore = () => {
-    setVisiblePhotos((prev) => photoData.slice(0, prev.length + batchSize));
-  };
+  (0, import_react3.useEffect)(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const threshold = document.body.offsetHeight - 300;
+      if (scrollPosition >= threshold && visiblePhotos.length < photoData.length) {
+        setVisiblePhotos((prev) => photoData.slice(0, Math.min(prev.length + batchSize, photoData.length)));
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [visiblePhotos.length, photoData, batchSize]);
   const getLayoutParams = (0, import_react3.useCallback)(() => ({
     rowHeight: 250,
     portraitRowHeight: 215,
@@ -91736,41 +91745,100 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     (rowIndex, photoIndex) => rowGroups.slice(0, rowIndex).reduce((sum, row) => sum + row.photos.length, 0) + photoIndex + 1,
     [rowGroups]
   );
+  (0, import_react3.useEffect)(() => {
+    visiblePhotos.forEach((photo, i) => {
+      setTimeout(() => setVisibleSet((prev) => new Set(prev).add(i)), i * 50);
+    });
+  }, [visiblePhotos]);
   const { rowHeight, portraitRowHeight, containerWidth } = getLayoutParams();
   const galleryStyle = direction === "row" ? { display: "flex", flexDirection: "column", gap: `${ROW_GAP}px`, width: "100%", maxWidth: `${MAX_CONTAINER_WIDTH}px`, margin: "0 auto" } : { columnCount, columnGap: `${ROW_GAP}px`, width: "100%" };
   return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("div", { className: "gallery", style: galleryStyle }, direction === "row" ? rowGroups.map((row, rowIndex) => {
     const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
-    const totalRowWidth = row.photos.reduce((sum, p) => sum + p.ratio * currentRowHeight, 0);
+    const totalWidthOriginal = row.photos.reduce((sum, p) => sum + p.ratio * currentRowHeight, 0);
     const availableWidth = containerWidth - (row.photos.length - 1) * ROW_GAP;
-    const scaleFactor = Math.min(availableWidth / totalRowWidth, 1);
-    return /* @__PURE__ */ import_react3.default.createElement("div", { key: rowIndex, style: { display: "flex", flexWrap: "nowrap", gap: `${ROW_GAP}px`, justifyContent: "center", width: "100%" } }, row.photos.map((photo, i) => {
-      const width = photo.ratio * currentRowHeight * scaleFactor;
-      const height = currentRowHeight * scaleFactor;
-      return /* @__PURE__ */ import_react3.default.createElement(
-        "div",
-        {
-          key: i,
-          style: { width: `${width}px`, height: `${height}px`, borderRadius: "8px", overflow: "hidden", cursor: "pointer", backgroundColor: "#000", flexShrink: 0, flexGrow: 0 },
-          onClick: () => {
-            setSlide(calculateLightboxIndex(rowIndex, i));
-            setToggler((t) => !t);
-          }
-        },
-        /* @__PURE__ */ import_react3.default.createElement("img", { src: photo.thumbnail || photo.src, alt: photo.alt || "", style: { width: "100%", height: "100%", objectFit: "contain" }, loading: "lazy" })
-      );
-    }));
+    const scaleFactor = availableWidth / totalWidthOriginal;
+    return /* @__PURE__ */ import_react3.default.createElement(
+      "div",
+      {
+        key: rowIndex,
+        style: {
+          display: "flex",
+          flexWrap: "nowrap",
+          gap: `${ROW_GAP}px`,
+          justifyContent: "center",
+          width: "100%"
+        }
+      },
+      row.photos.map((photo, i) => {
+        const width = photo.ratio * currentRowHeight * scaleFactor;
+        const height = currentRowHeight * scaleFactor;
+        return /* @__PURE__ */ import_react3.default.createElement(
+          "div",
+          {
+            key: i,
+            style: {
+              width: `${width}px`,
+              height: `${height}px`,
+              borderRadius: "8px",
+              overflow: "hidden",
+              cursor: "pointer",
+              backgroundColor: "#000",
+              flexShrink: 0,
+              flexGrow: 0,
+              transition: "width 0.3s ease, height 0.3s ease, opacity 0.5s ease",
+              opacity: visibleSet.has(i) ? 1 : 0
+            },
+            onClick: () => {
+              setSlide(calculateLightboxIndex(rowIndex, i));
+              setToggler((t) => !t);
+            }
+          },
+          /* @__PURE__ */ import_react3.default.createElement(
+            "img",
+            {
+              src: photo.thumbnail || photo.src,
+              alt: photo.alt || "",
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                transition: "width 0.3s ease, height 0.3s ease, opacity 0.5s ease",
+                opacity: visibleSet.has(i) ? 1 : 0
+              },
+              loading: "lazy"
+            }
+          )
+        );
+      })
+    );
   }) : visiblePhotos.map((photo, i) => /* @__PURE__ */ import_react3.default.createElement(
     "div",
     {
       key: i,
-      style: { breakInside: "avoid", marginBottom: `${ROW_GAP}px`, borderRadius: "8px", overflow: "hidden", cursor: "pointer" },
+      style: {
+        breakInside: "avoid",
+        marginBottom: `${ROW_GAP}px`,
+        borderRadius: "8px",
+        overflow: "hidden",
+        cursor: "pointer",
+        opacity: visibleSet.has(i) ? 1 : 0,
+        transition: "opacity 0.5s ease"
+      },
       onClick: () => {
         setSlide(i + 1);
         setToggler((t) => !t);
       }
     },
-    /* @__PURE__ */ import_react3.default.createElement("img", { src: photo.thumbnail || photo.src, alt: photo.alt || "", style: { width: "100%", height: "auto", objectFit: "contain" }, loading: "lazy" })
-  ))), visiblePhotos.length < photoData.length && /* @__PURE__ */ import_react3.default.createElement("div", { style: { textAlign: "center", margin: "20px 0" } }, /* @__PURE__ */ import_react3.default.createElement("button", { onClick: loadMore, style: { padding: "8px 16px", cursor: "pointer" } }, "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0435\u0449\u0451")), photos.length > 0 && /* @__PURE__ */ import_react3.default.createElement(import_fslightbox_react.default, { toggler, sources: photos.map((p) => p.src), slide: slide2, onClose: handleClose }));
+    /* @__PURE__ */ import_react3.default.createElement(
+      "img",
+      {
+        src: photo.thumbnail || photo.src,
+        alt: photo.alt || "",
+        style: { width: "100%", height: "auto", objectFit: "contain", opacity: visibleSet.has(i) ? 1 : 0, transition: "opacity 0.5s ease" },
+        loading: "lazy"
+      }
+    )
+  ))), photos.length > 0 && /* @__PURE__ */ import_react3.default.createElement(import_fslightbox_react.default, { toggler, sources: photos.map((p) => p.src), slide: slide2, onClose: handleClose }));
 }
 
 // app/javascript/controllers/gallery_controller.js

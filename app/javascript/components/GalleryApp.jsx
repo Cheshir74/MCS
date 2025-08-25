@@ -15,6 +15,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
   const [visiblePhotos, setVisiblePhotos] = useState([]);
   const [rowGroups, setRowGroups] = useState([]);
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
+  const [visibleSet, setVisibleSet] = useState(new Set()); // для fade-in
 
   const MAX_CONTAINER_WIDTH = 1320;
   const ROW_GAP = 10;
@@ -60,15 +61,23 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
 
   useEffect(() => { preloadImages(); }, [preloadImages]);
 
-  // ---------------- Batch loading ----------------
+  // ---------------- Batch loading + Infinity Scroll ----------------
   useEffect(() => {
     if (!photoData.length) return;
     setVisiblePhotos(photoData.slice(0, batchSize));
   }, [photoData, batchSize]);
 
-  const loadMore = () => {
-    setVisiblePhotos(prev => photoData.slice(0, prev.length + batchSize));
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const threshold = document.body.offsetHeight - 300; // за 300px до низа
+      if (scrollPosition >= threshold && visiblePhotos.length < photoData.length) {
+        setVisiblePhotos(prev => photoData.slice(0, Math.min(prev.length + batchSize, photoData.length)));
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [visiblePhotos.length, photoData, batchSize]);
 
   // ------------------ ROW ------------------
   const getLayoutParams = useCallback(() => ({
@@ -148,6 +157,13 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
     [rowGroups]
   );
 
+  // ------------------ Fade-in effect ------------------
+  useEffect(() => {
+    visiblePhotos.forEach((photo, i) => {
+      setTimeout(() => setVisibleSet(prev => new Set(prev).add(i)), i * 50);
+    });
+  }, [visiblePhotos]);
+
   const { rowHeight, portraitRowHeight, containerWidth } = getLayoutParams();
 
   const galleryStyle = direction === "row"
@@ -160,20 +176,56 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
         {direction === "row"
           ? rowGroups.map((row, rowIndex) => {
               const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
-              const totalRowWidth = row.photos.reduce((sum, p) => sum + p.ratio * currentRowHeight, 0);
+              const totalWidthOriginal = row.photos.reduce((sum, p) => sum + p.ratio * currentRowHeight, 0);
               const availableWidth = containerWidth - (row.photos.length - 1) * ROW_GAP;
-              const scaleFactor = Math.min(availableWidth / totalRowWidth, 1);
+              const scaleFactor = availableWidth / totalWidthOriginal;
 
               return (
-                <div key={rowIndex} style={{ display: "flex", flexWrap: "nowrap", gap: `${ROW_GAP}px`, justifyContent: "center", width: "100%" }}>
+                <div
+                  key={rowIndex}
+                  style={{
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    gap: `${ROW_GAP}px`,
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
                   {row.photos.map((photo, i) => {
                     const width = photo.ratio * currentRowHeight * scaleFactor;
                     const height = currentRowHeight * scaleFactor;
                     return (
-                      <div key={i} style={{ width: `${width}px`, height: `${height}px`, borderRadius: "8px", overflow: "hidden", cursor: "pointer", backgroundColor: "#000", flexShrink: 0, flexGrow: 0 }}
-                        onClick={() => { setSlide(calculateLightboxIndex(rowIndex, i)); setToggler(t => !t); }}
+                      <div
+                        key={i}
+                        style={{
+                          width: `${width}px`,
+                          height: `${height}px`,
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          cursor: "pointer",
+                          backgroundColor: "#000",
+                          flexShrink: 0,
+                          flexGrow: 0,
+                          transition: "width 0.3s ease, height 0.3s ease, opacity 0.5s ease",
+                          opacity: visibleSet.has(i) ? 1 : 0
+                        }}
+                        onClick={() => {
+                          setSlide(calculateLightboxIndex(rowIndex, i));
+                          setToggler(t => !t);
+                        }}
                       >
-                        <img src={photo.thumbnail || photo.src} alt={photo.alt || ""} style={{ width: "100%", height: "100%", objectFit: "contain" }} loading="lazy" />
+                        <img
+                          src={photo.thumbnail || photo.src}
+                          alt={photo.alt || ""}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain",
+                            transition: "width 0.3s ease, height 0.3s ease, opacity 0.5s ease",
+                            opacity: visibleSet.has(i) ? 1 : 0
+                          }}
+                          loading="lazy"
+                        />
                       </div>
                     );
                   })}
@@ -181,19 +233,28 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
               );
             })
           : visiblePhotos.map((photo, i) => (
-              <div key={i} style={{ breakInside: "avoid", marginBottom: `${ROW_GAP}px`, borderRadius: "8px", overflow: "hidden", cursor: "pointer" }}
+              <div
+                key={i}
+                style={{
+                  breakInside: "avoid",
+                  marginBottom: `${ROW_GAP}px`,
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  opacity: visibleSet.has(i) ? 1 : 0,
+                  transition: "opacity 0.5s ease"
+                }}
                 onClick={() => { setSlide(i + 1); setToggler(t => !t); }}
               >
-                <img src={photo.thumbnail || photo.src} alt={photo.alt || ""} style={{ width: "100%", height: "auto", objectFit: "contain" }} loading="lazy" />
+                <img
+                  src={photo.thumbnail || photo.src}
+                  alt={photo.alt || ""}
+                  style={{ width: "100%", height: "auto", objectFit: "contain", opacity: visibleSet.has(i) ? 1 : 0, transition: "opacity 0.5s ease" }}
+                  loading="lazy"
+                />
               </div>
             ))}
       </div>
-
-      {visiblePhotos.length < photoData.length &&
-        <div style={{ textAlign: "center", margin: "20px 0" }}>
-          <button onClick={loadMore} style={{ padding: "8px 16px", cursor: "pointer" }}>Загрузить ещё</button>
-        </div>
-      }
 
       {photos.length > 0 && <FsLightbox toggler={toggler} sources={photos.map(p => p.src)} slide={slide} onClose={handleClose} />}
     </>
