@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import FsLightbox from "fslightbox-react";
 
-// --- Глобальный кэш изображений ---
-const imageCache = {}; // ключ: src, значение: { width, height, ratio, orientation }
+// --- Глобальный кэш ---
+const imageCache = {}; // { src: { width, height, ratio, orientation } }
 
 function exitFullscreen() {
   if (document.fullscreenElement) document.exitFullscreen();
 }
 
-export default function GalleryApp({ photos, direction = "row" }) {
+export default function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
   const [toggler, setToggler] = useState(false);
   const [slide, setSlide] = useState(1);
   const [photoData, setPhotoData] = useState([]);
+  const [visiblePhotos, setVisiblePhotos] = useState([]);
   const [rowGroups, setRowGroups] = useState([]);
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
 
@@ -23,14 +24,12 @@ export default function GalleryApp({ photos, direction = "row" }) {
   // ---------------- Preload images с кэшем ----------------
   const preloadImages = useCallback(() => {
     if (!photos || !photos.length) return;
-
     let loaded = 0;
     const data = [];
 
     photos.forEach((p, idx) => {
       if (!p.src) { loaded++; return; }
 
-      // Проверка кэша
       if (imageCache[p.src]) {
         data[idx] = { ...p, ...imageCache[p.src] };
         loaded++;
@@ -47,7 +46,7 @@ export default function GalleryApp({ photos, direction = "row" }) {
           ratio: img.naturalWidth / img.naturalHeight,
           orientation: img.naturalWidth > img.naturalHeight ? "landscape" : "portrait",
         };
-        imageCache[p.src] = info; // сохраняем в кэш
+        imageCache[p.src] = info;
         data[idx] = { ...p, ...info };
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
@@ -61,6 +60,16 @@ export default function GalleryApp({ photos, direction = "row" }) {
 
   useEffect(() => { preloadImages(); }, [preloadImages]);
 
+  // ---------------- Batch loading ----------------
+  useEffect(() => {
+    if (!photoData.length) return;
+    setVisiblePhotos(photoData.slice(0, batchSize));
+  }, [photoData, batchSize]);
+
+  const loadMore = () => {
+    setVisiblePhotos(prev => photoData.slice(0, prev.length + batchSize));
+  };
+
   // ------------------ ROW ------------------
   const getLayoutParams = useCallback(() => ({
     rowHeight: 250,
@@ -68,15 +77,15 @@ export default function GalleryApp({ photos, direction = "row" }) {
     containerWidth: Math.min(windowWidth, MAX_CONTAINER_WIDTH) - 80
   }), [windowWidth]);
 
-  const groupPhotosSmart = useCallback(() => {
-    if (!photoData.length || direction !== "row") return [];
+  const groupPhotosSmart = useCallback((photosToGroup) => {
+    if (!photosToGroup.length || direction !== "row") return [];
 
     const { containerWidth, rowHeight, portraitRowHeight } = getLayoutParams();
     const rows = [];
     let currentRow = [];
     let rowHasPortrait = false;
 
-    photoData.forEach(photo => {
+    photosToGroup.forEach(photo => {
       currentRow.push(photo);
       if (photo.orientation === "portrait") rowHasPortrait = true;
 
@@ -112,11 +121,11 @@ export default function GalleryApp({ photos, direction = "row" }) {
     }
 
     return balancedRows;
-  }, [photoData, direction, getLayoutParams]);
+  }, [direction, getLayoutParams]);
 
   useEffect(() => {
-    if (photoData.length && direction === "row") setRowGroups(groupPhotosSmart());
-  }, [photoData, groupPhotosSmart, direction]);
+    if (visiblePhotos.length && direction === "row") setRowGroups(groupPhotosSmart(visiblePhotos));
+  }, [visiblePhotos, groupPhotosSmart, direction]);
 
   // ------------------ COLUMN (Pinterest style) ------------------
   const getColumnCount = useCallback(() => {
@@ -164,21 +173,27 @@ export default function GalleryApp({ photos, direction = "row" }) {
                       <div key={i} style={{ width: `${width}px`, height: `${height}px`, borderRadius: "8px", overflow: "hidden", cursor: "pointer", backgroundColor: "#000", flexShrink: 0, flexGrow: 0 }}
                         onClick={() => { setSlide(calculateLightboxIndex(rowIndex, i)); setToggler(t => !t); }}
                       >
-                        <img src={photo.src} alt={photo.alt || ""} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                        <img src={photo.thumbnail || photo.src} alt={photo.alt || ""} style={{ width: "100%", height: "100%", objectFit: "contain" }} loading="lazy" />
                       </div>
                     );
                   })}
                 </div>
               );
             })
-          : photoData.map((photo, i) => (
+          : visiblePhotos.map((photo, i) => (
               <div key={i} style={{ breakInside: "avoid", marginBottom: `${ROW_GAP}px`, borderRadius: "8px", overflow: "hidden", cursor: "pointer" }}
                 onClick={() => { setSlide(i + 1); setToggler(t => !t); }}
               >
-                <img src={photo.src} alt={photo.alt || ""} style={{ width: "100%", height: "auto", objectFit: "contain" }} />
+                <img src={photo.thumbnail || photo.src} alt={photo.alt || ""} style={{ width: "100%", height: "auto", objectFit: "contain" }} loading="lazy" />
               </div>
             ))}
       </div>
+
+      {visiblePhotos.length < photoData.length &&
+        <div style={{ textAlign: "center", margin: "20px 0" }}>
+          <button onClick={loadMore} style={{ padding: "8px 16px", cursor: "pointer" }}>Загрузить ещё</button>
+        </div>
+      }
 
       {photos.length > 0 && <FsLightbox toggler={toggler} sources={photos.map(p => p.src)} slide={slide} onClose={handleClose} />}
     </>

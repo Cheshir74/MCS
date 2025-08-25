@@ -91621,10 +91621,11 @@ var imageCache = {};
 function exitFullscreen() {
   if (document.fullscreenElement) document.exitFullscreen();
 }
-function GalleryApp({ photos, direction = "row" }) {
+function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
   const [toggler, setToggler] = (0, import_react3.useState)(false);
   const [slide2, setSlide] = (0, import_react3.useState)(1);
   const [photoData, setPhotoData] = (0, import_react3.useState)([]);
+  const [visiblePhotos, setVisiblePhotos] = (0, import_react3.useState)([]);
   const [rowGroups, setRowGroups] = (0, import_react3.useState)([]);
   const [windowWidth, setWindowWidth] = (0, import_react3.useState)(typeof window !== "undefined" ? window.innerWidth : 1200);
   const MAX_CONTAINER_WIDTH = 1320;
@@ -91668,18 +91669,25 @@ function GalleryApp({ photos, direction = "row" }) {
   (0, import_react3.useEffect)(() => {
     preloadImages();
   }, [preloadImages]);
+  (0, import_react3.useEffect)(() => {
+    if (!photoData.length) return;
+    setVisiblePhotos(photoData.slice(0, batchSize));
+  }, [photoData, batchSize]);
+  const loadMore = () => {
+    setVisiblePhotos((prev) => photoData.slice(0, prev.length + batchSize));
+  };
   const getLayoutParams = (0, import_react3.useCallback)(() => ({
     rowHeight: 250,
     portraitRowHeight: 215,
     containerWidth: Math.min(windowWidth, MAX_CONTAINER_WIDTH) - 80
   }), [windowWidth]);
-  const groupPhotosSmart = (0, import_react3.useCallback)(() => {
-    if (!photoData.length || direction !== "row") return [];
+  const groupPhotosSmart = (0, import_react3.useCallback)((photosToGroup) => {
+    if (!photosToGroup.length || direction !== "row") return [];
     const { containerWidth: containerWidth2, rowHeight: rowHeight2, portraitRowHeight: portraitRowHeight2 } = getLayoutParams();
     const rows = [];
     let currentRow = [];
     let rowHasPortrait = false;
-    photoData.forEach((photo) => {
+    photosToGroup.forEach((photo) => {
       currentRow.push(photo);
       if (photo.orientation === "portrait") rowHasPortrait = true;
       const currentRowHeight = rowHasPortrait ? portraitRowHeight2 : rowHeight2;
@@ -91709,10 +91717,10 @@ function GalleryApp({ photos, direction = "row" }) {
       else balancedRows.push({ photos: buffer });
     }
     return balancedRows;
-  }, [photoData, direction, getLayoutParams]);
+  }, [direction, getLayoutParams]);
   (0, import_react3.useEffect)(() => {
-    if (photoData.length && direction === "row") setRowGroups(groupPhotosSmart());
-  }, [photoData, groupPhotosSmart, direction]);
+    if (visiblePhotos.length && direction === "row") setRowGroups(groupPhotosSmart(visiblePhotos));
+  }, [visiblePhotos, groupPhotosSmart, direction]);
   const getColumnCount = (0, import_react3.useCallback)(() => {
     if (windowWidth < 768) return 1;
     if (windowWidth < 1024) return 2;
@@ -91748,10 +91756,10 @@ function GalleryApp({ photos, direction = "row" }) {
             setToggler((t) => !t);
           }
         },
-        /* @__PURE__ */ import_react3.default.createElement("img", { src: photo.src, alt: photo.alt || "", style: { width: "100%", height: "100%", objectFit: "contain" } })
+        /* @__PURE__ */ import_react3.default.createElement("img", { src: photo.thumbnail || photo.src, alt: photo.alt || "", style: { width: "100%", height: "100%", objectFit: "contain" }, loading: "lazy" })
       );
     }));
-  }) : photoData.map((photo, i) => /* @__PURE__ */ import_react3.default.createElement(
+  }) : visiblePhotos.map((photo, i) => /* @__PURE__ */ import_react3.default.createElement(
     "div",
     {
       key: i,
@@ -91761,8 +91769,8 @@ function GalleryApp({ photos, direction = "row" }) {
         setToggler((t) => !t);
       }
     },
-    /* @__PURE__ */ import_react3.default.createElement("img", { src: photo.src, alt: photo.alt || "", style: { width: "100%", height: "auto", objectFit: "contain" } })
-  ))), photos.length > 0 && /* @__PURE__ */ import_react3.default.createElement(import_fslightbox_react.default, { toggler, sources: photos.map((p) => p.src), slide: slide2, onClose: handleClose }));
+    /* @__PURE__ */ import_react3.default.createElement("img", { src: photo.thumbnail || photo.src, alt: photo.alt || "", style: { width: "100%", height: "auto", objectFit: "contain" }, loading: "lazy" })
+  ))), visiblePhotos.length < photoData.length && /* @__PURE__ */ import_react3.default.createElement("div", { style: { textAlign: "center", margin: "20px 0" } }, /* @__PURE__ */ import_react3.default.createElement("button", { onClick: loadMore, style: { padding: "8px 16px", cursor: "pointer" } }, "\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044C \u0435\u0449\u0451")), photos.length > 0 && /* @__PURE__ */ import_react3.default.createElement(import_fslightbox_react.default, { toggler, sources: photos.map((p) => p.src), slide: slide2, onClose: handleClose }));
 }
 
 // app/javascript/controllers/gallery_controller.js
