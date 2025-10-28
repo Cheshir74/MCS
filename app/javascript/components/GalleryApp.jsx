@@ -1,36 +1,65 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import FsLightbox from "fslightbox-react";
 
-// --- Глобальный кэш ---
-const imageCache = {}; // { src: { width, height, ratio, orientation } }
+// --- Глобальный кэш метаданных ---
+const imageCache = {}; // { src: { width, height, ratio, orientation } } [web:41]
 
-function exitFullscreen() {
-  if (document.fullscreenElement) document.exitFullscreen();
+// Утилита выхода из fullscreen
+function exitFullscreenSafe() {
+  try { if (document.fullscreenElement) document.exitFullscreen(); } catch {}
+}
+
+function isCrossOrigin(url) {
+  if (typeof window === "undefined" || !url) return false; // [web:41]
+  try {
+    const u = new URL(url, window.location.href);
+    return u.origin !== window.location.origin; // [web:41]
+  } catch {
+    return false; // [web:41]
+  }
+}
+
+// Единый «сессионный» cache-busting для полноразмерных URL
+function addBustOnce(url, seed) {
+  if (!url) return url; // [web:41]
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}_ts=${seed}`; // [web:41]
 }
 
 export default function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
-  const [toggler, setToggler] = useState(false);
-  const [slide, setSlide] = useState(1);
-  const [photoData, setPhotoData] = useState([]);
-  const [visiblePhotos, setVisiblePhotos] = useState([]);
-  const [rowGroups, setRowGroups] = useState([]);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
-  const [visibleSet, setVisibleSet] = useState(new Set()); // для fade-in
+  // Lightbox управление: toggler + slide (1-based), как в рабочем примере
+  const [toggler, setToggler] = useState(false); // [web:26]
+  const [slide, setSlide] = useState(1);         // 1-based индекс слайда [web:26]
 
-  const MAX_CONTAINER_WIDTH = 1320;
-  const ROW_GAP = 10;
+  // Состояние сетки
+  const [photoData, setPhotoData] = useState([]);       // массив с ratio/orientation [web:41]
+  const [visiblePhotos, setVisiblePhotos] = useState([]); // порции для бесконечной прокрутки [web:41]
+  const [rowGroups, setRowGroups] = useState([]);       // сгруппированные ряды для row режима [web:41]
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200); // [web:41]
+  const [visibleSet, setVisibleSet] = useState(new Set()); // fade-in [web:41]
 
-  const handleClose = () => setTimeout(exitFullscreen, 100);
+  // Окружение/refs
+  const isSafari = typeof navigator !== "undefined" && /^((?!chrome|android).)*safari/i.test(navigator.userAgent); // [web:41]
+  const sessionSeedRef = useRef(Math.floor(Date.now() / 30000)); // единый bust ~30с для полноразмерных [web:41]
 
-  // ---------------- Preload images с кэшем ----------------
+  const MAX_CONTAINER_WIDTH = 1320; // [web:41]
+  const ROW_GAP = 10;               // [web:41]
+
+  const handleClose = useCallback(() => {
+    // Явное закрытие без инверсий и выход из fullscreen
+    setTimeout(exitFullscreenSafe, 80); // дать анимации завершиться [web:41]
+  }, []); // [web:26][web:41]
+
+  // ---------- Preload размеров превью (без bust на превью) ----------
   const preloadImages = useCallback(() => {
-    if (!photos || !photos.length) return;
-    let loaded = 0;
+    if (!photos || !photos.length) return; // [web:41]
     const data = [];
+    let loaded = 0;
 
     photos.forEach((p, idx) => {
-      if (!p.src) { loaded++; return; }
+      if (!p || !p.src) { loaded++; if (loaded === photos.length) setPhotoData(data.filter(Boolean)); return; } // [web:41]
 
+      // есть кэш — используем сразу
       if (imageCache[p.src]) {
         data[idx] = { ...p, ...imageCache[p.src] };
         loaded++;
@@ -38,15 +67,17 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
         return;
       }
 
+      // грузим «как есть» (превью), без bust
       const img = new Image();
+      try { if (isCrossOrigin(p.src)) img.crossOrigin = "anonymous"; } catch {}
       img.src = p.src;
       img.onload = () => {
         const info = {
           width: img.naturalWidth,
           height: img.naturalHeight,
           ratio: img.naturalWidth / img.naturalHeight,
-          orientation: img.naturalWidth > img.naturalHeight ? "landscape" : "portrait",
-        };
+          orientation: img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
+        }; // [web:41]
         imageCache[p.src] = info;
         data[idx] = { ...p, ...info };
         loaded++;
@@ -57,38 +88,37 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
       };
     });
-  }, [photos]);
+  }, [photos]); // [web:41]
 
-  useEffect(() => { preloadImages(); }, [preloadImages]);
+  useEffect(() => { preloadImages(); }, [preloadImages]); // [web:41]
 
-  // ---------------- Batch loading + Infinity Scroll ----------------
+  // ---------- Порционная загрузка + бесконечная прокрутка ----------
   useEffect(() => {
-    if (!photoData.length) return;
-    setVisiblePhotos(photoData.slice(0, batchSize));
-  }, [photoData, batchSize]);
+    if (!photoData.length) return; // [web:41]
+    setVisiblePhotos(photoData.slice(0, batchSize)); // [web:41]
+  }, [photoData, batchSize]); // [web:41]
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.innerHeight + window.scrollY;
-      const threshold = document.body.offsetHeight - 300; // за 300px до низа
+      const threshold = document.body.offsetHeight - 300;
       if (scrollPosition >= threshold && visiblePhotos.length < photoData.length) {
         setVisiblePhotos(prev => photoData.slice(0, Math.min(prev.length + batchSize, photoData.length)));
       }
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [visiblePhotos.length, photoData, batchSize]);
+  }, [visiblePhotos.length, photoData, batchSize]); // [web:41]
 
-  // ------------------ ROW ------------------
+  // ---------- ROW layout helpers ----------
   const getLayoutParams = useCallback(() => ({
     rowHeight: 250,
     portraitRowHeight: 215,
     containerWidth: Math.min(windowWidth, MAX_CONTAINER_WIDTH) - 80
-  }), [windowWidth]);
+  }), [windowWidth]); // [web:41]
 
   const groupPhotosSmart = useCallback((photosToGroup) => {
-    if (!photosToGroup.length || direction !== "row") return [];
-
+    if (!photosToGroup.length || direction !== "row") return []; // [web:41]
     const { containerWidth, rowHeight, portraitRowHeight } = getLayoutParams();
     const rows = [];
     let currentRow = [];
@@ -97,11 +127,9 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
     photosToGroup.forEach(photo => {
       currentRow.push(photo);
       if (photo.orientation === "portrait") rowHasPortrait = true;
-
       const currentRowHeight = rowHasPortrait ? portraitRowHeight : rowHeight;
       const maxPerRow = rowHasPortrait ? 4 : 3;
       const totalWidth = currentRow.reduce((sum, p) => sum + p.ratio * currentRowHeight, 0) + (currentRow.length - 1) * ROW_GAP;
-
       if (currentRow.length > maxPerRow || totalWidth > containerWidth) {
         if (currentRow.length > 1) {
           const last = currentRow.pop();
@@ -114,61 +142,64 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
 
     if (currentRow.length) rows.push({ photos: currentRow, hasPortrait: rowHasPortrait });
 
-    // Перераспределяем одиночные фото
-    const balancedRows = [];
-    let buffer = [];
-    rows.forEach(row => {
-      row.photos.forEach(p => buffer.push(p));
-      while (buffer.length >= 2) {
-        const maxPerRow = row.photos.some(p => p.orientation === "portrait") ? 4 : 3;
-        balancedRows.push({ photos: buffer.splice(0, Math.min(buffer.length, maxPerRow)) });
-      }
-    });
-    if (buffer.length) {
-      if (balancedRows.length) balancedRows[balancedRows.length - 1].photos.push(...buffer);
-      else balancedRows.push({ photos: buffer });
-    }
-
-    return balancedRows;
-  }, [direction, getLayoutParams]);
+    // ВАЖНО: без «перераспределения одиночных» во имя стабильности глобальных индексов
+    return rows; // индексы остаются монотонными и соответствуют photos.map((p)=>p.src) [web:41]
+  }, [direction, getLayoutParams]); // [web:41]
 
   useEffect(() => {
-    if (visiblePhotos.length && direction === "row") setRowGroups(groupPhotosSmart(visiblePhotos));
-  }, [visiblePhotos, groupPhotosSmart, direction]);
+    if (visiblePhotos.length && direction === "row") setRowGroups(groupPhotosSmart(visiblePhotos)); // [web:41]
+  }, [visiblePhotos, groupPhotosSmart, direction]); // [web:41]
 
-  // ------------------ COLUMN (Pinterest style) ------------------
+  // ---------- COLUMN (masonry) ----------
   const getColumnCount = useCallback(() => {
     if (windowWidth < 768) return 1;
     if (windowWidth < 1024) return 2;
     return 3;
-  }, [windowWidth]);
-
-  const columnCount = direction === "column" ? getColumnCount() : 0;
+  }, [windowWidth]); // [web:41]
+  const columnCount = direction === "column" ? getColumnCount() : 0; // [web:41]
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, []); // [web:41]
 
-  const calculateLightboxIndex = useCallback(
-    (rowIndex, photoIndex) =>
-      rowGroups.slice(0, rowIndex).reduce((sum, row) => sum + row.photos.length, 0) + photoIndex + 1,
-    [rowGroups]
-  );
-
-  // ------------------ Fade-in effect ------------------
+  // ---------- Fade-in ----------
   useEffect(() => {
     visiblePhotos.forEach((photo, i) => {
       setTimeout(() => setVisibleSet(prev => new Set(prev).add(i)), i * 50);
     });
-  }, [visiblePhotos]);
+  }, [visiblePhotos]); // [web:41]
 
+  // ---------- Подготовка полноразмерных sources (с единым сессионным bust) ----------
+  const fullSources = useMemo(() => {
+    const seed = sessionSeedRef.current;
+    return (photos || []).map(p => addBustOnce(p?.src || "", seed)); // [web:41]
+  }, [photos]); // [web:41]
+
+  // Вычисление глобального 1-based индекса для FsLightbox (row режим)
+  const calcGlobalSlideRow = useCallback(
+    (rowIndex, photoIndex) =>
+      rowGroups.slice(0, rowIndex).reduce((sum, row) => sum + (row.photos?.length || 0), 0) + photoIndex + 1,
+    [rowGroups]
+  ); // [web:26]
+
+  // ---------- Открытие по клику: выставить slide → дождаться кадра → инвертировать toggler ----------
+  const openWithSlide = useCallback(async (nextSlide) => {
+    // clamp в диапазоне 1..N
+    const n = fullSources.length || 1;
+    const safe = Math.min(Math.max(nextSlide, 1), n);
+    setSlide(safe); // сначала слайд [web:26]
+    // дождаться применения пропов родителя до инициализации модалки
+    await new Promise(r => requestAnimationFrame(r)); // [web:41]
+    setToggler(t => !t); // затем запуск [web:26]
+  }, [fullSources.length]); // [web:26][web:41]
+
+  // ---------- Рендер ----------
   const { rowHeight, portraitRowHeight, containerWidth } = getLayoutParams();
-
   const galleryStyle = direction === "row"
     ? { display: "flex", flexDirection: "column", gap: `${ROW_GAP}px`, width: "100%", maxWidth: `${MAX_CONTAINER_WIDTH}px`, margin: "0 auto" }
-    : { columnCount: columnCount, columnGap: `${ROW_GAP}px`, width: "100%" };
+    : { columnCount, columnGap: `${ROW_GAP}px`, width: "100%" }; // [web:41]
 
   return (
     <>
@@ -176,30 +207,24 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
         {direction === "row"
           ? rowGroups.map((row, rowIndex) => {
               const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
-              const totalWidthOriginal = row.photos.reduce((sum, p) => sum + p.ratio * currentRowHeight, 0);
-              const availableWidth = containerWidth - (row.photos.length - 1) * ROW_GAP;
-              const scaleFactor = availableWidth / totalWidthOriginal;
+              const totalWidthOriginal = (row.photos || []).reduce((sum, p) => sum + (p.ratio || 1) * currentRowHeight, 0) || 1;
+              const availableWidth = Math.max(1, containerWidth - ((row.photos?.length || 0) - 1) * ROW_GAP);
+              const scaleFactor = isFinite(availableWidth / totalWidthOriginal) ? availableWidth / totalWidthOriginal : 1;
 
               return (
                 <div
                   key={rowIndex}
-                  style={{
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    gap: `${ROW_GAP}px`,
-                    justifyContent: "center",
-                    width: "100%",
-                  }}
+                  style={{ display: "flex", flexWrap: "nowrap", gap: `${ROW_GAP}px`, justifyContent: "center", width: "100%" }}
                 >
-                  {row.photos.map((photo, i) => {
-                    const width = photo.ratio * currentRowHeight * scaleFactor;
+                  {(row.photos || []).map((photo, i) => {
+                    const width = (photo.ratio || 1) * currentRowHeight * scaleFactor;
                     const height = currentRowHeight * scaleFactor;
                     return (
                       <div
-                        key={i}
+                        key={photo.src || `${rowIndex}-${i}`}
                         style={{
-                          width: `${width}px`,
-                          height: `${height}px`,
+                          width: `${Number.isFinite(width) ? width : currentRowHeight}px`,
+                          height: `${Number.isFinite(height) ? height : currentRowHeight}px`,
                           borderRadius: "8px",
                           overflow: "hidden",
                           cursor: "pointer",
@@ -210,8 +235,8 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                           opacity: visibleSet.has(i) ? 1 : 0
                         }}
                         onClick={() => {
-                          setSlide(calculateLightboxIndex(rowIndex, i));
-                          setToggler(t => !t);
+                          const globalSlide = calcGlobalSlideRow(rowIndex, i);
+                          void openWithSlide(globalSlide);
                         }}
                       >
                         <img
@@ -244,7 +269,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                   opacity: visibleSet.has(i) ? 1 : 0,
                   transition: "opacity 0.5s ease"
                 }}
-                onClick={() => { setSlide(i + 1); setToggler(t => !t); }}
+                onClick={() => { void openWithSlide(i + 1); }}
               >
                 <img
                   src={photo.thumbnail || photo.src}
@@ -256,7 +281,16 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
             ))}
       </div>
 
-      {photos.length > 0 && <FsLightbox toggler={toggler} sources={photos.map(p => p.src)} slide={slide} onClose={handleClose} />}
+      {Array.isArray(photos) && photos.length > 0 && (
+        <FsLightbox
+          // Источники — стабильный порядок исходного списка, но с единым сессионным bust для Safari‑кэша
+          sources={fullSources} // [web:41]
+          type="image"          // фикс типа стабилизирует инициализацию [web:26]
+          toggler={toggler}     // запуск по инверсии [web:26]
+          slide={slide}         // 1-based индекс, предварительно установлен по клику [web:26]
+          onClose={handleClose} // обычное закрытие без инверсий [web:26]
+        />
+      )}
     </>
   );
 }

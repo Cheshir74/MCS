@@ -35835,7 +35835,7 @@ var require_react_development2 = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useReducer(reducer, initialArg, init);
         }
-        function useRef2(initialValue) {
+        function useRef3(initialValue) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
@@ -35855,7 +35855,7 @@ var require_react_development2 = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useCallback(callback, deps);
         }
-        function useMemo(create, deps) {
+        function useMemo2(create, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useMemo(create, deps);
         }
@@ -36627,9 +36627,9 @@ var require_react_development2 = __commonJS({
         exports2.useImperativeHandle = useImperativeHandle;
         exports2.useInsertionEffect = useInsertionEffect;
         exports2.useLayoutEffect = useLayoutEffect;
-        exports2.useMemo = useMemo;
+        exports2.useMemo = useMemo2;
         exports2.useReducer = useReducer;
-        exports2.useRef = useRef2;
+        exports2.useRef = useRef3;
         exports2.useState = useState4;
         exports2.useSyncExternalStore = useSyncExternalStore;
         exports2.useTransition = useTransition;
@@ -62197,7 +62197,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
             return [workInProgressHook.memoizedState, _dispatch];
           }
         }
-        function useMemo(nextCreate, deps) {
+        function useMemo2(nextCreate, deps) {
           currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
           workInProgressHook = createWorkInProgressHook();
           var nextDeps = deps === void 0 ? null : deps;
@@ -62222,7 +62222,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
           workInProgressHook.memoizedState = [nextValue, nextDeps];
           return nextValue;
         }
-        function useRef2(initialValue) {
+        function useRef3(initialValue) {
           currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
           workInProgressHook = createWorkInProgressHook();
           var previousRef = workInProgressHook.memoizedState;
@@ -62271,7 +62271,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
           }
         }
         function useCallback2(callback, deps) {
-          return useMemo(function() {
+          return useMemo2(function() {
             return callback;
           }, deps);
         }
@@ -62311,9 +62311,9 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
         var Dispatcher2 = {
           readContext: readContext$1,
           useContext,
-          useMemo,
+          useMemo: useMemo2,
           useReducer,
-          useRef: useRef2,
+          useRef: useRef3,
           useState: useState4,
           useInsertionEffect: noop2,
           useLayoutEffect,
@@ -67537,7 +67537,7 @@ var require_react_dom_server_browser_development = __commonJS({
             return [workInProgressHook.memoizedState, _dispatch];
           }
         }
-        function useMemo(nextCreate, deps) {
+        function useMemo2(nextCreate, deps) {
           currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
           workInProgressHook = createWorkInProgressHook();
           var nextDeps = deps === void 0 ? null : deps;
@@ -67562,7 +67562,7 @@ var require_react_dom_server_browser_development = __commonJS({
           workInProgressHook.memoizedState = [nextValue, nextDeps];
           return nextValue;
         }
-        function useRef2(initialValue) {
+        function useRef3(initialValue) {
           currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
           workInProgressHook = createWorkInProgressHook();
           var previousRef = workInProgressHook.memoizedState;
@@ -67611,7 +67611,7 @@ var require_react_dom_server_browser_development = __commonJS({
           }
         }
         function useCallback2(callback, deps) {
-          return useMemo(function() {
+          return useMemo2(function() {
             return callback;
           }, deps);
         }
@@ -67651,9 +67651,9 @@ var require_react_dom_server_browser_development = __commonJS({
         var Dispatcher2 = {
           readContext: readContext$1,
           useContext,
-          useMemo,
+          useMemo: useMemo2,
           useReducer,
-          useRef: useRef2,
+          useRef: useRef3,
           useState: useState4,
           useInsertionEffect: noop2,
           useLayoutEffect,
@@ -91618,8 +91618,25 @@ var import_client2 = __toESM(require_client());
 var import_react3 = __toESM(require_react());
 var import_fslightbox_react = __toESM(require_fslightbox_react());
 var imageCache = {};
-function exitFullscreen() {
-  if (document.fullscreenElement) document.exitFullscreen();
+function exitFullscreenSafe() {
+  try {
+    if (document.fullscreenElement) document.exitFullscreen();
+  } catch {
+  }
+}
+function isCrossOrigin(url) {
+  if (typeof window === "undefined" || !url) return false;
+  try {
+    const u = new URL(url, window.location.href);
+    return u.origin !== window.location.origin;
+  } catch {
+    return false;
+  }
+}
+function addBustOnce(url, seed) {
+  if (!url) return url;
+  const sep = url.includes("?") ? "&" : "?";
+  return `${url}${sep}_ts=${seed}`;
 }
 function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
   const [toggler, setToggler] = (0, import_react3.useState)(false);
@@ -91629,16 +91646,21 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
   const [rowGroups, setRowGroups] = (0, import_react3.useState)([]);
   const [windowWidth, setWindowWidth] = (0, import_react3.useState)(typeof window !== "undefined" ? window.innerWidth : 1200);
   const [visibleSet, setVisibleSet] = (0, import_react3.useState)(/* @__PURE__ */ new Set());
+  const isSafari = typeof navigator !== "undefined" && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const sessionSeedRef = (0, import_react3.useRef)(Math.floor(Date.now() / 3e4));
   const MAX_CONTAINER_WIDTH = 1320;
   const ROW_GAP = 10;
-  const handleClose = () => setTimeout(exitFullscreen, 100);
+  const handleClose = (0, import_react3.useCallback)(() => {
+    setTimeout(exitFullscreenSafe, 80);
+  }, []);
   const preloadImages = (0, import_react3.useCallback)(() => {
     if (!photos || !photos.length) return;
-    let loaded = 0;
     const data = [];
+    let loaded = 0;
     photos.forEach((p, idx) => {
-      if (!p.src) {
+      if (!p || !p.src) {
         loaded++;
+        if (loaded === photos.length) setPhotoData(data.filter(Boolean));
         return;
       }
       if (imageCache[p.src]) {
@@ -91648,6 +91670,10 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
         return;
       }
       const img = new Image();
+      try {
+        if (isCrossOrigin(p.src)) img.crossOrigin = "anonymous";
+      } catch {
+      }
       img.src = p.src;
       img.onload = () => {
         const info = {
@@ -91712,20 +91738,7 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
       }
     });
     if (currentRow.length) rows.push({ photos: currentRow, hasPortrait: rowHasPortrait });
-    const balancedRows = [];
-    let buffer = [];
-    rows.forEach((row) => {
-      row.photos.forEach((p) => buffer.push(p));
-      while (buffer.length >= 2) {
-        const maxPerRow = row.photos.some((p) => p.orientation === "portrait") ? 4 : 3;
-        balancedRows.push({ photos: buffer.splice(0, Math.min(buffer.length, maxPerRow)) });
-      }
-    });
-    if (buffer.length) {
-      if (balancedRows.length) balancedRows[balancedRows.length - 1].photos.push(...buffer);
-      else balancedRows.push({ photos: buffer });
-    }
-    return balancedRows;
+    return rows;
   }, [direction, getLayoutParams]);
   (0, import_react3.useEffect)(() => {
     if (visiblePhotos.length && direction === "row") setRowGroups(groupPhotosSmart(visiblePhotos));
@@ -91741,44 +91754,49 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  const calculateLightboxIndex = (0, import_react3.useCallback)(
-    (rowIndex, photoIndex) => rowGroups.slice(0, rowIndex).reduce((sum, row) => sum + row.photos.length, 0) + photoIndex + 1,
-    [rowGroups]
-  );
   (0, import_react3.useEffect)(() => {
     visiblePhotos.forEach((photo, i) => {
       setTimeout(() => setVisibleSet((prev) => new Set(prev).add(i)), i * 50);
     });
   }, [visiblePhotos]);
+  const fullSources = (0, import_react3.useMemo)(() => {
+    const seed = sessionSeedRef.current;
+    return (photos || []).map((p) => addBustOnce(p?.src || "", seed));
+  }, [photos]);
+  const calcGlobalSlideRow = (0, import_react3.useCallback)(
+    (rowIndex, photoIndex) => rowGroups.slice(0, rowIndex).reduce((sum, row) => sum + (row.photos?.length || 0), 0) + photoIndex + 1,
+    [rowGroups]
+  );
+  const openWithSlide = (0, import_react3.useCallback)(async (nextSlide) => {
+    const n = fullSources.length || 1;
+    const safe = Math.min(Math.max(nextSlide, 1), n);
+    setSlide(safe);
+    await new Promise((r) => requestAnimationFrame(r));
+    setToggler((t) => !t);
+  }, [fullSources.length]);
   const { rowHeight, portraitRowHeight, containerWidth } = getLayoutParams();
   const galleryStyle = direction === "row" ? { display: "flex", flexDirection: "column", gap: `${ROW_GAP}px`, width: "100%", maxWidth: `${MAX_CONTAINER_WIDTH}px`, margin: "0 auto" } : { columnCount, columnGap: `${ROW_GAP}px`, width: "100%" };
   return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("div", { className: "gallery", style: galleryStyle }, direction === "row" ? rowGroups.map((row, rowIndex) => {
     const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
-    const totalWidthOriginal = row.photos.reduce((sum, p) => sum + p.ratio * currentRowHeight, 0);
-    const availableWidth = containerWidth - (row.photos.length - 1) * ROW_GAP;
-    const scaleFactor = availableWidth / totalWidthOriginal;
+    const totalWidthOriginal = (row.photos || []).reduce((sum, p) => sum + (p.ratio || 1) * currentRowHeight, 0) || 1;
+    const availableWidth = Math.max(1, containerWidth - ((row.photos?.length || 0) - 1) * ROW_GAP);
+    const scaleFactor = isFinite(availableWidth / totalWidthOriginal) ? availableWidth / totalWidthOriginal : 1;
     return /* @__PURE__ */ import_react3.default.createElement(
       "div",
       {
         key: rowIndex,
-        style: {
-          display: "flex",
-          flexWrap: "nowrap",
-          gap: `${ROW_GAP}px`,
-          justifyContent: "center",
-          width: "100%"
-        }
+        style: { display: "flex", flexWrap: "nowrap", gap: `${ROW_GAP}px`, justifyContent: "center", width: "100%" }
       },
-      row.photos.map((photo, i) => {
-        const width = photo.ratio * currentRowHeight * scaleFactor;
+      (row.photos || []).map((photo, i) => {
+        const width = (photo.ratio || 1) * currentRowHeight * scaleFactor;
         const height = currentRowHeight * scaleFactor;
         return /* @__PURE__ */ import_react3.default.createElement(
           "div",
           {
-            key: i,
+            key: photo.src || `${rowIndex}-${i}`,
             style: {
-              width: `${width}px`,
-              height: `${height}px`,
+              width: `${Number.isFinite(width) ? width : currentRowHeight}px`,
+              height: `${Number.isFinite(height) ? height : currentRowHeight}px`,
               borderRadius: "8px",
               overflow: "hidden",
               cursor: "pointer",
@@ -91789,8 +91807,8 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
               opacity: visibleSet.has(i) ? 1 : 0
             },
             onClick: () => {
-              setSlide(calculateLightboxIndex(rowIndex, i));
-              setToggler((t) => !t);
+              const globalSlide = calcGlobalSlideRow(rowIndex, i);
+              void openWithSlide(globalSlide);
             }
           },
           /* @__PURE__ */ import_react3.default.createElement(
@@ -91825,8 +91843,7 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
         transition: "opacity 0.5s ease"
       },
       onClick: () => {
-        setSlide(i + 1);
-        setToggler((t) => !t);
+        void openWithSlide(i + 1);
       }
     },
     /* @__PURE__ */ import_react3.default.createElement(
@@ -91838,7 +91855,16 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
         loading: "lazy"
       }
     )
-  ))), photos.length > 0 && /* @__PURE__ */ import_react3.default.createElement(import_fslightbox_react.default, { toggler, sources: photos.map((p) => p.src), slide: slide2, onClose: handleClose }));
+  ))), Array.isArray(photos) && photos.length > 0 && /* @__PURE__ */ import_react3.default.createElement(
+    import_fslightbox_react.default,
+    {
+      sources: fullSources,
+      type: "image",
+      toggler,
+      slide: slide2,
+      onClose: handleClose
+    }
+  ));
 }
 
 // app/javascript/controllers/gallery_controller.js
