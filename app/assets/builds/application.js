@@ -91658,7 +91658,7 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     const data = [];
     let loaded = 0;
     photos.forEach((p, idx) => {
-      if (!p || !p.src) {
+      if (!p || !p.src && !p.src_webp) {
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
         return;
@@ -91676,19 +91676,21 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
       const wrapWithIndex = (info) => ({ ...p, ...info, originalIndex: idx });
       const infoFromProps = makeInfoFromDimensions({ width: p.width, height: p.height });
       if (infoFromProps) {
-        imageCache[p.src] = infoFromProps;
+        const baseKey = p.src || p.src_webp;
+        if (baseKey) imageCache[baseKey] = infoFromProps;
         data[idx] = wrapWithIndex(infoFromProps);
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
         return;
       }
-      if (imageCache[p.src]) {
-        data[idx] = wrapWithIndex(imageCache[p.src]);
+      const cacheKey = p.src || p.src_webp;
+      if (cacheKey && imageCache[cacheKey]) {
+        data[idx] = wrapWithIndex(imageCache[cacheKey]);
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
         return;
       }
-      const previewSrc = p.thumbnail || p.src;
+      const previewSrc = p.thumbnail_webp || p.thumbnail || p.src_webp || p.src;
       const img = new Image();
       try {
         if (isCrossOrigin(previewSrc)) img.crossOrigin = "anonymous";
@@ -91701,7 +91703,8 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
           ratio: img.naturalWidth / img.naturalHeight,
           orientation: img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
         };
-        imageCache[p.src] = info;
+        const baseKey = p.src || p.src_webp || previewSrc;
+        imageCache[baseKey] = info;
         data[idx] = wrapWithIndex(info);
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
@@ -91788,7 +91791,10 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
   }, [visiblePhotos]);
   const fullSources = (0, import_react3.useMemo)(() => {
     const seed = sessionSeedRef.current;
-    return (photos || []).map((p) => addBustOnce(p?.src || "", seed));
+    return (photos || []).map((p) => {
+      const source = p?.src_webp || p?.src;
+      return addBustOnce(source || "", seed);
+    });
   }, [photos]);
   const calcGlobalSlideRow = (0, import_react3.useCallback)(
     (rowIndex, photoIndex) => rowGroups.slice(0, rowIndex).reduce((sum, row) => sum + (row.photos?.length || 0), 0) + photoIndex + 1,
@@ -91821,7 +91827,7 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
         return /* @__PURE__ */ import_react3.default.createElement(
           "div",
           {
-            key: photo.src || `${rowIndex}-${i}`,
+            key: photo.src || photo.src_webp || `${rowIndex}-${i}`,
             style: {
               width: `${Number.isFinite(width) ? width : currentRowHeight}px`,
               height: `${Number.isFinite(height) ? height : currentRowHeight}px`,
@@ -91842,7 +91848,7 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
           /* @__PURE__ */ import_react3.default.createElement(
             "img",
             {
-              src: photo.thumbnail || photo.src,
+              src: photo.thumbnail_webp || photo.thumbnail || photo.src_webp || photo.src,
               alt: photo.alt || "",
               style: {
                 width: "100%",
@@ -91877,7 +91883,7 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     /* @__PURE__ */ import_react3.default.createElement(
       "img",
       {
-        src: photo.thumbnail || photo.src,
+        src: photo.thumbnail_webp || photo.thumbnail || photo.src_webp || photo.src,
         alt: photo.alt || "",
         style: {
           width: "100%",

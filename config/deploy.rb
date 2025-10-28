@@ -26,6 +26,8 @@ set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true
 
+set :gallery_reset_variants, false
+
 namespace :deploy do
   desc "🔑 Check master.key and credentials.yml.enc existence"
   task :check_keys do
