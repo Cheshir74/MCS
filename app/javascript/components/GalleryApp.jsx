@@ -59,18 +59,40 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
     photos.forEach((p, idx) => {
       if (!p || !p.src) { loaded++; if (loaded === photos.length) setPhotoData(data.filter(Boolean)); return; } // [web:41]
 
-      // есть кэш — используем сразу
-      if (imageCache[p.src]) {
-        data[idx] = { ...p, ...imageCache[p.src] };
+      const makeInfoFromDimensions = dims => {
+        const { width, height } = dims;
+        if (!width || !height) return null;
+        return {
+          width,
+          height,
+          ratio: width / height,
+          orientation: width > height ? "landscape" : "portrait"
+        };
+      };
+
+      const wrapWithIndex = info => ({ ...p, ...info, originalIndex: idx });
+
+      const infoFromProps = makeInfoFromDimensions({ width: p.width, height: p.height });
+      if (infoFromProps) {
+        imageCache[p.src] = infoFromProps;
+        data[idx] = wrapWithIndex(infoFromProps);
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
         return;
       }
 
-      // грузим «как есть» (превью), без bust
+      // есть кэш — используем сразу
+      if (imageCache[p.src]) {
+        data[idx] = wrapWithIndex(imageCache[p.src]);
+        loaded++;
+        if (loaded === photos.length) setPhotoData(data.filter(Boolean));
+        return;
+      }
+
+      // грузим «легкий» источник (thumbnail), чтобы не трогать полноразмерный файл
+      const previewSrc = p.thumbnail || p.src;
       const img = new Image();
-      try { if (isCrossOrigin(p.src)) img.crossOrigin = "anonymous"; } catch {}
-      img.src = p.src;
+      try { if (isCrossOrigin(previewSrc)) img.crossOrigin = "anonymous"; } catch {}
       img.onload = () => {
         const info = {
           width: img.naturalWidth,
@@ -79,7 +101,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
           orientation: img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
         }; // [web:41]
         imageCache[p.src] = info;
-        data[idx] = { ...p, ...info };
+        data[idx] = wrapWithIndex(info);
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
       };
@@ -87,6 +109,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
       };
+      img.src = previewSrc; // Safari требует назначать обработчики до src, иначе onload может потеряться из-за sync cache hit
     });
   }, [photos]); // [web:41]
 
@@ -167,7 +190,14 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
   // ---------- Fade-in ----------
   useEffect(() => {
     visiblePhotos.forEach((photo, i) => {
-      setTimeout(() => setVisibleSet(prev => new Set(prev).add(i)), i * 50);
+      const photoIndex = typeof photo?.originalIndex === "number" ? photo.originalIndex : i;
+      setTimeout(() => {
+        setVisibleSet(prev => {
+          const next = new Set(prev);
+          next.add(photoIndex);
+          return next;
+        });
+      }, i * 50);
     });
   }, [visiblePhotos]); // [web:41]
 
@@ -217,6 +247,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                   style={{ display: "flex", flexWrap: "nowrap", gap: `${ROW_GAP}px`, justifyContent: "center", width: "100%" }}
                 >
                   {(row.photos || []).map((photo, i) => {
+                    const photoIndex = typeof photo?.originalIndex === "number" ? photo.originalIndex : i;
                     const width = (photo.ratio || 1) * currentRowHeight * scaleFactor;
                     const height = currentRowHeight * scaleFactor;
                     return (
@@ -232,7 +263,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                           flexShrink: 0,
                           flexGrow: 0,
                           transition: "width 0.3s ease, height 0.3s ease, opacity 0.5s ease",
-                          opacity: visibleSet.has(i) ? 1 : 0
+                          opacity: visibleSet.has(photoIndex) ? 1 : 0
                         }}
                         onClick={() => {
                           const globalSlide = calcGlobalSlideRow(rowIndex, i);
@@ -247,7 +278,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                             height: "100%",
                             objectFit: "contain",
                             transition: "width 0.3s ease, height 0.3s ease, opacity 0.5s ease",
-                            opacity: visibleSet.has(i) ? 1 : 0
+                            opacity: visibleSet.has(photoIndex) ? 1 : 0
                           }}
                           loading="lazy"
                         />
@@ -266,7 +297,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                   borderRadius: "8px",
                   overflow: "hidden",
                   cursor: "pointer",
-                  opacity: visibleSet.has(i) ? 1 : 0,
+                  opacity: visibleSet.has(typeof photo?.originalIndex === "number" ? photo.originalIndex : i) ? 1 : 0,
                   transition: "opacity 0.5s ease"
                 }}
                 onClick={() => { void openWithSlide(i + 1); }}
@@ -274,7 +305,13 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                 <img
                   src={photo.thumbnail || photo.src}
                   alt={photo.alt || ""}
-                  style={{ width: "100%", height: "auto", objectFit: "contain", opacity: visibleSet.has(i) ? 1 : 0, transition: "opacity 0.5s ease" }}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "contain",
+                    opacity: visibleSet.has(typeof photo?.originalIndex === "number" ? photo.originalIndex : i) ? 1 : 0,
+                    transition: "opacity 0.5s ease"
+                  }}
                   loading="lazy"
                 />
               </div>
