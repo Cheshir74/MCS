@@ -85,12 +85,26 @@ namespace :deploy do
     end
   end
 
-  desc '🛠️ Build JS assets'
-  task :build_js_assets do
+  desc '🛠️ Build frontend assets (JS + CSS)'
+  task :build_frontend do
     on roles(:web) do
       within release_path do
-        execute :yarn, 'install --immutable'
-        execute :yarn, 'run build'
+        with rails_env: fetch(:rails_env), node_env: 'production' do
+          execute :yarn, 'install --immutable'
+          execute :yarn, 'run build'
+        end
+      end
+    end
+  end
+
+  desc '🧹 Clean shared assets cache before precompile'
+  task :clean_assets do
+    on roles(:app) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :bundle, 'exec rake assets:clobber'
+          execute :bundle, 'exec rake tmp:cache:clear'
+        end
       end
     end
   end
@@ -106,7 +120,8 @@ end
 # Hooks sequence
 before 'deploy:updated', 'deploy:check_keys'
 before 'deploy:assets:precompile', 'deploy:show_credentials'
+before 'deploy:assets:precompile', 'deploy:clean_assets'
+before 'deploy:assets:precompile', 'deploy:build_frontend'
 after 'deploy:updated', 'deploy:migrate'
-after 'deploy:updated', 'deploy:build_js_assets'
 after 'deploy:migrate', 'deploy:assets:precompile'
 after 'deploy:publishing', 'deploy:restart'

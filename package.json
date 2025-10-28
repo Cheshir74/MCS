@@ -53,7 +53,7 @@
   },
   "version": "0.1.0",
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --loader:.ttf=file --loader:.js=jsx --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build": "yarn build:css && esbuild app/javascript/*.* --bundle --loader:.ttf=file --loader:.js=jsx --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
     "build:css:compile": "sass --style compressed ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
     "build:css_admin:compile": "sass --style compressed ./app/assets/stylesheets/admin.scss:./app/assets/builds/admin.css --no-source-map --load-path=node_modules",
     "build:css:prefix": "postcss ./app/assets/builds/application.css --use=autoprefixer --output=./app/assets/builds/application.css",
