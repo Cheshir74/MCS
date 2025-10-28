@@ -57,7 +57,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
     let loaded = 0;
 
     photos.forEach((p, idx) => {
-      if (!p || !p.src) { loaded++; if (loaded === photos.length) setPhotoData(data.filter(Boolean)); return; } // [web:41]
+      if (!p || (!p.src && !p.src_webp)) { loaded++; if (loaded === photos.length) setPhotoData(data.filter(Boolean)); return; } // [web:41]
 
       const makeInfoFromDimensions = dims => {
         const { width, height } = dims;
@@ -74,7 +74,8 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
 
       const infoFromProps = makeInfoFromDimensions({ width: p.width, height: p.height });
       if (infoFromProps) {
-        imageCache[p.src] = infoFromProps;
+        const baseKey = p.src || p.src_webp;
+        if (baseKey) imageCache[baseKey] = infoFromProps;
         data[idx] = wrapWithIndex(infoFromProps);
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
@@ -82,15 +83,16 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
       }
 
       // есть кэш — используем сразу
-      if (imageCache[p.src]) {
-        data[idx] = wrapWithIndex(imageCache[p.src]);
+      const cacheKey = p.src || p.src_webp;
+      if (cacheKey && imageCache[cacheKey]) {
+        data[idx] = wrapWithIndex(imageCache[cacheKey]);
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
         return;
       }
 
       // грузим «легкий» источник (thumbnail), чтобы не трогать полноразмерный файл
-      const previewSrc = p.thumbnail || p.src;
+      const previewSrc = p.thumbnail_webp || p.thumbnail || p.src_webp || p.src;
       const img = new Image();
       try { if (isCrossOrigin(previewSrc)) img.crossOrigin = "anonymous"; } catch {}
       img.onload = () => {
@@ -100,7 +102,8 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
           ratio: img.naturalWidth / img.naturalHeight,
           orientation: img.naturalWidth > img.naturalHeight ? "landscape" : "portrait"
         }; // [web:41]
-        imageCache[p.src] = info;
+        const baseKey = p.src || p.src_webp || previewSrc;
+        imageCache[baseKey] = info;
         data[idx] = wrapWithIndex(info);
         loaded++;
         if (loaded === photos.length) setPhotoData(data.filter(Boolean));
@@ -166,7 +169,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
     if (currentRow.length) rows.push({ photos: currentRow, hasPortrait: rowHasPortrait });
 
     // ВАЖНО: без «перераспределения одиночных» во имя стабильности глобальных индексов
-    return rows; // индексы остаются монотонными и соответствуют photos.map((p)=>p.src) [web:41]
+    return rows; // индексы остаются монотонными и соответствуют исходному порядку photos [web:41]
   }, [direction, getLayoutParams]); // [web:41]
 
   useEffect(() => {
@@ -204,7 +207,10 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
   // ---------- Подготовка полноразмерных sources (с единым сессионным bust) ----------
   const fullSources = useMemo(() => {
     const seed = sessionSeedRef.current;
-    return (photos || []).map(p => addBustOnce(p?.src || "", seed)); // [web:41]
+    return (photos || []).map(p => {
+      const source = p?.src_webp || p?.src;
+      return addBustOnce(source || "", seed);
+    }); // [web:41]
   }, [photos]); // [web:41]
 
   // Вычисление глобального 1-based индекса для FsLightbox (row режим)
@@ -252,7 +258,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                     const height = currentRowHeight * scaleFactor;
                     return (
                       <div
-                        key={photo.src || `${rowIndex}-${i}`}
+                        key={photo.src || photo.src_webp || `${rowIndex}-${i}`}
                         style={{
                           width: `${Number.isFinite(width) ? width : currentRowHeight}px`,
                           height: `${Number.isFinite(height) ? height : currentRowHeight}px`,
@@ -271,7 +277,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                         }}
                       >
                         <img
-                          src={photo.thumbnail || photo.src}
+                          src={photo.thumbnail_webp || photo.thumbnail || photo.src_webp || photo.src}
                           alt={photo.alt || ""}
                           style={{
                             width: "100%",
@@ -303,7 +309,7 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                 onClick={() => { void openWithSlide(i + 1); }}
               >
                 <img
-                  src={photo.thumbnail || photo.src}
+                  src={photo.thumbnail_webp || photo.thumbnail || photo.src_webp || photo.src}
                   alt={photo.alt || ""}
                   style={{
                     width: "100%",
