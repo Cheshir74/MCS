@@ -1,35 +1,36 @@
-nav class="navbar col-lg-12 col-12 p-lg-0 fixed-top d-flex flex-row"
-  div class="navbar-menu-wrapper d-flex align-items-stretch justify-content-between"
-    a class="navbar-brand brand-logo-mini align-self-center d-lg-none" href="../index.html"
-      //img src="../../../assets/logo-mini.svg" alt="logo"
-    
-    button class="navbar-toggler navbar-toggler align-self-center me-2" data-turbo="true" type="button" data-toggle="minimize" 
+nav class="navbar admin-topbar fixed-top d-flex align-items-center"
+  div class="admin-topbar__left d-flex align-items-center"
+    button class="admin-topbar__toggle btn btn-icon" type="button" data-toggle="minimize"
       i class="mdi mdi-menu"
+    = link_to admin_path, class: "admin-topbar__brand"
+      - if @site_setting&.logo&.attached?
+        = image_tag @site_setting.logo.variant(resize_to_limit: [28, 28]), class: "admin-topbar__brand-logo", alt: @site_setting&.name_site || "Admin"
+      - else
+        = image_tag "test_logo_1.png", class: "admin-topbar__brand-logo admin-topbar__brand-logo--fallback", alt: @site_setting&.name_site || "Admin"
+      span class="admin-topbar__brand-name" = @site_setting&.name_site || "Admin"
 
+  div class="admin-topbar__right ms-auto d-flex align-items-center gap-3"
+    - env_label = Rails.env.production? ? ['Production', 'bg-success-subtle text-success'] : [Rails.env, 'bg-warning-subtle text-warning']
+    span class="badge #{env_label.last} fw-semibold small text-uppercase"= env_label.first.to_s.upcase
 
-
-    ul class="navbar-nav navbar-nav-right ml-lg-auto"
-      li class="nav-item dropdown d-none d-xl-flex border-0"
-        a class="nav-link dropdown-toggle" id="languageDropdown" href="#" data-bs-toggle="dropdown"
-          i class="mdi mdi-earth" English
-        div class="dropdown-menu navbar-dropdown" aria-labelledby="languageDropdown"
-          a class="dropdown-item" href="#" Russian
-
-
-      li class="nav-item  nav-profile dropdown border-0"
-        a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown"
-          img class="nav-profile-img me-2" alt="" src="../../../assets/face_default.svg"
-          span class="profile-name" Current User
-
-        div class="dropdown-menu navbar-dropdown w-100" aria-labelledby="profileDropdown"
-          a class="dropdown-item" href="#"
-            i class="mdi mdi-cached me-2 text-success" Activity Log
-          a class="dropdown-item" href="#"
-            i class="mdi mdi-logout me-2 text-primary" Signout
-
-            - if current_user.nil?
-            - else
-              = link_to 'Log out', destroy_user_session_path, :class => 'btn btn-outline-dark', data: { turbo_method: :delete }
-
-    button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas"
-      span class="mdi mdi-menu"
+    details class="admin-topbar__profile"
+      summary class="admin-topbar__profile-summary"
+        div class="avatar-circle"
+          span= (current_user&.email.to_s.first || "U").upcase
+        div class="admin-topbar__profile-text"
+          span class="fw-semibold text-dark"= current_user&.email || "Account"
+          - if current_user&.superadmin_role?
+            span class="text-muted small text-uppercase" Administrator
+          - elsif current_user&.supervisor_role?
+            span class="text-muted small text-uppercase" Editor
+          - else
+            span class="text-muted small text-uppercase" Viewer
+        i class="mdi mdi-chevron-down admin-topbar__profile-icon"
+      ul class="admin-topbar__profile-menu"
+        li
+          = link_to 'Account settings', edit_admin_user_path(current_user), class: 'admin-topbar__profile-link'
+        li
+          = link_to 'Brand & contact', admin_path, class: 'admin-topbar__profile-link'
+        li class="admin-topbar__profile-divider"
+        li
+          = link_to 'Log out', destroy_user_session_path, class: 'admin-topbar__profile-link admin-topbar__profile-link--danger', data: { turbo_method: :delete }

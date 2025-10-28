@@ -10,6 +10,7 @@ html
     = javascript_include_tag "admin", "data-turbo-track": "reload", type: "module"
     = stylesheet_link_tag 'admin', media: 'all'
 
+  body class="admin-layout"
     - unless flash.empty?
       = render 'layouts/notice'
     div class="container-scroller"
@@ -20,4 +21,3 @@ html
           div class="content-wrapper"
             = yield
           = render 'layouts/admin/footer'
-

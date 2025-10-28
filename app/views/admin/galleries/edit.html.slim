@@ -1,36 +1,56 @@
 div class="page-header"
-  h3 class="mb-0" Edit home page
-    
-div class="row"
-  div class="col-sm-12"
-    div class="card"
-      .card-header Primary block
+  h3 class="page-headline" Gallery Settings
+  div class="page-header__meta"
+    span.page-header__chip Gallery Toolkit
+    span.page-header__text Configure details and curate uploaded media
+
+div class="row g-4"
+  div class="col-12"
+    div class="card section-card"
+      .card-header
+        h4.card-title
+          span.card-chip Settings
+          |  Gallery details
+        p.card-subtitle.text-muted.small Update gallery title, visibility and media
       .card-body
         = form_for [:admin, @gallery] do |f|
           - if @gallery.errors.any?
             - @gallery.errors.full_messages.each do |msg|
-              .alert.alert-danger = msg
+              .alert.alert-danger.mb-3 = msg
 
-          .mb-3
-            = f.label :name
-            = f.text_field :name, class: 'form-control'
+          .row.g-4
+            .col-12.col-md-6
+              .input-card
+                h5.input-card__title Name
+                p.input-card__hint Internal name displayed across the site
+                = f.text_field :name, class: 'form-control input-card__control', placeholder: "Gallery title"
 
-          .mb-3
-            = f.label :visible
-            = f.check_box :visible
+            .col-12.col-md-6
+              .input-card.input-card--switch
+                h5.input-card__title Visibility
+                p.input-card__hint Control whether this gallery is visible to visitors
+                .form-switch-row.mt-2
+                  .form-check.form-switch
+                    = f.check_box :visible, class: 'form-check-input input-card__switch', id: 'gallery_visible_edit'
+                    = f.label :visible, "Show on site", class: 'form-check-label', for: 'gallery_visible_edit'
 
-          .mb-3
-            .dropzone.dropzone-default.dz-clickable data-controller="dropzone" 
+          .mb-5.mt-2
+            label.form-label.form-label--strong Upload images
+            p.form-hint Drag & drop photos or browse to add new items
+            .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
               = f.file_field :images, multiple: true, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
-              .dropzone-msg.dz-message.needsclick.text-gray-600
-                h3.dropzone-msg-title Drag here to upload or click here to browse
-                span.dropzone-msg-desc.text-sm 2 MB file size maximum. Allowed file types png, jpg.
+              .dropzone-msg.dz-message.needsclick
+                i.mdi.mdi-cloud-upload-outline.dropzone-icon
+                span.dropzone-title Drag files here or click to browse
+                span.dropzone-subtitle.text-muted.small 2 MB file size maximum • PNG, JPG formats
 
-          .mb-3
-            = f.submit "Submit", class: 'btn btn-primary'
-            = link_to "Cancel", admin_galleries_path, class: 'btn btn-default'
+          .form-actions.mt-4
+            = f.submit "Save changes", class: 'btn btn-primary'
+            = link_to "Cancel", admin_galleries_path, class: 'btn btn-outline-secondary'
 
-h3.page-header
-  | Images in #{@gallery.name}
-div id="edit_images"
-  = render 'admin/galleries/images'
+div class="section-header mt-5"
+  div
+    h4 class="section-header__title" Images in #{@gallery.name}
+    p class="section-header__meta" Manage, reorder or delete uploaded photos
+
+= render 'admin/galleries/images'

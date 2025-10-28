@@ -2,7 +2,12 @@ require 'active_support/message_encryptor'
 
 class SiteSetting < ApplicationRecord
   has_one_attached :favicon
+  has_one_attached :logo
+
+  attr_accessor :remove_logo, :remove_favicon
   after_save :update_mailer_settings
+  after_commit :purge_logo, if: -> { remove_logo.to_s == '1' }
+  after_commit :purge_favicon, if: -> { remove_favicon.to_s == '1' }
 
   def update_mailer_settings
     ActionMailer::Base.smtp_settings = {
@@ -68,5 +73,15 @@ class SiteSetting < ApplicationRecord
 
     # Возвращаем значение по умолчанию, если значение пустое
     value || default
+  end
+
+  private
+
+  def purge_logo
+    logo.purge_later if logo.attached?
+  end
+
+  def purge_favicon
+    favicon.purge_later if favicon.attached?
   end
 end

@@ -1,32 +1,23 @@
-= form_tag destroy_attach_admin_gallery_url, method: :delete do
-  = submit_tag "Delete"
+#edit_images
+  = form_tag destroy_attach_admin_gallery_url, method: :delete, class: "section-card section-card--gallery" do
+    .section-card__actions
+      span.section-card__hint Select photos to delete from this gallery
+      = submit_tag "Delete selected", class: "btn btn-outline-danger btn-sm"
 
-
-  //- if @gallery.images.present?
-    = content_tag :div,
-      id: "app_gallery",
-      data: { url_path: gallery_path, direction: "column" }
-      div data-controller="gallery_react"
-      
-
-  .row.row-cols-5.sortable id="lightgallery"
     - if @gallery.images.present?
-      - @gallery.images.each do |image|
-        .column data-id='#{image.id}'
-          .box-img
-                
-            = label_tag "delete_img_ids[#{image.id}]", nil,  class: 'checkbox-label'
-              = check_box_tag "delete_img_ids[]", image.id, false, :id => "delete_img_ids_#{image.id}", class: 'checkbox-input'
-              span.check
-          .item data-src="#{ url_for(image.variant(resize_to_limit: [2000, 1200])) }"
-            a href="#{ url_for(image.variant(resize_to_limit: [1000, 670])) }"
-              = image_tag image.variant(resize_to_limit: [210, 210])
-                  
-
-                  
-          .card-img-overlay
-            = link_to delete_image_attachment_admin_gallery_url(@gallery, image), data: { turbo_method: :delete }, class: 'img-btn-edit' do
-              i.fas.fa-trash
-          span.icon-focus
+      .gallery-grid#lightgallery
+        - @gallery.images.each do |image|
+          .gallery-item data-id=image.id
+            .gallery-thumb.bg-light
+              = link_to url_for(image.variant(resize_to_limit: [1000, 670])), data: { turbo: false }, class: "gallery-thumb__link" do
+                = image_tag image.variant(resize_to_limit: [360, 360]), class: "gallery-thumb__image", alt: ""
+            = label_tag "delete_img_ids_#{image.id}", class: "gallery-select" do
+              = check_box_tag "delete_img_ids[]", image.id, false, id: "delete_img_ids_#{image.id}", class: "gallery-select__checkbox"
+              span.gallery-select__mark
+            .gallery-item__footer
+              span.text-muted.small Image ##{image.id}
+              = link_to delete_image_attachment_admin_gallery_path(@gallery, image_id: image.id), data: { turbo_method: :delete, turbo_confirm: "Remove this photo permanently?" }, class: 'gallery-item__delete' do
+                i class="mdi mdi-trash-can-outline"
+                |  Remove
     - else
-      p There are no images
+      p.text-muted.mb-0 There are no images yet.

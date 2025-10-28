@@ -46,9 +46,15 @@ class Admin::GalleriesController < Admin::AdminController
   end
 
   def delete_image_attachment
-    attachment = @gallery.images.find(params[:format])
-    attachment.purge
-    redirect_back(fallback_location: edit_admin_gallery_path)
+    attachment_id = params[:image_id] || params[:format]
+    if attachment_id.present?
+      attachment = @gallery.images.find(attachment_id)
+      attachment.purge
+      flash[:notice] = "Image removed"
+    else
+      flash[:alert] = "Image not found"
+    end
+    redirect_back(fallback_location: edit_admin_gallery_path(@gallery))
   end
 
   def destroy_attach

@@ -48,7 +48,27 @@ class Admin::AdminController < ApplicationController
   #end
 
   def site_setting_params
-    params.require(:site_setting).permit(:site_name, :favicon, :facebook_link, :instagram_link)
+    params.require(:site_setting).permit(
+      :name_site,
+      :fb_url,
+      :inst_url,
+      :vk_url,
+      :yn_verification_pri,
+      :yn_verification_sec,
+      :footer,
+      :email_contact,
+      :email_login,
+      :email_domain,
+      :email_password,
+      :email_address,
+      :email_port,
+      :email_tls,
+      :email_ssl,
+      :favicon,
+      :remove_favicon,
+      :logo,
+      :remove_logo
+    )
   end
 
 end

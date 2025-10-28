@@ -1,31 +1,49 @@
-div class="main-panel"
-  div class="content-wrapper pb-0"
-    div class="page-header flex-wrap"
-      h3 class="mb-0" Hi, welcome back! 
+div class="page-header"
+  h3 class="page-headline" Create Gallery
+  div class="page-header__meta"
+    span.page-header__chip Gallery Toolkit
+    span.page-header__text Set up gallery metadata and prepare media uploads
 
-      div class="d-flex"
-        button type="button" class="btn btn-sm ms-3 btn-success" Add User
-    div class="row"
-      div class="row"
-        div class="col-lg-12 grid-margin stretch-card"
-          div class="card"
-            <div class="card-body px-0 overflow-auto">
-              h4 class="card-title ps-4" Edit home
+div class="row g-4"
+  div class="col-12"
+    div class="card section-card"
+      .card-header
+        h4.card-title
+          span.card-chip Setup
+          |  Gallery details
+        p.card-subtitle.text-muted.small Configure name, visibility and upload optional assets
+      .card-body
+        = form_for [:admin, @gallery] do |f|
+          - if @gallery.errors.any?
+            - @gallery.errors.full_messages.each do |msg|
+              .alert.alert-danger.mb-3 = msg
 
-              = form_for [ :admin, @gallery ] do |f|
+          .row.g-4
+            .col-12.col-md-6
+              .input-card
+                h5.input-card__title Name
+                p.input-card__hint Internal name displayed across the site
+                = f.text_field :name, class: 'form-control input-card__control', placeholder: "Gallery title"
 
-                - if @gallery.errors.any?
-                  - @gallery.errors.full_messages.each do |msg|
-                      div class="alert alert-danger">
-                        = msg
+            .col-12.col-md-6
+              .input-card.input-card--switch
+                h5.input-card__title Visibility
+                p.input-card__hint Decide whether to publish this gallery on the site
+                .form-switch-row.mt-2
+                  .form-check.form-switch
+                    = f.check_box :visible, class: 'form-check-input input-card__switch', id: 'gallery_visible'
+                    = f.label :visible, "Show on site", class: 'form-check-label', for: 'gallery_visible'
 
-                div class="form-group"
-                  = f.label :name
-                  = f.text_field :name, class:'form-control'
-                  = f.label :visible
-                  = f.check_box :visible
-                br
+          .mb-5.mt-2
+            label.form-label.form-label--strong Upload images
+            p.form-hint Optional: add photos now or later from the edit screen
+            .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
+              = f.file_field :images, multiple: true, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
+              .dropzone-msg.dz-message.needsclick
+                i.mdi.mdi-cloud-upload-outline.dropzone-icon
+                span.dropzone-title Drag files here or click to browse
+                span.dropzone-subtitle.text-muted.small 2 MB file size maximum • PNG, JPG formats
 
-                = f.submit "Submit", class: 'btn btn-primary'
-                = link_to "Cancel", admin_galleries_path, class:'btn btn-default'
-
+          .form-actions.mt-4
+            = f.submit "Create gallery", class: 'btn btn-primary'
+            = link_to "Cancel", admin_galleries_path, class:'btn btn-outline-secondary'

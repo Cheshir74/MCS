@@ -1,43 +1,16 @@
-nav class="sidebar sidebar-offcanvas" id="sidebar"
-  div class="text-center sidebar-brand-wrapper d-flex align-items-center"
-    a class="sidebar-brand brand-logo" href="../index.html"
-      img src="../../../assets/test_logo_1.png"
-    a class="sidebar-brand brand-logo-mini ps-4 pt-3" href="../index.html"
-      img src="../../../assets/logo-mini.png"
-  br
-  ul class="nav"
-    br
+nav class="sidebar sidebar-offcanvas admin-sidebar" id="sidebar"
+  div class="admin-sidebar__brand d-flex align-items-center justify-content-center"
+    = link_to admin_path, class: "sidebar-logo-link"
+      - if @site_setting&.logo&.attached?
+        = image_tag @site_setting.logo.variant(resize_to_limit: [44, 44]), class: "sidebar-logo-img", alt: @site_setting&.name_site || "Admin"
+      - else
+        = image_tag "test_logo_1.png", class: "sidebar-logo-img sidebar-logo-img--fallback", alt: @site_setting&.name_site || "Admin"
 
-    li class="nav-item"
-      = link_to admin_path, class: 'nav-link'
-        i class="mdi mdi-home menu-icon"
-        span class="menu-title" Dashboard
-      
-    li class="nav-item"
-      = link_to admin_homes_path, class: 'nav-link'
-        i class="mdi mdi-crosshairs-gps menu-icon"
-        span class="menu-title" Home
-        i class="menu-arrow"
-
-    li class="nav-item"
-      = link_to admin_users_path, class: 'nav-link'
-        //a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons"
-        i class="mdi mdi-contacts menu-icon"
-        span class="menu-title" Users
-        i class="menu-arrow"
-
-    li class="nav-item"
-      = link_to admin_galleries_path, class: 'nav-link'
-        //a class="nav-link" data-bs-toggle="collapse" href="#forms" aria-expanded="false" aria-controls="forms"
-        i class="mdi mdi-format-list-bulleted menu-icon"
-        span class="menu-title" Galleries
-        i class="menu-arrow"
-
-    li class="nav-item sidebar-actions"
-      div class="nav-link"
-        div class="mt-4"
-          div class="border-none"
-            //p class="text-black" Notification
-
-          ul class="mt-4 ps-0"
-            li Sign Out
+  ul class="nav flex-column mt-4"
+    - menu_items = [{ title: "Dashboard", icon: "mdi-view-dashboard", path: admin_path }, { title: "Home Pages", icon: "mdi-crosshairs-gps", path: admin_homes_path }, { title: "Users", icon: "mdi-account-multiple", path: admin_users_path }, { title: "Galleries", icon: "mdi-image-multiple", path: admin_galleries_path }]
+    - menu_items.each do |item|
+      - active = current_page?(item[:path])
+      li class="nav-item"
+        = link_to item[:path], class: "nav-link admin-sidebar__link #{'active' if active}"
+          i class="mdi #{item[:icon]} menu-icon"
+          span class="menu-title"= item[:title]
