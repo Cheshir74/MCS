@@ -13,9 +13,10 @@
 
 @font-face {
   font-family: "Material Design Icons";
-  src: asset-url("materialdesignicons-webfont.eot");
-  src: asset-url("materialdesignicons-webfont.woff2") format("woff2"), asset-url("materialdesignicons-webfont.woff") format("woff"), asset-url("materialdesignicons-webfont.ttf") format("truetype");
-};
+  src: font-url("materialdesignicons-webfont.eot");
+  src: font-url("materialdesignicons-webfont.woff2") format("woff2"), font-url("materialdesignicons-webfont.woff") format("woff"), font-url("materialdesignicons-webfont.ttf") format("truetype");
+  font-display: swap;
+}
 
 //@import 'bootstrap/scss/bootstrap';
 //@import 'bootstrap-icons/font/bootstrap-icons';
