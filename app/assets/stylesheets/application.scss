@@ -18,7 +18,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url("cabin-latin.woff2") format('woff2');
+  src: font-url("cabin-latin.woff2") format('woff2');
   };
 
 
@@ -27,7 +27,7 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url("lora-latin.woff2") format('woff2');
+  src: font-url("lora-latin.woff2") format('woff2');
 };
 
 // Скрыть текстовый "0" внутри fslightbox
