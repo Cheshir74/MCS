@@ -1,23 +1,9 @@
-/* MaterialDesignIcons.com */
-/* @font-face removed here to allow Rails asset pipeline to manage font URLs
-   (see app/assets/stylesheets/admin.scss which declares the same font using
-   asset-url/font-url helpers). Removing this prevents fragile relative
-   ../../../assets/... paths that caused 404s in production. */
+/* Placeholder stub to satisfy requests for /assets/src/materialdesignicons.css
+   The full icon rules are in _materialdesignicons.scss which is imported into
+   admin.scss. Keeping this minimal placeholder prevents 404s for clients that still
+   request the old separate CSS file. */
 
-.mdi:before,
-.mdi-set {
-  display: inline-block;
-  font: normal normal normal 24px/1 "Material Design Icons";
-  font-size: inherit;
-  text-rendering: auto;
-  line-height: inherit;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.mdi-ab-testing::before {
-  content: "\F01C9";
-}
+/* intentionally empty */
 
 .mdi-abacus::before {
   content: "\F16E0";
