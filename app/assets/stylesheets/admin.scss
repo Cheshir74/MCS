@@ -9,7 +9,7 @@
 // @import "~@fortawesome/fontawesome-free";
 
 //@import "@mdi/font/css/materialdesignicons";
-@import "./src/materialdesignicons.css";
+@import "./src/materialdesignicons"; // import SASS partial to inline icon CSS and avoid separate /assets/src/materialdesignicons.css request
 
 @font-face {
   font-family: "Material Design Icons";

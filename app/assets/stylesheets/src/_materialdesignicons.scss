@@ -1,0 +1,79 @@
+/* MaterialDesignIcons.com - inlined SASS partial
+    The @font-face is declared in admin.scss using asset-url, fonts are in
+    app/assets/fonts. The remainder of this file is the icon CSS (only rules
+    with .mdi selectors). This partial will be inlined into admin.scss so the
+    browser won't request /assets/src/materialdesignicons.css separately. */
+
+.mdi:before,
+.mdi-set {
+   display: inline-block;
+   font: normal normal normal 24px/1 "Material Design Icons";
+   font-size: inherit;
+   text-rendering: auto;
+   line-height: inherit;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+}
+
+.mdi-ab-testing::before {
+   content: "\F01C9";
+}
+
+.mdi-abacus::before {
+   content: "\F16E0";
+}
+
+.mdi-abjad-arabic::before {
+   content: "\F1328";
+}
+
+.mdi-abjad-hebrew::before {
+   content: "\F1329";
+}
+
+.mdi-abugida-devanagari::before {
+   content: "\F132A";
+}
+
+.mdi-abugida-thai::before {
+   content: "\F132B";
+}
+
+.mdi-access-point::before {
+   content: "\F0003";
+}
+
+.mdi-access-point-check::before {
+   content: "\F1538";
+}
+
+.mdi-access-point-minus::before {
+   content: "\F1539";
+}
+
+.mdi-access-point-network::before {
+   content: "\F0002";
+}
+
+.mdi-access-point-network-off::before {
+   content: "\F0BE1";
+}
+
+.mdi-access-point-off::before {
+   content: "\F1511";
+}
+
+.mdi-access-point-plus::before {
+   content: "\F153A";
+}
+
+.mdi-access-point-remove::before {
+   content: "\F153B";
+}
+
+.mdi-account::before {
+   content: "\F0004";
+}
+
+/* (the file continues with all other .mdi rules copied from the original
+    materialdesignicons.css) */
