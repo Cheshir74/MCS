@@ -30,19 +30,6 @@
   src: font-url("lora-latin.woff2") format('woff2');
 };
 
-// Include Material Design Icons for public pages (inline rules in partial)
-// This ensures the compiled `application.css` contains the @font-face that
-// references digested font assets via font-url and avoids missing icons on
-// the public site.
-@import "./src/materialdesignicons";
-
-@font-face {
-  font-family: "Material Design Icons";
-  src: font-url("materialdesignicons-webfont.eot");
-  src: font-url("materialdesignicons-webfont.woff2") format("woff2"), font-url("materialdesignicons-webfont.woff") format("woff"), font-url("materialdesignicons-webfont.ttf") format("truetype");
-  font-display: swap;
-}
-
 // Скрыть текстовый "0" внутри fslightbox
 .fslightbox-container {
   font-size: 0 !important;
@@ -59,4 +46,3 @@
 
 @import 'lightgallery/css/lightgallery-bundle';
 @import 'swiper/swiper-bundle.min';
-

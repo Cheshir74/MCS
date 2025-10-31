@@ -17,7 +17,7 @@
             .gallery-item__footer
               span.text-muted.small Image ##{image.id}
               = link_to delete_image_attachment_admin_gallery_path(@gallery, image_id: image.id), data: { turbo_method: :delete, turbo_confirm: "Remove this photo permanently?" }, class: 'gallery-item__delete' do
-                i class="mdi mdi-trash-can-outline"
+                i class="fa-solid fa-trash" aria-hidden="true"
                 |  Remove
     - else
       p.text-muted.mb-0 There are no images yet.

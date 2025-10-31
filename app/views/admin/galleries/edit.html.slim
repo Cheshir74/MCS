@@ -40,7 +40,7 @@ div class="row g-4"
             .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
               = f.file_field :images, multiple: true, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
               .dropzone-msg.dz-message.needsclick
-                i.mdi.mdi-cloud-upload-outline.dropzone-icon
+                i class="fa-solid fa-cloud-arrow-up dropzone-icon" aria-hidden="true"
                 span.dropzone-title Drag files here or click to browse
                 span.dropzone-subtitle.text-muted.small 2 MB file size maximum • PNG, JPG formats
 

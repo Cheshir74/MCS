@@ -7,10 +7,10 @@ nav class="sidebar sidebar-offcanvas admin-sidebar" id="sidebar"
         = image_tag "test_logo_1.png", class: "sidebar-logo-img sidebar-logo-img--fallback", alt: @site_setting&.name_site || "Admin"
 
   ul class="nav flex-column mt-4"
-    - menu_items = [{ title: "Dashboard", icon: "mdi-view-dashboard", path: admin_path }, { title: "Home Pages", icon: "mdi-crosshairs-gps", path: admin_homes_path }, { title: "Users", icon: "mdi-account-multiple", path: admin_users_path }, { title: "Galleries", icon: "mdi-image-multiple", path: admin_galleries_path }]
+    - menu_items = [{ title: 'Dashboard', icon: 'fa-solid fa-gauge-high', path: admin_path }, { title: 'Home Pages', icon: 'fa-solid fa-bullseye', path: admin_homes_path }, { title: 'Users', icon: 'fa-solid fa-users', path: admin_users_path }, { title: 'Galleries', icon: 'fa-solid fa-images', path: admin_galleries_path }]
     - menu_items.each do |item|
       - active = current_page?(item[:path])
       li class="nav-item"
         = link_to item[:path], class: "nav-link admin-sidebar__link #{'active' if active}"
-          i class="mdi #{item[:icon]} menu-icon"
+          i class="#{item[:icon]} menu-icon" aria-hidden="true"
           span class="menu-title"= item[:title]
