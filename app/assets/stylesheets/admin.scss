@@ -9,12 +9,14 @@
 // @import "~@fortawesome/fontawesome-free";
 
 //@import "@mdi/font/css/materialdesignicons";
-@import "./src/materialdesignicons.css";
+@import "./src/materialdesignicons";
 
 @font-face {
   font-family: "Material Design Icons";
-  src: asset-url("materialdesignicons-webfont.eot");
-  src: asset-url("materialdesignicons-webfont.woff2") format("woff2"), asset-url("materialdesignicons-webfont.woff") format("woff"), asset-url("materialdesignicons-webfont.ttf") format("truetype");
+  src: url("/assets/materialdesignicons-webfont.eot");
+  src: url("/assets/materialdesignicons-webfont.woff2") format("woff2"),
+    url("/assets/materialdesignicons-webfont.woff") format("woff"),
+    url("/assets/materialdesignicons-webfont.ttf") format("truetype");
 };
 
 //@import 'bootstrap/scss/bootstrap';
@@ -27,10 +29,10 @@
 @mixin rubik-font($weight, $file) {
   @font-face {
     font-family: "Rubik";
-    src: font-url("rubik/#{$file}.eot");
-    src: font-url("rubik/#{$file}.woff2") format("woff2"),
-      font-url("rubik/#{$file}.woff") format("woff"),
-      font-url("rubik/#{$file}.ttf") format("truetype");
+    src: url("/assets/rubik/#{$file}.eot");
+    src: url("/assets/rubik/#{$file}.woff2") format("woff2"),
+      url("/assets/rubik/#{$file}.woff") format("woff"),
+      url("/assets/rubik/#{$file}.ttf") format("truetype");
     font-weight: $weight;
     font-style: normal;
     font-display: swap;

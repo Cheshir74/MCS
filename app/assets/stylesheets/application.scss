@@ -14,21 +14,40 @@
 @import "@fortawesome/fontawesome-free/scss/brands";
 
 @font-face {
-    font-family: 'cabin-latin';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("cabin-latin.woff2") format('woff2');
-  };
-
+  font-family: "Cabin";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/cabin/cabin-latin-400-normal.woff2") format("woff2"),
+    url("/assets/cabin/cabin-latin-400-normal.woff") format("woff");
+}
 
 @font-face {
-    font-family: 'lora-latin';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("lora-latin.woff2") format('woff2');
-};
+  font-family: "Cabin";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/cabin/cabin-latin-700-normal.woff2") format("woff2"),
+    url("/assets/cabin/cabin-latin-700-normal.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/assets/lora/lora-latin-400-normal.woff2") format("woff2"),
+    url("/assets/lora/lora-latin-400-normal.woff") format("woff");
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("/assets/lora/lora-latin-700-normal.woff2") format("woff2"),
+    url("/assets/lora/lora-latin-700-normal.woff") format("woff");
+}
 
 // Скрыть текстовый "0" внутри fslightbox
 .fslightbox-container {
@@ -46,4 +65,3 @@
 
 @import 'lightgallery/css/lightgallery-bundle';
 @import 'swiper/swiper-bundle.min';
-
