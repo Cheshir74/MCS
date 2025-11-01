@@ -27,6 +27,9 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true
 
 set :gallery_reset_variants, false
+set :assets_keep, 5
+set :nginx_reload, false
+set :nginx_service, 'nginx'
 
 namespace :deploy do
   desc "🔑 Check master.key and credentials.yml.enc existence"
@@ -108,10 +111,40 @@ namespace :deploy do
     end
   end
 
+  desc '🧼 Remove old compiled assets while keeping the latest ones'
+  task :prune_old_assets do
+    on roles(:app) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          keep = fetch(:assets_keep, 5)
+          execute :bundle, "exec rake assets:clean[#{keep}]"
+        end
+      end
+    end
+  end
+
   desc '🔄 Restart Puma'
   task :restart do
     on roles(:app) do
       invoke 'puma:restart'
+    end
+  end
+end
+
+namespace :nginx do
+  desc '♻️ Reload Nginx to pick up fresh static assets'
+  task :reload do
+    on roles(:web) do
+      unless fetch(:nginx_reload, false)
+        info 'Skipping nginx reload (set :nginx_reload, true to enable)'
+        next
+      end
+
+      begin
+        execute :sudo, :systemctl, :reload, fetch(:nginx_service, 'nginx')
+      rescue SSHKit::Command::Failed => e
+        warn "⚠️ Failed to reload Nginx automatically: #{e.message}"
+      end
     end
   end
 end
@@ -123,4 +156,6 @@ before 'deploy:assets:precompile', 'deploy:clean_assets'
 before 'deploy:assets:precompile', 'deploy:build_frontend'
 after 'deploy:updated', 'deploy:migrate'
 after 'deploy:migrate', 'deploy:assets:precompile'
+after 'deploy:assets:precompile', 'deploy:prune_old_assets'
+after 'deploy:publishing', 'nginx:reload'
 after 'deploy:publishing', 'deploy:restart'

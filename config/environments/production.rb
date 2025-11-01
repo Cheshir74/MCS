@@ -26,10 +26,10 @@ Rails.application.configure do
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
 
-  # Do not fall back to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = true
+  # Rely on fully precompiled assets in production so NGINX can serve them directly.
+  config.assets.compile = false
   config.assets.digest = true
-  config.assets.precompile += %w[application.js application.css]
+  config.assets.precompile += %w[application.js application.css admin.js admin.css]
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
