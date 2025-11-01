@@ -102,18 +102,9 @@ namespace :deploy do
     on roles(:app) do
       within release_path do
         with rails_env: fetch(:rails_env) do
-          execute :bundle, 'exec rake assets:clobber'
           execute :bundle, 'exec rake tmp:cache:clear'
         end
       end
-    end
-  end
-
-  desc '🗑 Remove cached compiled assets from shared path'
-  task :purge_shared_assets do
-    on roles(:app) do
-      execute :rm, '-rf', "#{shared_path}/public/assets"
-      execute :mkdir, '-p', "#{shared_path}/public/assets"
     end
   end
 
@@ -129,7 +120,6 @@ end
 before 'deploy:updated', 'deploy:check_keys'
 before 'deploy:assets:precompile', 'deploy:show_credentials'
 before 'deploy:assets:precompile', 'deploy:clean_assets'
-before 'deploy:assets:precompile', 'deploy:purge_shared_assets'
 before 'deploy:assets:precompile', 'deploy:build_frontend'
 after 'deploy:updated', 'deploy:migrate'
 after 'deploy:migrate', 'deploy:assets:precompile'

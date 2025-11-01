@@ -26,7 +26,8 @@ header
 
             li class="nav-item nav-link dropdown" style="font-size: 14px;"
               a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                img class="rounded-circle u-box-shadow-sm me-2" width="25" height="25" src="../../../assets/face_default.svg" alt="Htmlstream" Current User
+                = image_tag "face_default.svg", class: "rounded-circle u-box-shadow-sm me-2", width: 25, height: 25, alt: "Current User"
+                | Current User
                 i class="fa fa-angle-down"
                 
               div class="dropdown-menu" aria-labelledby="navbarDropdown"
@@ -39,4 +40,3 @@ header
                 div class="dropdown-divider"  
                 = link_to 'Log out', destroy_user_session_path, :class => 'dropdown-item', data: { turbo_method: :delete }
                 
-
