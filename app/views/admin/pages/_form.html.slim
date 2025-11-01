@@ -1,0 +1,48 @@
+= form_for [:admin, page] do |f|
+  - if page.errors.any?
+    - page.errors.full_messages.each do |msg|
+      .alert.alert-danger.mb-3 = msg
+
+  .row.g-4
+    .col-12.col-lg-8
+      .card.section-card
+        .card-header
+          h4.card-title
+            span.card-chip Content
+            |  Page details
+          p.card-subtitle.text-muted.small Edit the title and main copy visible to visitors
+        .card-body
+          .row.g-4
+            .col-12
+              .input-card
+                h5.input-card__title Title
+                p.input-card__hint Displayed in navigation and breadcrumbs
+                = f.text_field :title, class: 'form-control input-card__control', placeholder: 'Page title'
+            .col-12
+              .input-card
+                h5.input-card__title Body
+                p.input-card__hint Main content shown on the page
+                = f.text_area :body, class: 'form-control input-card__control', rows: 8, placeholder: 'Write the page content here'
+
+    .col-12.col-lg-4
+      .card.section-card
+        .card-header
+          h4.card-title
+            span.card-chip Assistance
+            |  Formatting tips
+          p.card-subtitle.text-muted.small Use plain text or add HTML snippets for richer layouts
+        .card-body
+          ul.list-unstyled.form-hint.mb-0
+            li.d-flex.gap-2.mb-2
+              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
+              span.small Keep titles concise for navigation menus
+            li.d-flex.gap-2.mb-2
+              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
+              span.small Use paragraphs to break up longer body text
+            li.d-flex.gap-2
+              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
+              span.small HTML tags are supported for advanced formatting
+
+  .form-actions.mt-4
+    = f.submit page.persisted? ? "Save changes" : "Create page", class: 'btn btn-primary'
+    = link_to "Cancel", admin_pages_path, class: 'btn btn-outline-secondary'

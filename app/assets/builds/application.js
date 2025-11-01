@@ -35835,11 +35835,11 @@ var require_react_development2 = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useReducer(reducer, initialArg, init);
         }
-        function useRef3(initialValue) {
+        function useRef4(initialValue) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect2(create, deps) {
+        function useEffect3(create, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useEffect(create, deps);
         }
@@ -36622,14 +36622,14 @@ var require_react_development2 = __commonJS({
         exports2.useContext = useContext;
         exports2.useDebugValue = useDebugValue;
         exports2.useDeferredValue = useDeferredValue;
-        exports2.useEffect = useEffect2;
+        exports2.useEffect = useEffect3;
         exports2.useId = useId;
         exports2.useImperativeHandle = useImperativeHandle;
         exports2.useInsertionEffect = useInsertionEffect;
         exports2.useLayoutEffect = useLayoutEffect;
         exports2.useMemo = useMemo2;
         exports2.useReducer = useReducer;
-        exports2.useRef = useRef3;
+        exports2.useRef = useRef4;
         exports2.useState = useState4;
         exports2.useSyncExternalStore = useSyncExternalStore;
         exports2.useTransition = useTransition;
@@ -62222,7 +62222,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
           workInProgressHook.memoizedState = [nextValue, nextDeps];
           return nextValue;
         }
-        function useRef3(initialValue) {
+        function useRef4(initialValue) {
           currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
           workInProgressHook = createWorkInProgressHook();
           var previousRef = workInProgressHook.memoizedState;
@@ -62313,7 +62313,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
           useContext,
           useMemo: useMemo2,
           useReducer,
-          useRef: useRef3,
+          useRef: useRef4,
           useState: useState4,
           useInsertionEffect: noop2,
           useLayoutEffect,
@@ -67562,7 +67562,7 @@ var require_react_dom_server_browser_development = __commonJS({
           workInProgressHook.memoizedState = [nextValue, nextDeps];
           return nextValue;
         }
-        function useRef3(initialValue) {
+        function useRef4(initialValue) {
           currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
           workInProgressHook = createWorkInProgressHook();
           var previousRef = workInProgressHook.memoizedState;
@@ -67653,7 +67653,7 @@ var require_react_dom_server_browser_development = __commonJS({
           useContext,
           useMemo: useMemo2,
           useReducer,
-          useRef: useRef3,
+          useRef: useRef4,
           useState: useState4,
           useInsertionEffect: noop2,
           useLayoutEffect,
@@ -91946,6 +91946,37 @@ function ChangePasswordModal({ url, show, onClose }) {
   const [confirmPassword, setConfirmPassword] = (0, import_react5.useState)("");
   const [error2, setError] = (0, import_react5.useState)(null);
   const [success, setSuccess] = (0, import_react5.useState)(null);
+  const timeoutRef = (0, import_react5.useRef)(null);
+  (0, import_react5.useEffect)(() => {
+    if (show) {
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setError(null);
+      setSuccess(null);
+      document.body.classList.add("modal-open");
+    } else {
+      document.body.classList.remove("modal-open");
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    }
+    const handleKeyDown = (event2) => {
+      if (event2.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.classList.remove("modal-open");
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, [show, onClose]);
   if (!show) return null;
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -91970,43 +92001,52 @@ function ChangePasswordModal({ url, show, onClose }) {
       });
       const data = await response.json();
       if (response.ok) {
-        setSuccess(data.message);
-        onClose();
+        setSuccess(data.message || "\u041F\u0430\u0440\u043E\u043B\u044C \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0438\u0437\u043C\u0435\u043D\u0435\u043D");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        timeoutRef.current = setTimeout(() => {
+          timeoutRef.current = null;
+          onClose();
+        }, 1200);
       } else {
-        setError(data.error);
+        setError(data.error || "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0438\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C");
       }
     } catch {
       setError("\u041E\u0448\u0438\u0431\u043A\u0430 \u0441\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u044F");
     }
   };
-  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal fade show d-block", tabIndex: "-1", role: "dialog" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-dialog", role: "document" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-content" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "modal-title" }, "\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn-close", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "modal-body" }, error2 && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-danger" }, error2), success && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-success" }, success), /* @__PURE__ */ import_react5.default.createElement("form", { onSubmit: handleSubmit }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react5.default.createElement("label", { className: "form-label" }, "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement(
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal-backdrop", role: "dialog", "aria-modal": "true", onClick: onClose }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__dialog", role: "document", onClick: (event2) => event2.stopPropagation() }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "section-card admin-modal__card admin-modal__card--compact" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__header" }, /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("h4", { className: "admin-modal__title" }, "\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "admin-modal__subtitle" }, "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u0430\u0440\u043E\u043B\u044C \u0438 \u043D\u043E\u0432\u044B\u0439, \u0447\u0442\u043E\u0431\u044B \u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0443\u0447\u0435\u0442\u043D\u044B\u0435 \u0434\u0430\u043D\u043D\u044B\u0435")), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "admin-modal__close btn-close", "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__body" }, error2 && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-danger mb-3" }, error2), success && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-success mb-3" }, success), /* @__PURE__ */ import_react5.default.createElement("form", { onSubmit: handleSubmit, className: "admin-modal__form" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "input-card input-card--mini" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "input-card__title" }, "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "input-card__hint" }, "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u043F\u0430\u0440\u043E\u043B\u044C, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F \u0441\u0435\u0439\u0447\u0430\u0441"), /* @__PURE__ */ import_react5.default.createElement(
     "input",
     {
       type: "password",
-      className: "form-control",
+      className: "form-control input-card__control",
       value: currentPassword,
       onChange: (e) => setCurrentPassword(e.target.value),
-      required: true
+      required: true,
+      autoComplete: "current-password"
     }
-  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react5.default.createElement("label", { className: "form-label" }, "\u041D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement(
+  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "input-card input-card--mini" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "input-card__title" }, "\u041D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "input-card__hint" }, "\u041C\u0438\u043D\u0438\u043C\u0443\u043C 8 \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432, \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0431\u0443\u043A\u0432\u044B \u0438 \u0446\u0438\u0444\u0440\u044B"), /* @__PURE__ */ import_react5.default.createElement(
     "input",
     {
       type: "password",
-      className: "form-control",
+      className: "form-control input-card__control",
       value: newPassword,
       onChange: (e) => setNewPassword(e.target.value),
-      required: true
+      required: true,
+      autoComplete: "new-password"
     }
-  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "mb-3" }, /* @__PURE__ */ import_react5.default.createElement("label", { className: "form-label" }, "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 \u043F\u0430\u0440\u043E\u043B\u044F"), /* @__PURE__ */ import_react5.default.createElement(
+  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "input-card input-card--mini" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "input-card__title" }, "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "input-card__hint" }, "\u041F\u043E\u0432\u0442\u043E\u0440\u043D\u043E \u0432\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C \u0434\u043B\u044F \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F"), /* @__PURE__ */ import_react5.default.createElement(
     "input",
     {
       type: "password",
-      className: "form-control",
+      className: "form-control input-card__control",
       value: confirmPassword,
       onChange: (e) => setConfirmPassword(e.target.value),
-      required: true
+      required: true,
+      autoComplete: "new-password"
     }
-  )), /* @__PURE__ */ import_react5.default.createElement("button", { type: "submit", className: "btn btn-primary" }, "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C"), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn btn-secondary ms-2", onClick: onClose }, "\u041E\u0442\u043C\u0435\u043D\u0430"))))));
+  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__actions" }, /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn btn-outline-secondary", onClick: onClose }, "\u041E\u0442\u043C\u0435\u043D\u0430"), /* @__PURE__ */ import_react5.default.createElement("button", { type: "submit", className: "btn btn-primary" }, "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C")))))));
 }
 
 // app/javascript/controllers/change_password_controller.js

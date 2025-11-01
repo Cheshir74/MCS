@@ -1,37 +1,76 @@
-.div.page-header
-  h3.mb-0 Edit home page
+div.page-header
+  h3.page-headline Edit User
+  div.page-header__meta
+    span.page-header__chip Team Access
+    span.page-header__text Adjust administrative permissions for this account
 
-form
-  .row
-    .col-sm-12
-      .card
-        .card-header Primary block
+= form_for [:admin, @user] do |f|
+  - if @user.errors.any?
+    - @user.errors.full_messages.each do |msg|
+      .alert.alert-danger.mb-3 = msg
+
+  .row.g-4
+    .col-12.col-xl-6
+      .card.section-card
+        .card-header
+          h4.card-title
+            span.card-chip Roles
+            |  Access levels
+          p.card-subtitle.text-muted.small Enable or disable elevated privileges
         .card-body
-          = form_for [:admin, @user] do |f|
-            - if @user.errors.any?
-              - @user.errors.full_messages.each do |msg|
-                .alert.alert-danger = msg
+          - superadmin_id = dom_id(@user, :superadmin_role)
+          - supervisor_id = dom_id(@user, :supervisor_role)
+          - user_role_id = dom_id(@user, :user_role)
 
-            .mb-6
-              .form-group.form-check
-                div.superadmin
-                  = f.label :superadmin_role
-                  = f.check_box :superadmin_role, class:'form-check-input'
-                div.supervisor
-                  = f.label :supervisor_role
-                  = f.check_box :supervisor_role, class: 'form-check-input'
-                div.userrole
-                  = f.label :user_role
-                  = f.check_box :user_role, class: 'form-check-input'
+          .input-card.input-card--switch
+            h5.input-card__title Superadmin
+            p.input-card__hint Full access to all administrative features
+            .form-switch-row.mt-2
+              .form-check.form-switch
+                = f.check_box :superadmin_role, class: 'form-check-input input-card__switch', id: superadmin_id
+                = f.label :superadmin_role, "Grant superadmin privileges", class: 'form-check-label', for: superadmin_id
 
-            .form-group
-              = f.submit "Submit", class: 'btn btn-primary'
-              = link_to "Cancel", admin_users_path, class: 'btn btn-default'
+          .input-card.input-card--switch.mt-3
+            h5.input-card__title Editor
+            p.input-card__hint Manage content while skipping system settings
+            .form-switch-row.mt-2
+              .form-check.form-switch
+                = f.check_box :supervisor_role, class: 'form-check-input input-card__switch', id: supervisor_id
+                = f.label :supervisor_role, "Enable editor capabilities", class: 'form-check-label', for: supervisor_id
 
-= button_tag "Сменить пароль",
-  type: "button",
-  class: "btn btn-warning mt-3",
-  onclick: "Stimulus.getControllerForElementAndIdentifier(document.getElementById('change_password_modal'), 'change-password').open()"
+          .input-card.input-card--switch.mt-3
+            h5.input-card__title Viewer
+            p.input-card__hint Minimal access for reviewing dashboards
+            .form-switch-row.mt-2
+              .form-check.form-switch
+                = f.check_box :user_role, class: 'form-check-input input-card__switch', id: user_role_id
+                = f.label :user_role, "Allow dashboard access", class: 'form-check-label', for: user_role_id
 
+    .col-12.col-xl-6
+      .card.section-card
+        .card-header
+          h4.card-title
+            span.card-chip Account
+            |  Contact details
+          p.card-subtitle.text-muted.small Reference primary email and manage password resets
+        .card-body
+          .input-card
+            h5.input-card__title Email
+            p.input-card__hint Sign-in address for this user
+            span.d-block.fw-semibold = @user.email
+            span.form-hint.mb-0 To update the email, edit the account from the authentication panel.
+
+          ul.list-unstyled.form-hint.mt-4.mb-0
+            li.d-flex.gap-2.mb-2
+              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
+              span.small Combine roles to tailor access (e.g., Editor + Viewer)
+            li.d-flex.gap-2
+              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
+              span.small Use the password action below to send a reset request
+
+  .form-actions.mt-4
+    = f.submit "Save changes", class: 'btn btn-primary'
+    = link_to "Cancel", admin_users_path, class: 'btn btn-outline-secondary'
+    = button_tag "Change password", type: "button", class: "btn btn-outline-primary", onclick: "Stimulus.getControllerForElementAndIdentifier(document.getElementById('change_password_modal'), 'change-password').open()"
 
 #change_password_modal[data-controller="change-password" data-url=change_password_admin_user_path(@user)]

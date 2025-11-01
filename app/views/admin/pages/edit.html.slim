@@ -1,21 +1,7 @@
-h2 Edit page
+div.page-header
+  h3.page-headline Edit Page
+  div.page-header__meta
+    span.page-header__chip Content Ops
+    span.page-header__text Update the copy and structure of this page
 
-= form_for [ :admin, @page ] do |f|
-
-  - if @page.errors.any?
-    - @page.errors.full_messages.each do |msg|
-        div class="alert alert-danger">
-          = msg
-
-  div class="form-group"
-    = f.label :title
-    = f.text_field :title, class:'form-control'
-  br
-  div class="form-group"
-    = f.label :body
-    = f.text_field :body, class:'form-control'
-  br
-
-  = f.submit "Submit", class: 'btn btn-primary'
-  = link_to "Cancel", admin_pages_path, class:'btn btn-default'
-
+= render 'form', page: @page
