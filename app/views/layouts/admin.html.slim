@@ -6,6 +6,7 @@ html
     meta name="yandex-verification" content=@site_setting.yn_verification_sec
     = csrf_meta_tags
     = csp_meta_tag
+    = site_favicon_tag
 
     = javascript_include_tag "admin", "data-turbo-track": "reload", type: "module"
     = stylesheet_link_tag 'admin', media: 'all'

@@ -1,16 +1,21 @@
 nav class="sidebar sidebar-offcanvas admin-sidebar" id="sidebar"
-  div class="admin-sidebar__brand d-flex align-items-center justify-content-center"
-    = link_to admin_path, class: "sidebar-logo-link"
-      - if @site_setting&.logo&.attached?
-        = image_tag @site_setting.logo.variant(resize_to_limit: [44, 44]), class: "sidebar-logo-img", alt: @site_setting&.name_site || "Admin"
-      - else
-        = image_tag "test_logo_1.png", class: "sidebar-logo-img sidebar-logo-img--fallback", alt: @site_setting&.name_site || "Admin"
+  div class="admin-sidebar__brand"
+    = link_to admin_path, class: "sidebar-logo-card"
+      div.sidebar-logo-card__avatar
+        - if @site_setting&.logo&.attached?
+          = image_tag @site_setting.logo.variant(resize_to_limit: [120, 120]), class: "sidebar-logo-card__image", alt: @site_setting&.name_site || 'Admin'
+        - else
+          div.sidebar-logo-card__fallback aria-hidden="true"
+            span.sidebar-logo-card__tile
+              span.sidebar-logo-card__tile-lens
+            span.sidebar-logo-card__tile-badge
+      span.sidebar-logo-card__tagline Control Panel
 
   ul class="nav flex-column mt-4"
-    - menu_items = [{ title: 'Dashboard', icon: 'fa-solid fa-gauge-high', path: admin_path }, { title: 'Home Pages', icon: 'fa-solid fa-bullseye', path: admin_homes_path }, { title: 'Users', icon: 'fa-solid fa-users', path: admin_users_path }, { title: 'Galleries', icon: 'fa-solid fa-images', path: admin_galleries_path }]
+    - menu_items = [{ title: 'Dashboard', icon: :dashboard, path: admin_path }, { title: 'Home Pages', icon: :home, path: admin_homes_path }, { title: 'Users', icon: :users, path: admin_users_path }, { title: 'Galleries', icon: :galleries, path: admin_galleries_path }]
     - menu_items.each do |item|
       - active = current_page?(item[:path])
       li class="nav-item"
         = link_to item[:path], class: "nav-link admin-sidebar__link #{'active' if active}"
-          i class="#{item[:icon]} menu-icon" aria-hidden="true"
+          span.menu-icon= admin_sidebar_icon(item[:icon])
           span class="menu-title"= item[:title]

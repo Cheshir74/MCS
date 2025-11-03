@@ -3,10 +3,6 @@ nav class="navbar admin-topbar fixed-top d-flex align-items-center"
     button class="admin-topbar__toggle btn btn-icon" type="button" data-toggle="minimize"
       i class="fa-solid fa-bars" aria-hidden="true"
     = link_to admin_path, class: "admin-topbar__brand"
-      - if @site_setting&.logo&.attached?
-        = image_tag @site_setting.logo.variant(resize_to_limit: [28, 28]), class: "admin-topbar__brand-logo", alt: @site_setting&.name_site || "Admin"
-      - else
-        = image_tag "test_logo_1.png", class: "admin-topbar__brand-logo admin-topbar__brand-logo--fallback", alt: @site_setting&.name_site || "Admin"
       span class="admin-topbar__brand-name" = @site_setting&.name_site || "Admin"
 
   div class="admin-topbar__right ms-auto d-flex align-items-center gap-3"

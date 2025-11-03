@@ -4,8 +4,8 @@
     - home.errors.full_messages.each do |msg|
       .alert.alert-danger.mb-3 = msg
 
-  .row.g-4
-    .col-12.col-lg-8
+  .home-settings
+    .home-settings__column.home-settings__column--primary
       .card.section-card
         .card-header
           h4.card-title
@@ -13,13 +13,13 @@
             |  Hero block
           p.card-subtitle.text-muted.small Update the title and lead text visitors see first
         .card-body
-          .row.g-4
-            .col-12.col-md-6
+          .home-hero-grid
+            .home-hero-grid__field
               .input-card
                 h5.input-card__title Title
                 p.input-card__hint Headline shown on the main banner
                 = f.text_field :title, class: 'form-control input-card__control', placeholder: 'Your captivating headline'
-            .col-12.col-md-6
+            .home-hero-grid__field
               .input-card
                 h5.input-card__title Intro Text
                 p.input-card__hint Short teaser displayed beneath the headline
@@ -32,8 +32,8 @@
             |  Home gallery
           p.card-subtitle.text-muted.small Curate the images highlighted on the landing page
         .card-body
-          .row.g-4.align-items-start
-            .col-12.col-lg-7
+          .home-media-grid
+            .home-media-grid__dropzone
               label.form-label.form-label--strong Upload images
               .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
                 = f.file_field :images, multiple: true, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
@@ -41,7 +41,7 @@
                   i.fa-solid.fa-cloud-arrow-up.dropzone-icon aria-hidden="true"
                   span.dropzone-title Drag files here or click to browse
                   span.dropzone-subtitle.text-muted.small 2 MB file size maximum • PNG, JPG formats
-            .col-12.col-lg-5
+            .home-media-grid__info
               ul.list-unstyled.form-hint.mb-0
                 li.d-flex.gap-2.mb-2
                   i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
@@ -60,77 +60,78 @@
                 p.section-header__meta Select assets to remove, reorder or preview in lightbox
             = render 'admin/homes/images', home: home
 
-    .col-12.col-lg-4
-      .card.section-card
-        - visible_id = dom_id(home, :visible)
-        - visible_cf_id = dom_id(home, :visible_cf)
-        .card-header
-          h4.card-title
-            span.card-chip Settings
-            |  Visibility
-          p.card-subtitle.text-muted.small Control which blocks appear on the homepage
-        .card-body
-          .input-card.input-card--switch
-            h5.input-card__title Show home page section
-            p.input-card__hint Toggle overall display of the home page content
-            .form-switch-row.mt-2
-              .form-check.form-switch
-                = f.check_box :visible, class: 'form-check-input input-card__switch', id: visible_id
-                = f.label :visible, "Display home page", class: 'form-check-label', for: visible_id
-          .input-card.input-card--switch.mt-3
-            h5.input-card__title Contact form
-            p.input-card__hint Decide if the contact form is rendered on the home page
-            .form-switch-row.mt-2
-              .form-check.form-switch
-                = f.check_box :visible_cf, class: 'form-check-input input-card__switch', id: visible_cf_id
-                = f.label :visible_cf, "Show contact form", class: 'form-check-label', for: visible_cf_id
-          .input-card.mt-3
-            h5.input-card__title Featured gallery
-            p.input-card__hint Choose the gallery showcased on the home screen
-            = f.select :gallery_id,
-                options_for_select(galleries.map { |g| [g.name, g.id] }, home.gallery_id),
-                {}, class: 'form-select input-card__control'
+    .home-settings__column.home-settings__column--sidebar
+      .home-card-stack
+        .card.section-card
+          - visible_id = dom_id(home, :visible)
+          - visible_cf_id = dom_id(home, :visible_cf)
+          .card-header
+            h4.card-title
+              span.card-chip Settings
+              |  Visibility
+            p.card-subtitle.text-muted.small Control which blocks appear on the homepage
+          .card-body
+            .input-card.input-card--switch
+              h5.input-card__title Show home page section
+              p.input-card__hint Toggle overall display of the home page content
+              .form-switch-row.mt-2
+                .form-check.form-switch
+                  = f.check_box :visible, class: 'form-check-input input-card__switch', id: visible_id
+                  = f.label :visible, "Display home page", class: 'form-check-label', for: visible_id
+            .input-card.input-card--switch.mt-3
+              h5.input-card__title Contact form
+              p.input-card__hint Decide if the contact form is rendered on the home page
+              .form-switch-row.mt-2
+                .form-check.form-switch
+                  = f.check_box :visible_cf, class: 'form-check-input input-card__switch', id: visible_cf_id
+                  = f.label :visible_cf, "Show contact form", class: 'form-check-label', for: visible_cf_id
+            .input-card.mt-3
+              h5.input-card__title Featured gallery
+              p.input-card__hint Choose the gallery showcased on the home screen
+              = f.select :gallery_id,
+                  options_for_select(galleries.map { |g| [g.name, g.id] }, home.gallery_id),
+                  {}, class: 'form-select input-card__control'
 
-      .card.section-card
-        .card-header
-          h4.card-title
-            span.card-chip Profile
-            |  About me
-          p.card-subtitle.text-muted.small Update biography text and accompanying portrait
-        .card-body
-          .input-card
-            h5.input-card__title Block title
-            p.input-card__hint Heading displayed above the biography copy
-            = f.text_field :title_block1, class: 'form-control input-card__control', placeholder: 'About me'
+        .card.section-card
+          .card-header
+            h4.card-title
+              span.card-chip Profile
+              |  About me
+            p.card-subtitle.text-muted.small Update biography text and accompanying portrait
+          .card-body
+            .input-card
+              h5.input-card__title Block title
+              p.input-card__hint Heading displayed above the biography copy
+              = f.text_field :title_block1, class: 'form-control input-card__control', placeholder: 'About me'
 
-          .input-card.mt-3
-            h5.input-card__title Bio text
-            p.input-card__hint Short paragraph that introduces you to visitors
-            = f.text_area :body_block1, class: 'form-control input-card__control', placeholder: 'Share your story', rows: 4
+            .input-card.mt-3
+              h5.input-card__title Bio text
+              p.input-card__hint Short paragraph that introduces you to visitors
+              = f.text_area :body_block1, class: 'form-control input-card__control', placeholder: 'Share your story', rows: 4
 
-          label.form-label.form-label--strong.mt-4 Upload profile image
-          p.form-hint Drag & drop a portrait or click to upload
-          .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
-            = f.file_field :image, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
-            .dropzone-msg.dz-message.needsclick
-              i.fa-solid.fa-cloud-arrow-up.dropzone-icon aria-hidden="true"
-              span.dropzone-title Drag file here or click to browse
-              span.dropzone-subtitle.text-muted.small 2 MB file size maximum • PNG, JPG formats
+            label.form-label.form-label--strong.mt-4 Upload profile image
+            p.form-hint Drag & drop a portrait or click to upload
+            .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
+              = f.file_field :image, as: :file, direct_upload: true, 'data-dropzone-target': 'input'
+              .dropzone-msg.dz-message.needsclick
+                i.fa-solid.fa-cloud-arrow-up.dropzone-icon aria-hidden="true"
+                span.dropzone-title Drag file here or click to browse
+                span.dropzone-subtitle.text-muted.small 2 MB file size maximum • PNG, JPG formats
 
-          - if home.image.attached?
-            .section-header.mt-4
-              div
-                h5.section-header__title Current portrait
-                p.section-header__meta Use the trash icon to remove the uploaded photo
-            .about-photo
-              .row.g-3.align-items-start
-                .col-auto
-                  .item data-src="#{url_for(home.image.variant(resize_to_limit: [2000, 1200]))}"
-                    a href="#{url_for(home.image.variant(resize_to_limit: [1000, 670]))}"
-                      = image_tag home.image.variant(resize_to_limit: [210, 210]), class: 'img-fluid rounded-3 shadow-sm'
-                  .card-img-overlay
-                    = link_to delete_photo_attachment_admin_home_url(home, home.image), data: { turbo_method: :delete }, class: 'img-btn-edit' do
-                      i.fas.fa-trash
+            - if home.image.attached?
+              .section-header.mt-4
+                div
+                  h5.section-header__title Current portrait
+                  p.section-header__meta Use the trash icon to remove the uploaded photo
+              .about-photo
+                .row.g-3.align-items-start
+                  .col-auto
+                    .item data-src="#{url_for(home.image.variant(resize_to_limit: [2000, 1200]))}"
+                      a href="#{url_for(home.image.variant(resize_to_limit: [1000, 670]))}"
+                        = image_tag home.image.variant(resize_to_limit: [210, 210]), class: 'img-fluid rounded-3 shadow-sm'
+                    .card-img-overlay
+                      = link_to delete_photo_attachment_admin_home_url(home, home.image), data: { turbo_method: :delete }, class: 'img-btn-edit' do
+                        i.fas.fa-trash
 
   .form-actions.mt-4
     = f.submit home.persisted? ? "Save changes" : "Create home page", class: 'btn btn-primary'

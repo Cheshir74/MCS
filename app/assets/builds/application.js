@@ -92069,6 +92069,58 @@ var change_password_controller_default = class extends Controller {
   }
 };
 
+// app/javascript/controllers/logo_preview_controller.js
+var logo_preview_controller_default = class extends Controller {
+  static targets = ["input", "preview", "image", "filename", "currentPreview"];
+  preview(event2) {
+    const [file] = event2.target.files ?? [];
+    if (!file) {
+      this.reset();
+      return;
+    }
+    if (!file.type.startsWith("image/")) {
+      this.reset();
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.showPreview(reader.result, file.name);
+    };
+    reader.readAsDataURL(file);
+  }
+  reset() {
+    if (this.hasPreviewTarget) {
+      this.previewTarget.hidden = true;
+    }
+    if (this.hasImageTarget) {
+      this.imageTarget.src = "";
+    }
+    if (this.hasFilenameTarget) {
+      this.filenameTarget.textContent = "";
+    }
+    if (this.hasCurrentPreviewTarget) {
+      this.currentPreviewTarget.classList.remove("brand-upload__preview--inactive");
+    }
+    if (this.hasInputTarget) {
+      this.inputTarget.value = "";
+    }
+  }
+  showPreview(src, filename) {
+    if (this.hasImageTarget) {
+      this.imageTarget.src = src;
+    }
+    if (this.hasFilenameTarget) {
+      this.filenameTarget.textContent = filename;
+    }
+    if (this.hasPreviewTarget) {
+      this.previewTarget.hidden = false;
+    }
+    if (this.hasCurrentPreviewTarget) {
+      this.currentPreviewTarget.classList.add("brand-upload__preview--inactive");
+    }
+  }
+};
+
 // app/javascript/controllers/index.js
 application.register("dropzone", dropzone_controller_default);
 application.register("modal", modal_controller_default);
@@ -92076,6 +92128,7 @@ application.register("swiper", swiper_controller_default);
 application.register("check_email", check_email_controller_default);
 application.register("gallery", gallery_controller_default);
 application.register("change-password", change_password_controller_default);
+application.register("logo-preview", logo_preview_controller_default);
 
 // app/javascript/application.js
 var import_react7 = __toESM(require_react());

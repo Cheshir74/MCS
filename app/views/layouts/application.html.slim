@@ -8,6 +8,7 @@ html
 
     = csrf_meta_tags
     = csp_meta_tag
+    = site_favicon_tag
 
     = javascript_include_tag "application", "data-turbo-track": "reload"
     = stylesheet_link_tag 'application', media: 'all'
@@ -32,4 +33,3 @@ html
             = yield
 
     = render 'layouts/footer'
-

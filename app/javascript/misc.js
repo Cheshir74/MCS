@@ -1,15 +1,25 @@
-(function($) {"turbo:load",
+(function($) {
   'use strict';
-  $(function() {
-    var body = $('body');
-    var contentWrapper = $('.content-wrapper');
-    var scroller = $('.container-scroller');
-    var footer = $('.footer');
-    var sidebar = $('.sidebar');
+
+  const MINIMIZE_SELECTOR = '[data-toggle="minimize"]';
+  const FULLSCREEN_SELECTOR = '#fullscreen-button';
+
+  function initializeSidebar() {
+    const body = $('body');
+    const contentWrapper = $('.content-wrapper');
+    const scroller = $('.container-scroller');
+    const footer = $('.footer');
+    const sidebar = $('.sidebar');
+
+    if (!sidebar.length) return;
+
+    // reset sidebar event handlers to avoid duplicates after Turbo navigation
+    sidebar.off('show.bs.collapse', '.collapse');
+    $(document).off('click', MINIMIZE_SELECTOR);
+    $(document).off('click', FULLSCREEN_SELECTOR);
 
     //Add active class to nav-link based on url dynamically
     //Active class can be hard coded directly in html file also as required
-
     function addActiveClass(element) {
       if (current === "") {
         //for root url
@@ -35,7 +45,11 @@
       }
     }
 
-    var current = location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
+    sidebar.find('.nav-item').removeClass('active');
+    sidebar.find('.nav-link.active').removeClass('active');
+    sidebar.find('.collapse.show').removeClass('show');
+
+    var current = window.location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
     $('.nav li a', sidebar).each(function() {
       var $this = $(this);
       addActiveClass($this);
@@ -71,7 +85,7 @@
       }
     }
 
-    $('[data-toggle="minimize"]').on("click", function() {
+    $(document).on("click", MINIMIZE_SELECTOR, function() {
       if ((body.hasClass('sidebar-toggle-display')) || (body.hasClass('sidebar-absolute'))) {
         body.toggleClass('sidebar-hidden');
       } else {
@@ -80,10 +94,15 @@
     });
 
     //checkbox and radios
-    $(".form-check label,.form-radio label").append('<i class="input-helper"></i>');
+    $(".form-check label,.form-radio label").each(function() {
+      var $label = $(this);
+      if ($label.find('.input-helper').length === 0) {
+        $label.append('<i class="input-helper"></i>');
+      }
+    });
 
     //fullscreen
-    $("#fullscreen-button").on("click", function toggleFullScreen() {
+    $(document).on("click", FULLSCREEN_SELECTOR, function toggleFullScreen() {
       if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
         if (document.documentElement.requestFullScreen) {
           document.documentElement.requestFullScreen();
@@ -106,6 +125,10 @@
         }
       }
     })
-    
-  });
+
+  }
+
+  document.addEventListener('turbo:load', initializeSidebar);
+  document.addEventListener('DOMContentLoaded', initializeSidebar);
+
 })(jQuery);

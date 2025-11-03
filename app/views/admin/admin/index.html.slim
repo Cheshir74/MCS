@@ -5,9 +5,9 @@ div class="page-header"
     span.page-header__text Update brand assets, contact info, and email delivery
 
 = form_with(model: @site_setting, url: admin_site_setting_path(@site_setting), local: true, html: { class: "settings-form" }) do |f|
-  div class="row g-4"
-    div class="col-12 col-xl-5"
-      div class="section-card settings-card"
+  .settings-layout
+    .settings-layout__column.settings-layout__column--branding
+      .section-card.settings-card
         .card-header
           h4.card-title
             span.card-chip Branding
@@ -15,36 +15,41 @@ div class="page-header"
           p.card-subtitle.text-muted.small Manage logos and favicons shown across the site
         .card-body
           .brand-upload
-            div class="brand-upload__item"
+            .brand-upload__item data-controller="logo-preview"
               h5.brand-upload__title Primary logo
               p.brand-upload__hint Displayed in navigation and admin
               - if @site_setting.logo.attached?
                 - logo_preview = @site_setting.logo.variable? ? @site_setting.logo.variant(resize_to_limit: [200, 200]) : @site_setting.logo
-                div class="brand-upload__preview"
+                .brand-upload__preview data-logo-preview-target="currentPreview"
                   = image_tag logo_preview, class: "brand-upload__image", alt: "Current logo"
-                  label class="brand-upload__remove"
+                  label.brand-upload__remove
                     = f.check_box :remove_logo, class: "form-check-input"
                     span Remove logo
-              = f.file_field :logo, accept: "image/png,image/jpeg, image/svg+xml", class: "form-control", direct_upload: true
+              = f.file_field :logo, accept: "image/png,image/jpeg, image/svg+xml", class: "form-control", direct_upload: true, data: { action: "change->logo-preview#preview", logo_preview_target: "input" }
+              .brand-upload__preview.brand-upload__preview--live(data-logo-preview-target="preview" hidden)
+                img.brand-upload__image data-logo-preview-target="image" alt="Selected logo preview"
+                div.brand-upload__meta
+                  span.brand-upload__filename data-logo-preview-target="filename"
+                  button.brand-upload__reset type="button" data-action="logo-preview#reset" Reset selection
               span.brand-upload__note Recommended 320×320px PNG or SVG
 
             hr
 
-            div class="brand-upload__item"
+            .brand-upload__item
               h5.brand-upload__title Favicon
               p.brand-upload__hint Used in browser tabs and bookmarks
               - if @site_setting.favicon.attached?
                 - favicon_preview = @site_setting.favicon.variable? ? @site_setting.favicon.variant(resize_to_limit: [64, 64]) : @site_setting.favicon
-                div class="brand-upload__preview brand-upload__preview--favicon"
+                .brand-upload__preview.brand-upload__preview--favicon
                   = image_tag favicon_preview, class: "brand-upload__image", alt: "Favicon"
-                  label class="brand-upload__remove"
+                  label.brand-upload__remove
                     = f.check_box :remove_favicon, class: "form-check-input"
                     span Remove favicon
               = f.file_field :favicon, accept: "image/x-icon,image/png", class: "form-control", direct_upload: true
               span.brand-upload__note ICO or PNG 32×32px
 
-    div class="col-12 col-xl-7"
-      div class="section-card settings-card"
+    .settings-layout__column.settings-layout__column--content
+      .section-card.settings-card
         .card-header
           h4.card-title
             span.card-chip Content
@@ -74,7 +79,8 @@ div class="page-header"
               = f.label :vk_url, 'VK URL', class: 'form-label form-label--strong'
               = f.text_field :vk_url, class: 'form-control', placeholder: 'https://vk.com/...'
 
-      div class="section-card settings-card mt-4"
+    .settings-layout__full
+      .section-card.settings-card
         .card-header
           h4.card-title
             span.card-chip Email
@@ -100,7 +106,7 @@ div class="page-header"
             .form-grid__item
               = f.label :email_port, 'SMTP port', class: 'form-label form-label--strong'
               = f.number_field :email_port, class: 'form-control', placeholder: '587'
-            .form-grid__item
+            .form-grid__item.form-grid__item--full
               .input-card.input-card--switch
                 h5.input-card__title TLS
                 p.input-card__hint Enable TLS for outgoing mail
@@ -108,7 +114,7 @@ div class="page-header"
                   .form-check.form-switch
                     = f.check_box :email_tls, class: 'form-check-input input-card__switch'
                     = f.label :email_tls, 'TLS enabled', class: 'form-check-label'
-            .form-grid__item
+            .form-grid__item.form-grid__item--full
               .input-card.input-card--switch
                 h5.input-card__title SSL
                 p.input-card__hint Enable SSL when required by provider
