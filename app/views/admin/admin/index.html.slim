@@ -72,124 +72,125 @@ div class="page-header"
         p.mb-3.text-muted No home page has been created yet. Create one now to publish your landing page.
         = link_to "Create home page", new_admin_home_path, class: "btn btn-primary"
 
-= form_with(model: @site_setting, url: admin_site_setting_path(@site_setting), local: true, html: { class: "settings-form" }) do |f|
-  .settings-layout
-    .settings-layout__column.settings-layout__column--branding
-      .section-card.settings-card
-        .card-header
-          h4.card-title
-            span.card-chip Branding
-            |  Visual identity
-          p.card-subtitle.text-muted.small Manage logos and favicons shown across the site
-        .card-body
-          .brand-upload
-            .brand-upload__item data-controller="logo-preview"
-              h5.brand-upload__title Primary logo
-              p.brand-upload__hint Displayed in navigation and admin
-              - if @site_setting.logo.attached?
-                - logo_preview = @site_setting.logo.variable? ? @site_setting.logo.variant(resize_to_limit: [200, 200]) : @site_setting.logo
-                .brand-upload__preview data-logo-preview-target="currentPreview"
-                  = image_tag logo_preview, class: "brand-upload__image", alt: "Current logo"
-                  label.brand-upload__remove
-                    = f.check_box :remove_logo, class: "form-check-input"
-                    span Remove logo
-              = f.file_field :logo, accept: "image/png,image/jpeg, image/svg+xml", class: "form-control", direct_upload: true, data: { action: "change->logo-preview#preview", logo_preview_target: "input" }
-              .brand-upload__preview.brand-upload__preview--live(data-logo-preview-target="preview" hidden)
-                img.brand-upload__image data-logo-preview-target="image" alt="Selected logo preview"
-                div.brand-upload__meta
-                  span.brand-upload__filename data-logo-preview-target="filename"
-                  button.brand-upload__reset type="button" data-action="logo-preview#reset" Reset selection
-              span.brand-upload__note Recommended 320×320px PNG or SVG
+.section-card.settings-card.mt-4
+  .card-header
+    h4.card-title
+      span.card-chip Site
+      |  Brand & communications
+    p.card-subtitle.text-muted.small Keep branding, messaging and email delivery in sync.
+  .card-body
+    = form_with(model: @site_setting, url: admin_site_setting_path(@site_setting), local: true, html: { class: "settings-form" }) do |f|
+      .settings-panels.featured-home-wrapper
+        .settings-panels__grid.featured-home-grid
+          .settings-panel.featured-home-panel
+            .settings-panel__header
+              h6.settings-panel__title Brand assets
+              p.text-muted.small Refresh the visuals shown across navigation and tabs.
+            .settings-panel__body
+              .brand-upload
+                .brand-upload__item data-controller="logo-preview"
+                  h5.brand-upload__title Primary logo
+                  p.brand-upload__hint Displayed in navigation and admin
+                  - if @site_setting.logo.attached?
+                    - logo_preview = @site_setting.logo.variable? ? @site_setting.logo.variant(resize_to_limit: [200, 200]) : @site_setting.logo
+                    .brand-upload__preview data-logo-preview-target="currentPreview"
+                      = image_tag logo_preview, class: "brand-upload__image", alt: "Current logo"
+                      label.brand-upload__remove
+                        = f.check_box :remove_logo, class: "form-check-input"
+                        span Remove logo
+                  = f.file_field :logo, accept: "image/png,image/jpeg, image/svg+xml", class: "form-control", direct_upload: true, data: { action: "change->logo-preview#preview", logo_preview_target: "input" }
+                  .brand-upload__preview.brand-upload__preview--live(data-logo-preview-target="preview" hidden)
+                    img.brand-upload__image data-logo-preview-target="image" alt="Selected logo preview"
+                    div.brand-upload__meta
+                      span.brand-upload__filename data-logo-preview-target="filename"
+                      button.brand-upload__reset type="button" data-action="logo-preview#reset" Reset selection
+                  span.brand-upload__note Recommended 320×320px PNG or SVG
 
-            hr
+                hr
 
-            .brand-upload__item
-              h5.brand-upload__title Favicon
-              p.brand-upload__hint Used in browser tabs and bookmarks
-              - if @site_setting.favicon.attached?
-                - favicon_preview = @site_setting.favicon.variable? ? @site_setting.favicon.variant(resize_to_limit: [64, 64]) : @site_setting.favicon
-                .brand-upload__preview.brand-upload__preview--favicon
-                  = image_tag favicon_preview, class: "brand-upload__image", alt: "Favicon"
-                  label.brand-upload__remove
-                    = f.check_box :remove_favicon, class: "form-check-input"
-                    span Remove favicon
-              = f.file_field :favicon, accept: "image/x-icon,image/png", class: "form-control", direct_upload: true
-              span.brand-upload__note ICO or PNG 32×32px
+                .brand-upload__item
+                  h5.brand-upload__title Favicon
+                  p.brand-upload__hint Used in browser tabs and bookmarks
+                  - if @site_setting.favicon.attached?
+                    - favicon_preview = @site_setting.favicon.variable? ? @site_setting.favicon.variant(resize_to_limit: [64, 64]) : @site_setting.favicon
+                    .brand-upload__preview.brand-upload__preview--favicon
+                      = image_tag favicon_preview, class: "brand-upload__image", alt: "Favicon"
+                      label.brand-upload__remove
+                        = f.check_box :remove_favicon, class: "form-check-input"
+                        span Remove favicon
+                  = f.file_field :favicon, accept: "image/x-icon,image/png", class: "form-control", direct_upload: true
+                  span.brand-upload__note ICO or PNG 32×32px
 
-    .settings-layout__column.settings-layout__column--content
-      .section-card.settings-card
-        .card-header
-          h4.card-title
-            span.card-chip Content
-            |  Public information
-          p.card-subtitle.text-muted.small Update visible copy and verification tokens
-        .card-body
-          .form-grid
-            .form-grid__item
-              = f.label :name_site, class: 'form-label form-label--strong'
-              = f.text_field :name_site, class: 'form-control', placeholder: 'Site display name'
-            .form-grid__item
-              = f.label :footer, class: 'form-label form-label--strong'
-              = f.text_field :footer, class: 'form-control', placeholder: 'Footer text'
-            .form-grid__item
-              = f.label :yn_verification_pri, class: 'form-label form-label--strong'
-              = f.text_field :yn_verification_pri, class: 'form-control', placeholder: 'Yandex verification primary'
-            .form-grid__item
-              = f.label :yn_verification_sec, class: 'form-label form-label--strong'
-              = f.text_field :yn_verification_sec, class: 'form-control', placeholder: 'Yandex verification secondary'
-            .form-grid__item
-              = f.label :fb_url, 'Facebook URL', class: 'form-label form-label--strong'
-              = f.text_field :fb_url, class: 'form-control', placeholder: 'https://facebook.com/...'
-            .form-grid__item
-              = f.label :inst_url, 'Instagram URL', class: 'form-label form-label--strong'
-              = f.text_field :inst_url, class: 'form-control', placeholder: 'https://instagram.com/...'
-            .form-grid__item
-              = f.label :vk_url, 'VK URL', class: 'form-label form-label--strong'
-              = f.text_field :vk_url, class: 'form-control', placeholder: 'https://vk.com/...'
+          .settings-panel.featured-home-panel
+            .settings-panel__header
+              h6.settings-panel__title Public profile
+              p.text-muted.small Update copy and social links shown to visitors.
+            .settings-panel__body
+              .form-grid
+                .form-grid__item
+                  = f.label :name_site, class: 'form-label form-label--strong'
+                  = f.text_field :name_site, class: 'form-control', placeholder: 'Site display name'
+                .form-grid__item
+                  = f.label :footer, class: 'form-label form-label--strong'
+                  = f.text_field :footer, class: 'form-control', placeholder: 'Footer text'
+                .form-grid__item
+                  = f.label :yn_verification_pri, class: 'form-label form-label--strong'
+                  = f.text_field :yn_verification_pri, class: 'form-control', placeholder: 'Yandex verification primary'
+                .form-grid__item
+                  = f.label :yn_verification_sec, class: 'form-label form-label--strong'
+                  = f.text_field :yn_verification_sec, class: 'form-control', placeholder: 'Yandex verification secondary'
+                .form-grid__item
+                  = f.label :fb_url, 'Facebook URL', class: 'form-label form-label--strong'
+                  = f.text_field :fb_url, class: 'form-control', placeholder: 'https://facebook.com/...'
+                .form-grid__item
+                  = f.label :inst_url, 'Instagram URL', class: 'form-label form-label--strong'
+                  = f.text_field :inst_url, class: 'form-control', placeholder: 'https://instagram.com/...'
+                .form-grid__item
+                  = f.label :vk_url, 'VK URL', class: 'form-label form-label--strong'
+                  = f.text_field :vk_url, class: 'form-control', placeholder: 'https://vk.com/...'
 
-    .settings-layout__full
-      .section-card.settings-card
-        .card-header
-          h4.card-title
-            span.card-chip Email
-            |  Outbound delivery settings
-          p.card-subtitle.text-muted.small Configure sender address and SMTP connectivity
-        .card-body
-          .form-grid
-            .form-grid__item
-              = f.label :email_contact, 'Contact email', class: 'form-label form-label--strong'
-              = f.email_field :email_contact, class: 'form-control', placeholder: 'info@example.com'
-            .form-grid__item
-              = f.label :email_login, 'SMTP login', class: 'form-label form-label--strong'
-              = f.text_field :email_login, class: 'form-control'
-            .form-grid__item
-              = f.label :email_domain, 'SMTP domain', class: 'form-label form-label--strong'
-              = f.text_field :email_domain, class: 'form-control'
-            .form-grid__item
-              = f.label :email_password, 'SMTP password', class: 'form-label form-label--strong'
-              = f.password_field :email_password, class: 'form-control'
-            .form-grid__item
-              = f.label :email_address, 'SMTP address', class: 'form-label form-label--strong'
-              = f.text_field :email_address, class: 'form-control', placeholder: 'smtp.example.com'
-            .form-grid__item
-              = f.label :email_port, 'SMTP port', class: 'form-label form-label--strong'
-              = f.number_field :email_port, class: 'form-control', placeholder: '587'
-            .form-grid__item.form-grid__item--full
-              .input-card.input-card--switch
-                h5.input-card__title TLS
-                p.input-card__hint Enable TLS for outgoing mail
-                .form-switch-row
-                  .form-check.form-switch
-                    = f.check_box :email_tls, class: 'form-check-input input-card__switch'
-                    = f.label :email_tls, 'TLS enabled', class: 'form-check-label'
-            .form-grid__item.form-grid__item--full
-              .input-card.input-card--switch
-                h5.input-card__title SSL
-                p.input-card__hint Enable SSL when required by provider
-                .form-switch-row
-                  .form-check.form-switch
-                    = f.check_box :email_ssl, class: 'form-check-input input-card__switch'
-                    = f.label :email_ssl, 'SSL enabled', class: 'form-check-label'
+        .settings-panel.settings-panel--full.featured-home-panel
+          .settings-panel__header
+            h6.settings-panel__title Email delivery
+            p.text-muted.small Configure SMTP credentials and security toggles.
+          .settings-panel__body
+            .form-grid.form-grid--two-col
+                .form-grid__item
+                  = f.label :email_contact, 'Contact email', class: 'form-label form-label--strong'
+                  = f.email_field :email_contact, class: 'form-control', placeholder: 'info@example.com'
+                .form-grid__item
+                  = f.label :email_login, 'SMTP login', class: 'form-label form-label--strong'
+                  = f.text_field :email_login, class: 'form-control'
+                .form-grid__item
+                  = f.label :email_domain, 'SMTP domain', class: 'form-label form-label--strong'
+                  = f.text_field :email_domain, class: 'form-control'
+                .form-grid__item
+                  = f.label :email_password, 'SMTP password', class: 'form-label form-label--strong'
+                  = f.password_field :email_password, class: 'form-control'
+                .form-grid__item
+                  = f.label :email_address, 'SMTP address', class: 'form-label form-label--strong'
+                  = f.text_field :email_address, class: 'form-control', placeholder: 'smtp.example.com'
+                .form-grid__item
+                  = f.label :email_port, 'SMTP port', class: 'form-label form-label--strong'
+                  = f.number_field :email_port, class: 'form-control', placeholder: '587'
+                .form-grid__item.form-grid__item--full
+                  .input-card.input-card--switch
+                    h5.input-card__title TLS
+                    p.input-card__hint Enable TLS for outgoing mail
+                    .form-switch-row
+                      .form-check.form-switch
+                        = f.check_box :email_tls, class: 'form-check-input input-card__switch'
+                        = f.label :email_tls, 'TLS enabled', class: 'form-check-label'
+                .form-grid__item.form-grid__item--full
+                  .input-card.input-card--switch
+                    h5.input-card__title SSL
+                    p.input-card__hint Enable SSL when required by provider
+                    .form-switch-row
+                      .form-check.form-switch
+                        = f.check_box :email_ssl, class: 'form-check-input input-card__switch'
+                        = f.label :email_ssl, 'SSL enabled', class: 'form-check-label'
 
-  .form-actions.mt-4
-    = f.submit "Save settings", class: 'btn btn-primary'
+      .settings-form-actions
+        button.btn.btn-gradient type="submit"
+          i.fa-solid.fa-floppy-disk.me-2 aria-hidden="true"
+          | Save site settings
