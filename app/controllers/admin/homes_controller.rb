@@ -23,7 +23,7 @@ class Admin::HomesController < Admin::AdminController
       else
         flash[:alert] = "No images selected"
       end
-      return redirect_to edit_admin_home_path(@home)
+      return redirect_back(fallback_location: edit_admin_home_path(@home))
     end
 
     attachments_scope.find_each(&:purge) if attachments_scope.exists?
@@ -37,10 +37,41 @@ class Admin::HomesController < Admin::AdminController
       end
 
       flash[:notice] = "Домашняя страница обновлена"
-      redirect_to edit_admin_home_path(@home)
+      redirect_back(fallback_location: edit_admin_home_path(@home))
     else
       render :edit
     end
+  end
+
+  def set_primary
+    home_id = params[:home_id].presence
+    unless home_id
+      return redirect_to admin_root_path, alert: "Select a home page to feature."
+    end
+
+    home = Home.find_by(id: home_id)
+
+    unless home
+      return redirect_to admin_root_path, alert: "The selected home page could not be found."
+    end
+
+    if home.visible?
+      return redirect_to admin_dashboard_path, notice: "This home page is already featured."
+    end
+
+    begin
+      ActiveRecord::Base.transaction do
+        Home.where.not(id: home.id).update_all(visible: false)
+        home.update!(visible: true)
+      end
+      flash[:notice] = "Featured home page updated."
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:alert] = e.record.errors.full_messages.to_sentence.presence || "Unable to update featured home page."
+    rescue => e
+      Rails.logger.error("[Admin::HomesController#set_primary] #{e.class}: #{e.message}")
+      flash[:alert] = "Unable to update featured home page."
+    end
+    redirect_to admin_dashboard_path
   end
 
   def create
@@ -131,8 +162,10 @@ class Admin::HomesController < Admin::AdminController
 
   def home_params
     params.require(:home).permit(
-      :title, :body, :title_block1, :body_block1,
+      :title, :body, :title_block1, :body_block1, :section_order,
       :gallery_id, :visible, :visible_cf, images: []
 )
   end
+
+  def safe_return_path; end
 end

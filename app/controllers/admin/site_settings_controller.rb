@@ -11,7 +11,7 @@ class Admin::SiteSettingsController < ApplicationController
   # PATCH/PUT /site_settings/:id
   def update
     if @site_setting.update(site_setting_params)
-      redirect_to admin_path, notice: 'Настройки были успешно обновлены.'
+      redirect_to admin_dashboard_path, notice: 'Настройки были успешно обновлены.'
     else
       render :edit
     end

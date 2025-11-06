@@ -6,6 +6,7 @@ class Admin::AdminController < ApplicationController
   layout "admin"
 
   before_action :set_site_setting, only: [:show, :edit, :update]
+  before_action :load_home_options, only: [:index, :show, :edit]
   # before_action :set_admin_setting, only: [:show, :edit, :update]
 
 
@@ -69,6 +70,11 @@ class Admin::AdminController < ApplicationController
       :logo,
       :remove_logo
     )
+  end
+
+  def load_home_options
+    @homes = Home.order(created_at: :desc)
+    @current_home = @homes.find(&:visible)
   end
 
 end

@@ -92436,6 +92436,71 @@ var rich_text_controller_default = class extends Controller {
   }
 };
 
+// app/javascript/controllers/section_order_controller.js
+var section_order_controller_default = class extends Controller {
+  static targets = ["input", "item", "list"];
+  connect() {
+    this.syncFromInput();
+  }
+  moveUp(event2) {
+    event2.preventDefault();
+    const item = event2.currentTarget.closest("[data-section-order-target='item']");
+    if (!item) return;
+    const prev = item.previousElementSibling;
+    if (prev) {
+      this.listTarget.insertBefore(item, prev);
+      this.updateInput();
+    }
+  }
+  moveDown(event2) {
+    event2.preventDefault();
+    const item = event2.currentTarget.closest("[data-section-order-target='item']");
+    if (!item) return;
+    const next = item.nextElementSibling;
+    if (next) {
+      this.listTarget.insertBefore(next, item);
+      this.updateInput();
+    }
+  }
+  syncFromInput() {
+    if (!this.hasInputTarget) return;
+    const order2 = (this.inputTarget.value || "").split(",").map((value) => value.trim()).filter(Boolean);
+    const items = Array.from(this.itemTargets);
+    order2.forEach((key) => {
+      const item = items.find((candidate) => candidate.dataset.key === key);
+      if (item) {
+        this.listTarget.appendChild(item);
+      }
+    });
+    this.updateInput();
+  }
+  updateInput() {
+    if (!this.hasInputTarget) return;
+    const keys = Array.from(this.listTarget.querySelectorAll("[data-section-order-target='item']")).map(
+      (element) => element.dataset.key
+    );
+    this.inputTarget.value = keys.join(",");
+  }
+};
+
+// app/javascript/controllers/featured_home_controller.js
+var featured_home_controller_default = class extends Controller {
+  static targets = ["item"];
+  connect() {
+    this.markActive();
+  }
+  markActive() {
+    const items = this.itemTargets;
+    items.forEach((item) => item.classList.remove("is-active"));
+    const activeRadio = this.element.querySelector("input[type='radio']:checked");
+    if (!activeRadio) return;
+    const label = activeRadio.closest("[data-featured-home-target='item']");
+    if (label) {
+      label.classList.add("is-active");
+    }
+  }
+};
+
 // app/javascript/controllers/index.js
 application.register("dropzone", dropzone_controller_default);
 application.register("modal", modal_controller_default);
@@ -92445,6 +92510,8 @@ application.register("gallery", gallery_controller_default);
 application.register("change-password", change_password_controller_default);
 application.register("logo-preview", logo_preview_controller_default);
 application.register("rich-text", rich_text_controller_default);
+application.register("section-order", section_order_controller_default);
+application.register("featured-home", featured_home_controller_default);
 
 // app/javascript/application.js
 var import_react7 = __toESM(require_react());

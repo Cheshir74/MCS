@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   get 'message' => 'messages#new'
   post 'message' => 'messages#create'
   namespace :admin do
-    get '/' => 'admin#index'
+    get '/' => 'admin#index', as: :dashboard
     resources :site_settings
     resources :users do
       member do
@@ -39,6 +39,9 @@ Rails.application.routes.draw do
         delete :delete_photo_attachment
         delete :destroy_attach
         patch :sort
+      end
+      collection do
+        patch :set_primary
       end
     end
   end

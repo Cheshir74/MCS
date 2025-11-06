@@ -4,6 +4,61 @@ div class="page-header"
     span.page-header__chip Control Panel
     span.page-header__text Update brand assets, contact info, and email delivery
 
+.section-card.settings-card.mb-4
+  .card-header
+    h4.card-title
+      span.card-chip Homepage
+      |  Featured layout
+    p.card-subtitle.text-muted.small Select which home page is published on the public site
+  .card-body
+    - if @homes.any?
+      - unless @current_home
+        .alert.alert-warning.d-flex.align-items-center.gap-2 role="alert"
+          i.fa-solid.fa-triangle-exclamation aria-hidden="true"
+          span No featured home page selected. Choose one below to publish it.
+      = form_with url: set_primary_admin_homes_path, method: :patch, local: true, html: { data: { controller: "featured-home" }, class: "primary-home-form" } do
+        .featured-home-list.list-group.list-group-flush.mb-3
+          - @homes.each_with_index do |home, index|
+            - checked = @current_home ? home == @current_home : index.zero?
+            label.list-group-item.featured-home-list__item data-featured-home-target="item" class=("is-active" if checked)
+              = radio_button_tag :home_id, home.id, checked, class: "form-check-input me-3", data: { action: "change->featured-home#markActive" }
+              .featured-home-list__body
+                span.featured-home-list__title = home.title.presence || "Home ##{home.id}"
+                - if home.updated_at
+                  span.featured-home-list__meta.text-muted.small Last updated #{time_ago_in_words(home.updated_at)} ago
+        .d-flex.gap-2.flex-wrap
+          = submit_tag "Set featured home", class: "btn btn-primary"
+          = link_to "Manage home pages", admin_homes_path, class: "btn btn-outline-secondary"
+      - if @current_home
+        hr.my-4
+        .featured-home-content
+          h5.featured-home-content__title Arrange home page sections
+          p.text-muted.small.mb-3 Use the arrows to reorder sections that appear below the hero block.
+          = form_with model: @current_home, url: admin_home_path(@current_home), method: :patch, local: true, html: { data: { controller: "section-order" } } do |f|
+            = f.hidden_field :section_order, value: @current_home.section_order_list.join(","), data: { section_order_target: "input" }
+            = hidden_field_tag :return_to, admin_dashboard_path
+            .section-order-list data-section-order-target="list"
+              - @current_home.section_order_list.each do |key|
+                - label = { "gallery" => "Gallery", "about" => "About", "contact" => "Contact" }[key] || key.titleize
+                .section-order-item data-section-order-target="item" data-key=key
+                  span.section-order-item__drag-icon
+                    i.fa-solid.fa-grip-vertical aria-hidden="true"
+                  span.section-order-item__label = label
+                  .section-order-item__actions
+                    button.btn.btn-link.btn-sm type="button" data-action="section-order#moveUp" data-direction="up"
+                      i.fa-solid.fa-arrow-up aria-hidden="true"
+                      span.visually-hidden Move up
+                    button.btn.btn-link.btn-sm type="button" data-action="section-order#moveDown" data-direction="down"
+                      i.fa-solid.fa-arrow-down aria-hidden="true"
+                      span.visually-hidden Move down
+            .d-flex.gap-2.mt-3.flex-wrap
+              = f.submit "Save section order", class: "btn btn-primary"
+              = link_to "Open in editor", edit_admin_home_path(@current_home), class: "btn btn-outline-secondary"
+    - else
+      .empty-state.text-center
+        p.mb-3.text-muted No home page has been created yet. Create one now to publish your landing page.
+        = link_to "Create home page", new_admin_home_path, class: "btn btn-primary"
+
 = form_with(model: @site_setting, url: admin_site_setting_path(@site_setting), local: true, html: { class: "settings-form" }) do |f|
   .settings-layout
     .settings-layout__column.settings-layout__column--branding

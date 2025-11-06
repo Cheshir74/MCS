@@ -30,3 +30,9 @@ application.register("logo-preview", LogoPreviewController)
 
 import RichTextController from "./rich_text_controller"
 application.register("rich-text", RichTextController)
+
+import SectionOrderController from "./section_order_controller"
+application.register("section-order", SectionOrderController)
+
+import FeaturedHomeController from "./featured_home_controller"
+application.register("featured-home", FeaturedHomeController)

@@ -1,6 +1,6 @@
 nav class="sidebar sidebar-offcanvas admin-sidebar" id="sidebar"
   div class="admin-sidebar__brand"
-    = link_to admin_path, class: "sidebar-logo-card"
+    = link_to admin_dashboard_path, class: "sidebar-logo-card"
       div.sidebar-logo-card__avatar
         - if @site_setting&.logo&.attached?
           = image_tag @site_setting.logo.variant(resize_to_limit: [120, 120]), class: "sidebar-logo-card__image", alt: @site_setting&.name_site || 'Admin'
@@ -12,7 +12,7 @@ nav class="sidebar sidebar-offcanvas admin-sidebar" id="sidebar"
       span.sidebar-logo-card__tagline Control Panel
 
   ul class="nav flex-column mt-4"
-    - menu_items = [{ title: 'Dashboard', icon: :dashboard, path: admin_path }, { title: 'Home Pages', icon: :home, path: admin_homes_path }, { title: 'Users', icon: :users, path: admin_users_path }, { title: 'Galleries', icon: :galleries, path: admin_galleries_path }]
+    - menu_items = [{ title: 'Dashboard', icon: :dashboard, path: admin_dashboard_path }, { title: 'Home Pages', icon: :home, path: admin_homes_path }, { title: 'Users', icon: :users, path: admin_users_path }, { title: 'Galleries', icon: :galleries, path: admin_galleries_path }]
     - menu_items.each do |item|
       - active = current_page?(item[:path])
       li class="nav-item"

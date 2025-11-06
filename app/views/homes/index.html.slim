@@ -34,44 +34,40 @@ section id="banner"
     
 
 
-section id="lastwork" class="text-center content-section" 
-  section class="photo-gallery" style="background: rgb(0,0,0);"
-    - if @home.present?
-      .container
-        .row.photos[data-bss-baguettebox id="lightgallery"]
-          - if @home.gallery_id.present?
-            #app_gallery[data-url-path="#{gallery_path(@home.gallery_id)}" data-direction="row"]
-              div data-controller="gallery"
-
-
-section id="about" class="text-center content-section" 
-  section class="photo-gallery" style="background: rgb(0,0,0);"
-    - if @home.present?
-      .container
-        div class="intro"
-          h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
-            = @home.title_block1
-
-  div class="container-fluid py-5" id="about"
-    div class="container"
-
-    - if @home.present?        
-      div class="row align-items-center"
-        div class="col-lg-5 pb-4 pb-lg-0"
-          - if @home.image.attached?
-            = image_tag @home.image, class: "img-fluid rounded w-100"
-                
-        div class="col-lg-7"
-          = sanitize(@home.body_block1, tags: %w[p br strong em a ul ol li blockquote pre code u s h3 h4 b i], attributes: %w[href target rel])
-
-- if @home&.visible_cf
-  section id="contacts" class="text-center content-section" 
-    .container
-      div class="intro title-contacts"
-        h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;" Contact Me
-    div class="container-contact100"
-      div data-controller="check_email" class="wrap-contact100" id="contact-form"
-
+- if @home.present?
+  - @home.content_sections.each do |section_key|
+    - case section_key
+    - when "gallery"
+      - next unless @home.gallery_id.present?
+      section id="lastwork" class="text-center content-section" 
+        section class="photo-gallery" style="background: rgb(0,0,0);"
+          .container
+            .row.photos[data-bss-baguettebox id="lightgallery"]
+              #app_gallery[data-url-path="#{gallery_path(@home.gallery_id)}" data-direction="row"]
+                div data-controller="gallery"
+    - when "about"
+      section id="about" class="text-center content-section" 
+        section class="photo-gallery" style="background: rgb(0,0,0);"
+          .container
+            div class="intro"
+              h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;padding-top: 55px;"
+                = @home.title_block1
+      div class="container-fluid py-5" id="about"
+        div class="container"
+          div class="row align-items-center"
+            div class="col-lg-5 pb-4 pb-lg-0"
+              - if @home.image.attached?
+                = image_tag @home.image, class: "img-fluid rounded w-100"
+            div class="col-lg-7"
+              = sanitize(@home.body_block1, tags: %w[p br strong em a ul ol li blockquote pre code u s h3 h4 b i], attributes: %w[href target rel])
+    - when "contact"
+      - next unless @home.visible_cf
+      section id="contacts" class="text-center content-section" 
+        .container
+          div class="intro title-contacts"
+            h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;" Contact Me
+        div class="container-contact100"
+          div data-controller="check_email" class="wrap-contact100" id="contact-form"
 
 
 
