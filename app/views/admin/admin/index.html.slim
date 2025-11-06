@@ -22,15 +22,19 @@ div class="page-header"
             h6.featured-home-panel__title Featured home page
             p.text-muted.small.mb-3 Choose which home entry is visible on the public site.
             = form_with url: set_primary_admin_homes_path, method: :patch, local: true, html: { data: { controller: "featured-home" }, class: "primary-home-form" } do
-              .featured-home-list.list-group.list-group-flush
+              .featured-home-list.list-group.list-group-flush data-featured-home-target="list"
                 - @homes.each_with_index do |home, index|
                   - checked = @current_home ? home == @current_home : index.zero?
-                  label.list-group-item.featured-home-list__item data-featured-home-target="item" class=("is-active" if checked)
-                    = radio_button_tag :home_id, home.id, checked, class: "form-check-input me-3", data: { action: "change->featured-home#markActive" }
+                  label.list-group-item.featured-home-list__item data-featured-home-target="item" data-key=home.id class=("is-active" if checked)
+                    .featured-home-list__selector
+                      = radio_button_tag :home_id, home.id, checked, class: "form-check-input me-3 visually-hidden", data: { action: "change->featured-home#markActive" }
+                      span.featured-home-list__indicator
+                        i.fa-solid.fa-circle
                     .featured-home-list__body
                       span.featured-home-list__title = home.title.presence || "Home ##{home.id}"
+                      span.featured-home-list__meta.badge= home.visible? ? "Active" : "Hidden"
                       - if home.updated_at
-                        span.featured-home-list__meta.text-muted.small Updated #{time_ago_in_words(home.updated_at)} ago
+                        span.featured-home-list__timestamp.text-muted.small Updated #{time_ago_in_words(home.updated_at)} ago
               .featured-home-panel__actions
                 = submit_tag "Set featured home", class: "btn btn-primary btn-sm"
                 = link_to "Manage home pages", admin_homes_path, class: "btn btn-outline-secondary btn-sm"

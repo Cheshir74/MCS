@@ -2179,6 +2179,7 @@ body.modal-open {
   height: 4px;
   background: linear-gradient(135deg, rgba(13, 110, 253, 0.35), rgba(25, 135, 84, 0.35));
   z-index: 0;
+  border-radius: inherit;
 }
 
 .featured-home-panel::after {
@@ -2190,6 +2191,7 @@ body.modal-open {
   transition: opacity 0.2s ease;
   pointer-events: none;
   z-index: 0;
+  border-radius: inherit;
 }
 
 .featured-home-panel > * {
@@ -2249,20 +2251,90 @@ body.modal-open {
   align-items: flex-start;
   gap: 0.75rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  border: 1px solid transparent;
-  border-radius: 0.85rem;
-  margin-bottom: 0.5rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  border-radius: 1rem;
+  margin-bottom: 0.55rem;
   padding: 0.75rem 0.9rem;
+  background-color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.featured-home-list__item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 rgba(13, 110, 253, 0);
+  transition: box-shadow 0.2s ease;
+  z-index: 0;
+}
+
+.featured-home-list__item > * {
+  position: relative;
+  z-index: 1;
+}
+
+.featured-home-list__item.is-hover:not(.is-active) {
+  border-color: rgba(13, 110, 253, 0.25);
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(111, 66, 193, 0.06));
+  box-shadow: none;
+}
+
+.featured-home-list__item.is-hover:not(.is-active)::after {
+  box-shadow: 0 16px 34px -22px rgba(13, 110, 253, 0.38);
 }
 
 .featured-home-list__item .form-check-input {
   margin-top: 0.35rem;
 }
 
+.featured-home-list__selector {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.featured-home-list__indicator {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid rgba(13, 110, 253, 0.3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-top: 0.2rem;
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+.featured-home-list__indicator i {
+  font-size: 0.55rem;
+  color: rgba(13, 110, 253, 0.45);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform: scale(0.6);
+  opacity: 0;
+}
+
+.featured-home-list__item.is-active .featured-home-list__indicator {
+  background: linear-gradient(135deg, rgba(25, 135, 84, 0.75), rgba(13, 110, 253, 0.65));
+  border-color: transparent;
+  box-shadow: 0 4px 12px -4px rgba(25, 135, 84, 0.65);
+}
+
+.featured-home-list__item.is-active .featured-home-list__indicator i {
+  opacity: 1;
+  transform: scale(1);
+  color: #fff;
+}
+
 .featured-home-list__body {
   display: flex;
   flex-direction: column;
+  gap: 0.2rem;
 }
 
 .featured-home-list__title {
@@ -2270,18 +2342,47 @@ body.modal-open {
   color: var(--admin-body-color, #212529);
 }
 
+.featured-home-list__meta.badge {
+  align-self: flex-start;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.45rem;
+  background-color: rgba(25, 135, 84, 0.15);
+  color: #247a43;
+  border-radius: 999px;
+}
+
+.featured-home-list__item:not(.is-active) .featured-home-list__meta.badge {
+  background-color: rgba(108, 117, 125, 0.16);
+  color: #6c757d;
+}
+
+.featured-home-list__timestamp {
+  display: inline-block;
+}
+
 .featured-home-list__item:hover {
-  background-color: rgba(13, 110, 253, 0.05);
+  background-color: rgba(13, 110, 253, 0.06);
+  border-color: rgba(13, 110, 253, 0.2);
+  box-shadow: 0 12px 24px -18px rgba(13, 110, 253, 0.25);
+  transform: translateY(-2px);
+  border-radius: 1rem;
 }
 
 .featured-home-list__item.is-active {
-  border-color: rgba(25, 135, 84, 0.45);
-  background-color: rgba(25, 135, 84, 0.12);
+  border-color: rgba(25, 135, 84, 0.55);
+  background: linear-gradient(135deg, rgba(25, 135, 84, 0.14), rgba(13, 110, 253, 0.1));
+  border-radius: 1rem;
+}
+
+.featured-home-list__item.is-active::after {
+  box-shadow: 0 22px 40px -20px rgba(25, 135, 84, 0.5);
 }
 
 .featured-home-list__item:not(.is-active) {
-  border-color: rgba(15, 23, 42, 0.04);
-  background-color: rgba(248, 249, 250, 0.65);
+  border-color: rgba(15, 23, 42, 0.07);
+  background-color: rgba(248, 249, 250, 0.75);
+  border-radius: 0.95rem;
 }
 
 .featured-home-content__title {
@@ -2301,10 +2402,28 @@ body.modal-open {
   align-items: center;
   justify-content: space-between;
   background-color: rgba(33, 37, 41, 0.04);
-  border-radius: 0.75rem;
+  border-radius: 0.85rem;
   padding: 0.55rem 0.75rem;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   border: 1px solid rgba(15, 23, 42, 0.04);
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.section-order-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 rgba(13, 110, 253, 0);
+  transition: box-shadow 0.2s ease;
+  z-index: 0;
+}
+
+.section-order-item > * {
+  position: relative;
+  z-index: 1;
 }
 
 .section-order-item--draggable {
@@ -2319,11 +2438,27 @@ body.modal-open {
 .section-order-item.is-dragging-active {
   opacity: 0.7;
   box-shadow: 0 12px 24px -12px rgba(13, 110, 253, 0.25);
+  border-color: rgba(13, 110, 253, 0.25);
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(111, 66, 193, 0.08));
 }
 
 .section-order-item.is-drop-target {
   border-color: rgba(13, 110, 253, 0.35);
-  background-color: rgba(13, 110, 253, 0.12);
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.16), rgba(25, 135, 84, 0.12));
+}
+
+.section-order-item.is-drop-target::after {
+  box-shadow: 0 18px 34px -18px rgba(13, 110, 253, 0.35);
+}
+
+.section-order-item:hover:not(.is-dragging-active) {
+  border-color: rgba(13, 110, 253, 0.2);
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(111, 66, 193, 0.06));
+  transform: translateY(-1px);
+}
+
+.section-order-item:hover::after {
+  box-shadow: 0 14px 30px -18px rgba(13, 110, 253, 0.3);
 }
 
 .section-order-item__drag-icon {
