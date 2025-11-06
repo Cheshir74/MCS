@@ -1,8 +1,9 @@
 #edit_images
-  = form_tag destroy_attach_admin_home_path(home), method: :delete, class: "section-card section-card--gallery" do
+  .section-card.section-card--gallery
     .section-card__actions
       span.section-card__hint Select photos to delete from the home gallery
-      = submit_tag "Delete selected", class: "btn btn-outline-danger btn-sm"
+      button.btn.btn-outline-danger.btn-sm type="submit" name="delete_selected" value="1"
+        | Delete selected
 
     - if home.images.present?
       .gallery-grid.home-gallery-grid.sortable#lightgallery

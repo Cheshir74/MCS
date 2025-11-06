@@ -7,28 +7,35 @@ class Admin::HomesController < Admin::AdminController
   end
 
   def update
-    # Сначала удаляем выбранные изображения
-    if params[:delete_img_ids].present?
-      ActiveStorage::Attachment.where(
-        id: params[:delete_img_ids],
-        record_type: 'Home',
-        record_id: @home.id,
-        name: 'images'
-      ).destroy_all
-    end
-  
-    # Получаем параметры без изображений
-    params_without_images = home_params.except(:images)
-    
-    # Сначала обновляем параметры без изображений
-    if @home.update(params_without_images)
-      # Затем прикрепляем новые изображения, если они есть
-      if home_params[:images].present?
-        home_params[:images].each do |image|
-          @home.images.attach(image)
-        end
+    selected_image_ids = Array(params[:delete_img_ids]).reject(&:blank?)
+
+    attachments_scope = ActiveStorage::Attachment.where(
+      id: selected_image_ids,
+      record_type: 'Home',
+      record_id: @home.id,
+      name: 'images'
+    )
+
+    if params[:delete_selected].present?
+      if attachments_scope.exists?
+        attachments_scope.find_each(&:purge)
+        flash[:notice] = "Selected images deleted successfully"
+      else
+        flash[:alert] = "No images selected"
       end
-      
+      return redirect_to edit_admin_home_path(@home)
+    end
+
+    attachments_scope.find_each(&:purge) if attachments_scope.exists?
+
+    permitted_params = home_params
+    params_without_images = permitted_params.except(:images)
+
+    if @home.update(params_without_images)
+      Array(permitted_params[:images]).each do |image|
+        @home.images.attach(image)
+      end
+
       flash[:notice] = "Домашняя страница обновлена"
       redirect_to edit_admin_home_path(@home)
     else

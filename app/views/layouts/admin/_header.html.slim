@@ -2,8 +2,10 @@ nav class="navbar admin-topbar fixed-top d-flex align-items-center"
   div class="admin-topbar__left d-flex align-items-center"
     button class="admin-topbar__toggle btn btn-icon" type="button" data-toggle="minimize"
       i class="fa-solid fa-bars" aria-hidden="true"
+    - site_name = @site_setting&.name_site.to_s.strip
+    - site_name = site_name.present? ? site_name : "Admin"
     = link_to admin_path, class: "admin-topbar__brand"
-      span class="admin-topbar__brand-name" = @site_setting&.name_site || "Admin"
+      span class="admin-topbar__brand-name" = site_name
 
   div class="admin-topbar__right ms-auto d-flex align-items-center gap-3"
     - env_label = Rails.env.production? ? ['Production', 'bg-success-subtle text-success'] : [Rails.env, 'bg-warning-subtle text-warning']

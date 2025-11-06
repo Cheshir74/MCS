@@ -27,3 +27,6 @@ application.register("change-password", ChangePasswordController)
 
 import LogoPreviewController from "./logo_preview_controller"
 application.register("logo-preview", LogoPreviewController)
+
+import RichTextController from "./rich_text_controller"
+application.register("rich-text", RichTextController)

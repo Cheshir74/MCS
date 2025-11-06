@@ -25,6 +25,7 @@ set :puma_pid, "#{shared_path}/tmp/pids/puma.pid"
 set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true
+set :puma_control_auth_token, "f3f1bafb1fc0ea06c21f89b3bc05e11c"
 
 set :gallery_reset_variants, false
 set :assets_keep, 5
