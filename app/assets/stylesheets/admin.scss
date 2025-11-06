@@ -2246,6 +2246,43 @@ body.modal-open {
   flex-wrap: wrap;
 }
 
+.btn-gradient {
+  background: linear-gradient(135deg, rgba(173, 209, 255, 0.92), rgba(151, 233, 215, 0.88));
+  border: none;
+  color: #0c172f;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  box-shadow: 0 12px 24px -16px rgba(14, 116, 144, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  border-radius: 999px;
+  padding-inline: 1.25rem;
+  padding-block: 0.45rem;
+}
+
+.btn-gradient:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px -18px rgba(25, 135, 84, 0.4);
+  filter: brightness(1.03);
+}
+
+.btn-ghost {
+  border: 1px dashed rgba(99, 102, 241, 0.28);
+  color: rgba(79, 70, 229, 0.8);
+  background-color: rgba(129, 140, 248, 0.08);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  border-radius: 999px;
+  padding-inline: 1.2rem;
+  padding-block: 0.45rem;
+}
+
+.btn-ghost:hover {
+  border-color: rgba(5, 150, 105, 0.35);
+  color: rgba(5, 150, 105, 0.85);
+  background-color: rgba(16, 185, 129, 0.12);
+}
+
 .featured-home-list__item {
   display: flex;
   align-items: flex-start;

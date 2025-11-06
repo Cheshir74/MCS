@@ -36,8 +36,12 @@ div class="page-header"
                       - if home.updated_at
                         span.featured-home-list__timestamp.text-muted.small Updated #{time_ago_in_words(home.updated_at)} ago
               .featured-home-panel__actions
-                = submit_tag "Set featured home", class: "btn btn-primary btn-sm"
-                = link_to "Manage home pages", admin_homes_path, class: "btn btn-outline-secondary btn-sm"
+                button.btn.btn-gradient.btn-sm type="submit"
+                  i.fa-solid.fa-check-double.me-2 aria-hidden="true"
+                  | Publish selected home
+                = link_to admin_homes_path, class: "btn btn-ghost btn-sm" do
+                  i.fa-solid.fa-table-list.me-2 aria-hidden="true"
+                  | Manage all home pages
           - if @current_home
             .featured-home-panel
               h6.featured-home-panel__title Section order
@@ -57,8 +61,12 @@ div class="page-header"
                         button.btn.btn-link.btn-sm type="button" data-action="section-order#moveDown" data-direction="down" aria-label="Move section down"
                           i.fa-solid.fa-arrow-down aria-hidden="true"
                 .featured-home-panel__actions
-                  = f.submit "Save section order", class: "btn btn-primary btn-sm"
-                  = link_to "Open in editor", edit_admin_home_path(@current_home), class: "btn btn-outline-secondary btn-sm"
+                  button.btn.btn-gradient.btn-sm type="submit"
+                    i.fa-solid.fa-layer-group.me-2 aria-hidden="true"
+                    | Save section layout
+                  = link_to edit_admin_home_path(@current_home), class: "btn btn-ghost btn-sm" do
+                    i.fa-solid.fa-pen-to-square.me-2 aria-hidden="true"
+                    | Edit homepage content
     - else
       .empty-state.text-center
         p.mb-3.text-muted No home page has been created yet. Create one now to publish your landing page.
