@@ -92441,6 +92441,11 @@ var section_order_controller_default = class extends Controller {
   static targets = ["input", "item", "list"];
   connect() {
     this.syncFromInput();
+    this.setupDragHandlers();
+    this.enableDragAndDrop();
+  }
+  disconnect() {
+    this.disableDragAndDrop();
   }
   moveUp(event2) {
     event2.preventDefault();
@@ -92480,6 +92485,98 @@ var section_order_controller_default = class extends Controller {
       (element) => element.dataset.key
     );
     this.inputTarget.value = keys.join(",");
+  }
+  setupDragHandlers() {
+    if (this.dragHandlers) return;
+    this.dragHandlers = {
+      start: this.handleDragStart.bind(this),
+      over: this.handleDragOver.bind(this),
+      enter: this.handleDragEnter.bind(this),
+      leave: this.handleDragLeave.bind(this),
+      drop: this.handleDrop.bind(this),
+      end: this.handleDragEnd.bind(this)
+    };
+  }
+  enableDragAndDrop() {
+    if (!this.hasItemTarget) return;
+    this.itemTargets.forEach((item) => {
+      item.setAttribute("draggable", "true");
+      item.classList.add("section-order-item--draggable");
+      item.addEventListener("dragstart", this.dragHandlers.start);
+      item.addEventListener("dragenter", this.dragHandlers.enter);
+      item.addEventListener("dragover", this.dragHandlers.over);
+      item.addEventListener("dragleave", this.dragHandlers.leave);
+      item.addEventListener("drop", this.dragHandlers.drop);
+      item.addEventListener("dragend", this.dragHandlers.end);
+    });
+  }
+  disableDragAndDrop() {
+    if (!this.dragHandlers || !this.hasItemTarget) return;
+    this.itemTargets.forEach((item) => {
+      item.removeAttribute("draggable");
+      item.classList.remove("section-order-item--draggable", "is-dragging", "is-drop-target");
+      item.removeEventListener("dragstart", this.dragHandlers.start);
+      item.removeEventListener("dragenter", this.dragHandlers.enter);
+      item.removeEventListener("dragover", this.dragHandlers.over);
+      item.removeEventListener("dragleave", this.dragHandlers.leave);
+      item.removeEventListener("drop", this.dragHandlers.drop);
+      item.removeEventListener("dragend", this.dragHandlers.end);
+    });
+  }
+  handleDragStart(event2) {
+    this.draggedItem = event2.currentTarget;
+    event2.dataTransfer.effectAllowed = "move";
+    event2.dataTransfer.setData("text/plain", this.draggedItem.dataset.key || "");
+    this.draggedItem.classList.add("is-dragging");
+    requestAnimationFrame(() => {
+      this.draggedItem?.classList.add("is-dragging-active");
+    });
+  }
+  handleDragEnter(event2) {
+    const target = this.validDropTarget(event2.currentTarget);
+    if (!target || target === this.draggedItem) return;
+    target.classList.add("is-drop-target");
+  }
+  handleDragOver(event2) {
+    const target = this.validDropTarget(event2.currentTarget);
+    if (!target) return;
+    event2.preventDefault();
+    event2.dataTransfer.dropEffect = "move";
+    if (!this.draggedItem || target === this.draggedItem) return;
+    const bounding = target.getBoundingClientRect();
+    const offset2 = event2.clientY - (bounding.top + bounding.height / 2);
+    if (offset2 > 0) {
+      this.listTarget.insertBefore(this.draggedItem, target.nextSibling);
+    } else {
+      this.listTarget.insertBefore(this.draggedItem, target);
+    }
+  }
+  handleDragLeave(event2) {
+    const target = this.validDropTarget(event2.currentTarget);
+    if (!target) return;
+    target.classList.remove("is-drop-target");
+  }
+  handleDrop(event2) {
+    event2.preventDefault();
+    const target = this.validDropTarget(event2.currentTarget);
+    if (!target) return;
+    target.classList.remove("is-drop-target");
+    this.updateInput();
+  }
+  handleDragEnd() {
+    if (this.draggedItem) {
+      this.draggedItem.classList.remove("is-dragging", "is-dragging-active");
+    }
+    this.clearDropTargets();
+    this.draggedItem = null;
+    this.updateInput();
+  }
+  validDropTarget(element) {
+    if (!element) return null;
+    return element.matches("[data-section-order-target='item']") ? element : element.closest("[data-section-order-target='item']");
+  }
+  clearDropTargets() {
+    this.itemTargets.forEach((item) => item.classList.remove("is-drop-target"));
   }
 };
 
