@@ -33,6 +33,7 @@ div class="page-header"
                     .featured-home-list__body
                       span.featured-home-list__title = home.title.presence || "Home ##{home.id}"
                       span.featured-home-list__meta.badge= home.visible? ? "Active" : "Hidden"
+                      span.featured-home-list__meta.badge.ms-2 = home.design_variant.to_s.titleize
                       - if home.updated_at
                         span.featured-home-list__timestamp.text-muted.small Updated #{time_ago_in_words(home.updated_at)} ago
               .featured-home-panel__actions
@@ -45,28 +46,35 @@ div class="page-header"
           - if @current_home
             .featured-home-panel
               h6.featured-home-panel__title Section order
-              p.text-muted.small.mb-3 Reorder the modules displayed beneath the hero block.
-              = form_with model: @current_home, url: admin_home_path(@current_home), method: :patch, local: true, html: { data: { controller: "section-order" } } do |f|
-                = f.hidden_field :section_order, value: @current_home.section_order_list.join(","), data: { section_order_target: "input" }
-                .section-order-list data-section-order-target="list"
-                  - @current_home.section_order_list.each do |key|
-                    - label = { "gallery" => "Gallery", "about" => "About", "contact" => "Contact" }[key] || key.titleize
-                    .section-order-item data-section-order-target="item" data-key=key
-                      span.section-order-item__drag-icon
-                        i.fa-solid.fa-grip-vertical aria-hidden="true"
-                      span.section-order-item__label = label
-                      .section-order-item__actions
-                        button.btn.btn-link.btn-sm type="button" data-action="section-order#moveUp" data-direction="up" aria-label="Move section up"
-                          i.fa-solid.fa-arrow-up aria-hidden="true"
-                        button.btn.btn-link.btn-sm type="button" data-action="section-order#moveDown" data-direction="down" aria-label="Move section down"
-                          i.fa-solid.fa-arrow-down aria-hidden="true"
+              - if @current_home.legacy?
+                p.text-muted.small.mb-3 Reorder the modules displayed beneath the hero block.
+                = form_with model: @current_home, url: admin_home_path(@current_home), method: :patch, local: true, html: { data: { controller: "section-order" } } do |f|
+                  = f.hidden_field :section_order, value: @current_home.section_order_list.join(","), data: { section_order_target: "input" }
+                  .section-order-list data-section-order-target="list"
+                    - @current_home.section_order_list.each do |key|
+                      - label = { "gallery" => "Gallery", "about" => "About", "contact" => "Contact" }[key] || key.titleize
+                      .section-order-item data-section-order-target="item" data-key=key
+                        span.section-order-item__drag-icon
+                          i.fa-solid.fa-grip-vertical aria-hidden="true"
+                        span.section-order-item__label = label
+                        .section-order-item__actions
+                          button.btn.btn-link.btn-sm type="button" data-action="section-order#moveUp" data-direction="up" aria-label="Move section up"
+                            i.fa-solid.fa-arrow-up aria-hidden="true"
+                          button.btn.btn-link.btn-sm type="button" data-action="section-order#moveDown" data-direction="down" aria-label="Move section down"
+                            i.fa-solid.fa-arrow-down aria-hidden="true"
+                  .featured-home-panel__actions
+                    button.btn.btn-gradient.btn-sm type="submit"
+                      i.fa-solid.fa-layer-group.me-2 aria-hidden="true"
+                      | Save section layout
+                    = link_to edit_admin_home_path(@current_home), class: "btn btn-ghost btn-sm" do
+                      i.fa-solid.fa-pen-to-square.me-2 aria-hidden="true"
+                      | Edit homepage content
+              - else
+                p.text-muted.small.mb-3 Editorial homepage uses a fixed section composition. Manage texts and gallery slots from the home record itself.
                 .featured-home-panel__actions
-                  button.btn.btn-gradient.btn-sm type="submit"
-                    i.fa-solid.fa-layer-group.me-2 aria-hidden="true"
-                    | Save section layout
-                  = link_to edit_admin_home_path(@current_home), class: "btn btn-ghost btn-sm" do
+                  = link_to edit_admin_home_path(@current_home), class: "btn btn-gradient btn-sm" do
                     i.fa-solid.fa-pen-to-square.me-2 aria-hidden="true"
-                    | Edit homepage content
+                    | Edit editorial home
     - else
       .empty-state.text-center
         p.mb-3.text-muted No home page has been created yet. Create one now to publish your landing page.
@@ -139,6 +147,9 @@ div class="page-header"
                 .form-grid__item
                   = f.label :yn_verification_sec, class: 'form-label form-label--strong'
                   = f.text_field :yn_verification_sec, class: 'form-control', placeholder: 'Yandex verification secondary'
+                .form-grid__item
+                  = f.label :tg_url, 'Telegram URL', class: 'form-label form-label--strong'
+                  = f.text_field :tg_url, class: 'form-control', placeholder: 'https://t.me/...'
                 .form-grid__item
                   = f.label :fb_url, 'Facebook URL', class: 'form-label form-label--strong'
                   = f.text_field :fb_url, class: 'form-control', placeholder: 'https://facebook.com/...'

@@ -1,6 +1,6 @@
 class Admin::HomesController < Admin::AdminController
   before_action :set_home, only: [:edit, :update, :destroy, :delete_image_attachment, :delete_photo_attachment, :sort]
-  before_action :load_resources, only: [:edit, :new]  # Опционально, если @homes и @galleries нужны
+  before_action :load_resources, only: [:edit, :new]
 
   def index
     @homes = Home.all
@@ -39,6 +39,7 @@ class Admin::HomesController < Admin::AdminController
       flash[:notice] = "Домашняя страница обновлена"
       redirect_back(fallback_location: edit_admin_home_path(@home))
     else
+      load_resources
       render :edit
     end
   end
@@ -80,13 +81,12 @@ class Admin::HomesController < Admin::AdminController
       flash[:notice] = "Home Created"
       redirect_to admin_homes_path
     else
-      load_resources  # Или render :new без повторной загрузки
+      load_resources
       render :new
     end
   end
 
   def edit
-  
   end
 
   def new
@@ -99,14 +99,10 @@ class Admin::HomesController < Admin::AdminController
   end
 
   def delete_photo_attachment
-    begin
-      # Находим и удаляем конкретное изображение
-      attachment = @home.images.find(params[:image_id])
-      attachment.purge
-      
-      # Редирект с сообщением
+    if @home.image.attached?
+      @home.image.purge
       redirect_back(fallback_location: edit_admin_home_path(@home), notice: "Изображение удалено")
-    rescue ActiveRecord::RecordNotFound
+    else
       redirect_back(fallback_location: edit_admin_home_path(@home), alert: "Изображение не найдено")
     end
   end
@@ -153,7 +149,7 @@ class Admin::HomesController < Admin::AdminController
 
   def load_resources
     @homes = Home.all
-    @galleries = Gallery.all
+    @galleries = Gallery.order(:name)
   end
 
   def attach_images
@@ -162,9 +158,20 @@ class Admin::HomesController < Admin::AdminController
 
   def home_params
     params.require(:home).permit(
-      :title, :body, :title_block1, :body_block1, :section_order,
-      :gallery_id, :visible, :visible_cf, images: []
-)
+      :title,
+      :body,
+      :title_block1,
+      :body_block1,
+      :section_order,
+      :gallery_id,
+      :visible,
+      :visible_cf,
+      :design_variant,
+      :image,
+      *Home::EDITORIAL_GALLERY_FIELDS,
+      *Home::EDITORIAL_FIELDS,
+      images: []
+    )
   end
 
   def safe_return_path; end

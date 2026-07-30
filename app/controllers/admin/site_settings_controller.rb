@@ -27,6 +27,7 @@ class Admin::SiteSettingsController < ApplicationController
     def site_setting_params
     params.require(:site_setting).permit(
       :name_site,
+      :tg_url,
       :fb_url,
       :inst_url,
       :vk_url,

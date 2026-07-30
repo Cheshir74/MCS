@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_02_000000) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_30_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_02_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "visible"
+    t.jsonb "homepage_settings", default: {}, null: false
   end
 
   create_table "homes", force: :cascade do |t|
@@ -77,6 +78,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_02_000000) do
     t.boolean "visible"
     t.boolean "visible_cf"
     t.text "section_order"
+    t.string "design_variant", default: "legacy", null: false
+    t.jsonb "editorial_settings", default: {}, null: false
+    t.bigint "editorial_lead_gallery_id"
+    t.bigint "editorial_feature_gallery_id"
+    t.bigint "editorial_compact_left_gallery_id"
+    t.bigint "editorial_compact_right_gallery_id"
+    t.bigint "editorial_series_first_gallery_id"
+    t.bigint "editorial_series_second_gallery_id"
+    t.bigint "editorial_series_third_gallery_id"
+    t.index ["editorial_compact_left_gallery_id"], name: "index_homes_on_editorial_compact_left_gallery_id"
+    t.index ["editorial_compact_right_gallery_id"], name: "index_homes_on_editorial_compact_right_gallery_id"
+    t.index ["editorial_feature_gallery_id"], name: "index_homes_on_editorial_feature_gallery_id"
+    t.index ["editorial_lead_gallery_id"], name: "index_homes_on_editorial_lead_gallery_id"
+    t.index ["editorial_series_first_gallery_id"], name: "index_homes_on_editorial_series_first_gallery_id"
+    t.index ["editorial_series_second_gallery_id"], name: "index_homes_on_editorial_series_second_gallery_id"
+    t.index ["editorial_series_third_gallery_id"], name: "index_homes_on_editorial_series_third_gallery_id"
   end
 
   create_table "images", force: :cascade do |t|
@@ -118,6 +135,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_02_000000) do
     t.string "email_password"
     t.boolean "email_ssl"
     t.boolean "email_tls"
+    t.string "tg_url", default: "", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -142,4 +160,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_02_000000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "articles"
+  add_foreign_key "homes", "galleries", column: "editorial_compact_left_gallery_id"
+  add_foreign_key "homes", "galleries", column: "editorial_compact_right_gallery_id"
+  add_foreign_key "homes", "galleries", column: "editorial_feature_gallery_id"
+  add_foreign_key "homes", "galleries", column: "editorial_lead_gallery_id"
+  add_foreign_key "homes", "galleries", column: "editorial_series_first_gallery_id"
+  add_foreign_key "homes", "galleries", column: "editorial_series_second_gallery_id"
+  add_foreign_key "homes", "galleries", column: "editorial_series_third_gallery_id"
 end

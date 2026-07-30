@@ -13,8 +13,9 @@ html
     = javascript_include_tag "application", "data-turbo-track": "reload"
     = stylesheet_link_tag 'application', media: 'all'
 
-  body
-    = render 'layouts/header'
+  body class=("home-editorial-page" if editorial_home_page?)
+    - unless editorial_home_page?
+      = render 'layouts/header'
     = turbo_frame_tag "modal"
          
     - unless flash.empty?
@@ -32,4 +33,5 @@ html
 
             = yield
 
-    = render 'layouts/footer'
+    - unless editorial_home_page?
+      = render 'layouts/footer'

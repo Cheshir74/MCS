@@ -1,0 +1,101 @@
+= form_for [:admin, gallery] do |f|
+  - if gallery.errors.any?
+    - gallery.errors.full_messages.each do |msg|
+      .alert.alert-danger.mb-3 = msg
+
+  div class="row g-4"
+    div class="col-12"
+      div class="card section-card"
+        .card-header
+          h4.card-title
+            span.card-chip Settings
+            |  Gallery details
+          p.card-subtitle.text-muted.small Internal identity, public visibility and home-card metadata
+        .card-body
+          .row.g-4
+            .col-12.col-md-6
+              .input-card
+                h5.input-card__title Name
+                p.input-card__hint Internal gallery name and fallback title
+                = f.text_field :name, class: "form-control input-card__control", placeholder: "Gallery title"
+
+            .col-12.col-md-6
+              .input-card.input-card--switch
+                h5.input-card__title Visibility
+                p.input-card__hint Controls whether this gallery is visible on the public gallery list
+                .form-switch-row.mt-2
+                  .form-check.form-switch
+                    = f.check_box :visible, class: "form-check-input input-card__switch", id: dom_id(gallery, :visible)
+                    = f.label :visible, "Show on site", class: "form-check-label", for: dom_id(gallery, :visible)
+
+          .row.g-4.mt-1
+            .col-12.col-lg-6
+              .input-card
+                h5.input-card__title Homepage title
+                p.input-card__hint Title rendered on lead, feature and compact cards
+                = f.text_field :homepage_title, class: "form-control input-card__control"
+            .col-12.col-lg-6
+              .input-card
+                h5.input-card__title Overlay title
+                p.input-card__hint Short title shown on the three mini-cards
+                = f.text_field :homepage_overlay_title, class: "form-control input-card__control"
+            .col-12
+              .input-card
+                h5.input-card__title Homepage description
+                p.input-card__hint Main caption text for the larger cards on the editorial home
+                = f.text_area :homepage_description, class: "form-control input-card__control", rows: 4
+            .col-12.col-md-4
+              .input-card
+                h5.input-card__title Meta 1
+                = f.text_field :homepage_meta_primary, class: "form-control input-card__control", placeholder: "Москва"
+            .col-12.col-md-4
+              .input-card
+                h5.input-card__title Meta 2
+                = f.text_field :homepage_meta_secondary, class: "form-control input-card__control", placeholder: "Июль 2026"
+            .col-12.col-md-4
+              .input-card
+                h5.input-card__title Meta 3
+                = f.text_field :homepage_meta_tertiary, class: "form-control input-card__control", placeholder: "Открытие выставки"
+            .col-12.col-md-6
+              .input-card
+                h5.input-card__title Footer 1
+                = f.text_field :homepage_footer_primary, class: "form-control input-card__control"
+            .col-12.col-md-6
+              .input-card
+                h5.input-card__title Footer 2
+                = f.text_field :homepage_footer_secondary, class: "form-control input-card__control"
+            .col-12.col-md-6
+              .input-card
+                h5.input-card__title Overlay meta 1
+                = f.text_field :homepage_overlay_meta_primary, class: "form-control input-card__control"
+            .col-12.col-md-6
+              .input-card
+                h5.input-card__title Overlay meta 2
+                = f.text_field :homepage_overlay_meta_secondary, class: "form-control input-card__control"
+            .col-12
+              .input-card
+                h5.input-card__title Tags
+                p.input-card__hint Comma-separated tags displayed under the three mini-cards
+                = f.text_field :homepage_tags, class: "form-control input-card__control", placeholder: "backstage, детали, хроника"
+
+          .mb-5.mt-4
+            label.form-label.form-label--strong Upload images
+            p.form-hint Drag & drop photos or browse to add new items. The first image becomes the cover on the new home page.
+            .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
+              = f.file_field :images, multiple: true, as: :file, direct_upload: true, "data-dropzone-target": "input"
+              .dropzone-msg.dz-message.needsclick
+                i class="fa-solid fa-cloud-arrow-up dropzone-icon" aria-hidden="true"
+                span.dropzone-title Drag files here or click to browse
+                span.dropzone-subtitle.text-muted.small Reorder uploaded images below to control the homepage cover
+
+          .form-actions.mt-4
+            = f.submit gallery.persisted? ? "Save changes" : "Create gallery", class: "btn btn-primary"
+            = link_to "Cancel", admin_galleries_path, class: "btn btn-outline-secondary"
+
+- if gallery.persisted?
+  div class="section-header mt-5"
+    div
+      h4 class="section-header__title" Images in #{gallery.name}
+      p class="section-header__meta" Manage, reorder or delete uploaded photos
+
+  = render "admin/galleries/images"

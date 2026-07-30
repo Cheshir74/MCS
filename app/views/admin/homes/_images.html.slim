@@ -7,7 +7,7 @@
 
     - if home.images.present?
       .gallery-grid.home-gallery-grid.sortable#lightgallery
-        - home.images.each do |image|
+        - home.ordered_images.each do |image|
           .gallery-item data-id=image.id
             .gallery-thumb.bg-light
               = link_to url_for(image.variant(resize_to_limit: [1000, 670])), data: { turbo: false }, class: "gallery-thumb__link" do

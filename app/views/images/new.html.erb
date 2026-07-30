@@ -23,7 +23,7 @@
   </div>
   <div class="form-group">
     <%= f.label :image %>
-    <%= f.file_field :image, multiple: true %>
+    <%= f.file_field :image, multiple: true, name: "image[image][]" %>
   </div>
 
   <br>

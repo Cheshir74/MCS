@@ -69,9 +69,11 @@ Rails.application.configure do
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
 
-  # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter = :resque
-  # config.active_job.queue_name_prefix = "mcs_production"
+  # Use async adapter so image variant generation runs in a background thread
+  # without blocking the web request. Switch to Solid Queue or GoodJob later
+  # for persistent jobs in production.
+  config.active_job.queue_adapter = :async
+  config.active_job.queue_name_prefix = "mcs_production"
   config.action_mailer.default_url_options = { host: Rails.application.credentials.mailer.mail_domain }
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true

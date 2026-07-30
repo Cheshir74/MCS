@@ -24,6 +24,7 @@ class Admin::GalleriesController < Admin::AdminController
       flash[:notice] = "Gallery updated"
       redirect_to edit_admin_gallery_path(params[:id])
     else
+      @galleries = Gallery.all
       render 'edit'
     end
   end
@@ -81,6 +82,6 @@ class Admin::GalleriesController < Admin::AdminController
   end
 
   def gallery_params
-    params.require(:gallery).permit(:name,:visible)
+    params.require(:gallery).permit(:name, :visible, *Gallery::HOMEPAGE_FIELDS)
   end
 end

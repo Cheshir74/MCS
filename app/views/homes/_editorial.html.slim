@@ -1,0 +1,138 @@
+- hero_image = home.ordered_images.first
+- social_links = editorial_social_links(@site_setting)
+
+.shell.home-editorial data-controller="editorial-home"
+  header.site-header data-editorial-home-target="header"
+    .site-header__inner
+      a.brand href="#top" aria-label="Наверх"
+        span.brand__meta
+          span.brand__title = editorial_brand_title(home)
+          span.brand__subtitle = editorial_brand_subtitle(home)
+
+      button.nav-toggle type="button" aria-label="Открыть навигацию" aria-expanded="false" data-action="editorial-home#toggleNav" data-editorial-home-target="toggle"
+        span
+
+      nav.site-nav data-action="click->editorial-home#closeNav" data-editorial-home-target="nav"
+        a href="#top" Главная
+        a href="#reports" Репортажи
+        a href="#about" Обо мне
+        a.is-accent href="#contacts" Контакты
+
+  main
+    section.hero id="top"
+      .hero__media aria-hidden="true" style=editorial_media_style(hero_image)
+      .hero__gradient aria-hidden="true"
+      .hero__noise aria-hidden="true"
+
+      .hero__content
+        .hero-card
+          p.eyebrow = home.editorial_content(:hero_eyebrow)
+          h1 = home.editorial_content(:hero_title)
+          p = home.editorial_content(:hero_body)
+          .hero-card__actions
+            a.button.button--solid href="#reports" = home.editorial_content(:hero_primary_cta_label)
+            a.button.button--ghost href="#contacts" = home.editorial_content(:hero_secondary_cta_label)
+
+      a.scroll-cue href="#reports" = home.editorial_content(:scroll_cue_label)
+
+    .headline-strip aria-hidden="true"
+      .headline-strip__inner data-editorial-home-target="brandTrigger"
+        .headline-strip__text = home.editorial_content(:headline_strip_text)
+
+    section.section id="reports"
+      .container
+        .section__header
+          div
+            p.eyebrow = home.editorial_content(:reports_eyebrow)
+            h2 = home.editorial_content(:reports_title)
+          p = home.editorial_content(:reports_body)
+
+        .reports-stage
+          .reports-stage__top
+            .reports-stage__intro
+              strong = home.editorial_content(:reports_intro_title)
+              p = home.editorial_content(:reports_intro_text)
+            .reports-stage__meta
+              strong = home.editorial_content(:reports_focus_title)
+              p = home.editorial_content(:reports_focus_text)
+            .reports-stage__meta
+              strong = home.editorial_content(:reports_delivery_title)
+              p = home.editorial_content(:reports_delivery_text)
+            .reports-stage__meta
+              strong = home.editorial_content(:reports_result_title)
+              p = home.editorial_content(:reports_result_text)
+
+          .story-grid
+            .story-primary-column
+              = render "gallery_story_card", gallery: home.editorial_lead_gallery, card_class: "story-card--lead", mini: false
+
+              .story-series-row
+                = render "gallery_story_card", gallery: home.editorial_series_first_gallery, card_class: "story-card--series story-card--mini", mini: true
+                = render "gallery_story_card", gallery: home.editorial_series_second_gallery, card_class: "story-card--series story-card--mini", mini: true
+                = render "gallery_story_card", gallery: home.editorial_series_third_gallery, card_class: "story-card--series story-card--mini", mini: true
+
+            .story-stack
+              = render "gallery_story_card", gallery: home.editorial_feature_gallery, card_class: "story-card--feature", mini: false
+              = render "gallery_story_card", gallery: home.editorial_compact_left_gallery, card_class: "story-card--compact story-card--compact-left", mini: false
+              = render "gallery_story_card", gallery: home.editorial_compact_right_gallery, card_class: "story-card--compact story-card--compact-right", mini: false
+
+    section.section id="about"
+      .container
+        .about-grid
+          .about-panel.panel
+            p.eyebrow = home.editorial_content(:about_eyebrow)
+            .about-panel__copy
+              h3 = home.editorial_content(:about_title)
+              == editorial_text_block(home.editorial_content(:about_body))
+              == editorial_text_block(home.editorial_content(:about_body_secondary))
+            .about-panel__quote
+              | “
+              = home.editorial_content(:about_quote)
+              | ”
+
+          .about-side
+            .about-photo aria-hidden="true" data-photo-caption=home.editorial_content(:about_photo_caption) style=editorial_media_style(home.image, resize_to_limit: [1200, 1200], position: "72% center")
+            aside.about-aside.panel
+              .hero-aside__top
+                span.hero-aside__index = home.editorial_content(:about_aside_index)
+              h2 = home.editorial_content(:about_aside_title)
+              p = home.editorial_content(:about_aside_text)
+              .hero-aside__facts
+                - home.editorial_fact_pairs.each do |label, value|
+                  .hero-aside__fact
+                    span.hero-aside__label = label
+                    span.hero-aside__value = value
+            .metric-grid
+              - home.editorial_metrics.each do |value, label|
+                .metric-card
+                  p.metric-card__value = value
+                  p.metric-card__label = label
+
+    section.section id="contacts"
+      .container
+        .contact-panel.panel
+          .contact-panel__copy
+            p.eyebrow = home.editorial_content(:contacts_eyebrow)
+            h3 = home.editorial_content(:contacts_title)
+            p = home.editorial_content(:contacts_body)
+          aside.contact-card aria-label="Контактная информация"
+            .contact-card__eyebrow = home.editorial_content(:contacts_card_eyebrow)
+            .contact-card__list
+              .contact-card__row
+                .contact-card__label = home.editorial_content(:contacts_location_label)
+                .contact-card__value = home.editorial_content(:contacts_location_value)
+              .contact-card__row
+                .contact-card__label = home.editorial_content(:contacts_phone_label)
+                .contact-card__value
+                  a href="tel:#{home.editorial_content(:contacts_phone_value).gsub(/[^\d+]/, '')}" = home.editorial_content(:contacts_phone_value)
+              .contact-card__row
+                .contact-card__label = home.editorial_content(:contacts_email_label)
+                .contact-card__value
+                  a href="mailto:#{home.editorial_content(:contacts_email_value)}" = home.editorial_content(:contacts_email_value)
+              - if social_links.present?
+                .contact-card__row
+                  .contact-card__label = home.editorial_content(:contacts_social_label)
+                  .contact-card__socials
+                    - social_links.each do |link|
+                      = link_to link[:url], class: "contact-card__social contact-card__social--#{link[:name]}", target: "_blank", rel: "noopener noreferrer", aria: { label: link[:name].to_s.titleize } do
+                        i class=link[:icon_class] aria-hidden="true"

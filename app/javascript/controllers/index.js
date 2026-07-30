@@ -36,3 +36,6 @@ application.register("section-order", SectionOrderController)
 
 import FeaturedHomeController from "./featured_home_controller"
 application.register("featured-home", FeaturedHomeController)
+
+import EditorialHomeController from "./editorial_home_controller"
+application.register("editorial-home", EditorialHomeController)

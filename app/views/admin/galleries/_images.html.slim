@@ -1,12 +1,12 @@
 #edit_images
-  = form_tag destroy_attach_admin_gallery_url, method: :delete, class: "section-card section-card--gallery" do
+  = form_tag destroy_attach_admin_gallery_url(@gallery), method: :delete, class: "section-card section-card--gallery" do
     .section-card__actions
       span.section-card__hint Select photos to delete from this gallery
       = submit_tag "Delete selected", class: "btn btn-outline-danger btn-sm"
 
     - if @gallery.images.present?
       .gallery-grid#lightgallery
-        - @gallery.images.each do |image|
+        - @gallery.ordered_images.each do |image|
           .gallery-item data-id=image.id
             .gallery-thumb.bg-light
               = link_to url_for(image.variant(resize_to_limit: [1000, 670])), data: { turbo: false }, class: "gallery-thumb__link" do

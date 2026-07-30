@@ -4,6 +4,11 @@ footer id="footerpad"
       col-md-6.col-lg-8.mx-auto
         ul class="list-inline text-center"
           li class="list-inline-item"
+            - if @site_setting.tg_url.present?
+              = link_to @site_setting.tg_url, target: "_blank", rel: "noopener" do
+                span class="fa-stack fa-lg"
+                  i class="fab fa-telegram-plane fa-stack-1x"
+          li class="list-inline-item"
             - if @site_setting.fb_url.present?
               = link_to @site_setting.fb_url, target: "_blank", rel: "noopener" do
                 span class="fa-stack fa-lg" 
