@@ -1,85 +1,38 @@
-- nav_sections = [{ id: "page-content", title: "Content", hint: "title and body" }, { id: "page-guidance", title: "Guidance", hint: "writing and formatting notes" }]
-- body_text = strip_tags(page.body.to_s)
-- summary_rows = [["Status", page.persisted? ? "Saved record" : "New draft", page.persisted? ? "accent" : "muted"], ["Words", body_text.split.size, body_text.present? ? "success" : "warning"], ["Characters", body_text.length, body_text.present? ? "muted" : "warning"]]
-
-= form_for [:admin, page], html: { class: "admin-editor admin-editor--page" } do |f|
+= form_for [:admin, page], html: { class: "admin-editor admin-editor--page admin-pages-form" } do |f|
   - if page.errors.any?
     .admin-form-errors
       - page.errors.full_messages.each do |msg|
         .alert.alert-danger.mb-3 = msg
 
-  .admin-editor__layout
-    aside.admin-editor__rail
-      .card.section-card.admin-editor__rail-card
-        .admin-editor__rail-head
-          .admin-editor__rail-copy-group
-            p.admin-kicker Static page
-            h4.admin-editor__rail-title Quick actions
-        p.admin-editor__rail-copy Update standalone content without leaving the admin workspace pattern used by the homepage and gallery editors.
-        .admin-editor__rail-actions
-          = f.submit page.persisted? ? "Save page" : "Create page", class: "btn btn-primary"
-          = link_to "Back to list", admin_pages_path, class: "btn btn-outline-secondary"
+  section.admin-workspace
+    .admin-workspace__header
+      .admin-workspace__header-copy
+        p.admin-kicker Pages
+        h1.admin-workspace__title = page.persisted? ? "Edit page" : "New page"
+        p.admin-workspace__lead This editor stays locked for now, but the structure is already reduced to a compact content draft.
+      .admin-workspace__actions
+        = link_to "Back to list", admin_pages_path, class: "btn btn-outline-secondary"
+        = button_tag page.persisted? ? "Save page" : "Create page", type: "button", class: "btn btn-primary", disabled: true, title: "Coming later"
 
-      .card.section-card.admin-editor__rail-card
-        .card-header
-          h4.card-title
-            span.card-chip Navigate
-            |  Sections
-          p.card-subtitle.text-muted.small Jump directly to the block you want to edit
-        nav.admin-editor__nav
-          - nav_sections.each do |item|
-            a.admin-editor__nav-link href="##{item[:id]}"
-              span.admin-editor__nav-title = item[:title]
-              span.admin-editor__nav-hint = item[:hint]
+    .card.section-card.admin-list-card.admin-pages-editor
+      .admin-list-card__head
+        .admin-list-card__copy
+          h2.admin-list-card__title Content draft
+          p.admin-list-card__meta Title and body only. The editor will expand when Pages are enabled.
 
-      .card.section-card.admin-editor__rail-card
-        .card-header
-          h4.card-title
-            span.card-chip Summary
-            |  Content density
-          p.card-subtitle.text-muted.small Quick signal for how complete the page is
-        .admin-summary-list
-          - summary_rows.each do |label, value, tone|
-            .admin-summary-list__item
-              span.admin-summary-list__label = label
-              span class="admin-summary-list__value admin-summary-list__value--#{tone}" = value
+      .admin-future-lock.admin-pages-lock
+        fieldset.admin-future-lock__content.admin-future-lock__content--fieldset disabled=true
+          .admin-pages-shell
+            .admin-pages-shell__field
+              label.admin-pages-shell__label for="page_title" Title
+              = f.text_field :title, class: "form-control admin-pages-shell__control", placeholder: "Page title"
 
-    .admin-editor__main
-      section.card.section-card.admin-editor__section id="page-content"
-        .card-header
-          h4.card-title
-            span.card-chip Content
-            |  Page details
-          p.card-subtitle.text-muted.small Core title and body copy displayed to visitors
-        .card-body
-          .admin-section-grid
-            .input-card
-              h5.input-card__title Title
-              p.input-card__hint Keep it concise enough for navigation and internal references
-              = f.text_field :title, class: "form-control input-card__control", placeholder: "Page title"
-            .input-card
-              h5.input-card__title Body
-              p.input-card__hint Plain text and HTML snippets are both supported when you need richer formatting
-              = f.text_area :body, class: "form-control input-card__control", rows: 12, placeholder: "Write the page content here"
+            .admin-pages-shell__field.admin-pages-shell__field--body
+              label.admin-pages-shell__label for="page_body" Body
+              = f.text_area :body, class: "form-control admin-pages-shell__control admin-pages-shell__control--body", rows: 8, placeholder: "Page content"
 
-      section.card.section-card.admin-editor__section id="page-guidance"
-        .card-header
-          h4.card-title
-            span.card-chip Guidance
-            |  Writing notes
-          p.card-subtitle.text-muted.small Keep the page readable on the public site and easy to maintain in admin
-        .card-body
-          .admin-note-grid
-            .admin-note
-              strong Clear title
-              p Use a page name that still makes sense in menus and admin lists a few months later.
-            .admin-note
-              strong Body structure
-              p Break longer copy into paragraphs or sub-sections instead of one continuous wall of text.
-            .admin-note
-              strong HTML support
-              p When richer formatting is needed, prefer simple semantic tags over deeply nested markup.
-
-  .form-actions.mt-4.admin-editor__footer-actions
-    = f.submit page.persisted? ? "Save page" : "Create page", class: "btn btn-primary"
-    = link_to "Cancel", admin_pages_path, class: "btn btn-outline-secondary"
+        .admin-future-lock__overlay
+          .card.section-card.admin-future-lock__card
+            p.admin-kicker Future feature
+            h2.admin-future-lock__title Pages editor
+            p.admin-future-lock__copy Coming later.

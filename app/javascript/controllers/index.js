@@ -48,3 +48,9 @@ application.register("gallery-preview", GalleryPreviewController)
 
 import SelectMenuController from "./select_menu_controller"
 application.register("select-menu", SelectMenuController)
+
+import BulkSelectionController from "./bulk_selection_controller"
+application.register("bulk-selection", BulkSelectionController)
+
+import UserAccessGuardController from "./user_access_guard_controller"
+application.register("user-access-guard", UserAccessGuardController)

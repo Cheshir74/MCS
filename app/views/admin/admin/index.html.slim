@@ -291,6 +291,15 @@ section.admin-workspace
               .form-grid__item
                 = f.label :fb_url, "Facebook URL", class: "form-label form-label--strong"
                 = f.text_field :fb_url, class: "form-control", placeholder: "https://facebook.com/..."
+              .form-grid__item.form-grid__item--full
+                .input-card.input-card--switch
+                  h5.input-card__title Pages
+                  p.input-card__hint Future feature
+                  .form-switch-row
+                    .form-check.form-switch
+                      = f.check_box :pages_enabled, class: "form-check-input input-card__switch", id: "site_setting_pages_enabled", disabled: true
+                      = f.label :pages_enabled, "Pages enabled", class: "form-check-label", for: "site_setting_pages_enabled"
+                  p.card-subtitle.text-muted.small.mt-2 Coming later. Pages workspace is locked for now.
 
         .admin-settings-card.admin-settings-card--full
           .admin-settings-card__header

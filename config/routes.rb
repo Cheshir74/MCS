@@ -22,6 +22,9 @@ Rails.application.routes.draw do
       member do
         patch :change_password
       end
+      collection do
+        patch :bulk_update
+      end
     end
     resources :galleries, except: [:show] do
       member do

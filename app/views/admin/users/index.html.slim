@@ -1,53 +1,113 @@
 - superadmin_count = @users.count(&:superadmin_role?)
 - editor_count = @users.count(&:supervisor_role?)
 - viewer_count = @users.count { |user| admin_user_roles(user).include?("Viewer") }
-- stats = [{ label: "Accounts", value: @users.size, note: "Administrative members", tone: "accent" }, { label: "Superadmins", value: superadmin_count, note: "Full system access", tone: superadmin_count.positive? ? "success" : "muted" }, { label: "Editors", value: editor_count, note: "Content and gallery operations", tone: editor_count.positive? ? "accent" : "muted" }, { label: "Viewers", value: viewer_count, note: "Read-oriented access", tone: viewer_count.positive? ? "muted" : "warning" }]
 
 section.admin-workspace
   .admin-workspace__header
     .admin-workspace__header-copy
       p.admin-kicker Team access
       h1.admin-workspace__title Roles, permissions and member accounts
-      p.admin-workspace__lead The team screen now reads like an access matrix instead of a flat table: you immediately see who can publish, who edits content and who only reviews.
+      p.admin-workspace__lead Manage the whole admin team in one compact list.
     .admin-workspace__actions
       = link_to "Open dashboard", admin_dashboard_path, class: "btn btn-outline-secondary"
 
-  .admin-overview-grid.admin-overview-grid--tight
-    - stats.each do |stat|
-      article.card.section-card.admin-stat-card
-        span.admin-stat-card__label = stat[:label]
-        strong.admin-stat-card__value = stat[:value]
-        span class="admin-pill admin-pill--#{stat[:tone]}" = stat[:note]
-
   - if @users.any?
-    .admin-record-grid.admin-record-grid--three
-      - @users.each do |user|
-        - roles = admin_user_roles(user)
-        - base_email = user.email.to_s
-        - account_label = user.try(:name).presence || base_email.split("@").first || base_email
-        article.card.section-card.admin-record-card
-          .admin-record-card__head
-            .admin-record-card__title-group
-              p.admin-record-card__eyebrow = "User ##{user.id}"
-              h2.admin-record-card__title = account_label
-              p.admin-record-card__summary = user.email
-            .admin-badge-stack
-              - roles.each do |role|
-                - tone = role == "Superadmin" ? "success" : role == "Editor" ? "accent" : "muted"
-                span class="admin-pill admin-pill--#{tone}" = role
-          .admin-record-card__metric-grid
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Roles enabled
-              strong.admin-record-card__metric-value = roles.size
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Updated
-              strong.admin-record-card__metric-value = l(user.updated_at, format: :short)
-          .admin-record-card__footer
-            .admin-record-card__meta
-              span Account permissions
-            .table-actions
-              = link_to "Edit", edit_admin_user_path(user), class: "btn btn-outline-primary btn-sm"
-              = link_to "Delete", admin_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?", confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+    .admin-users-bulk data-controller="bulk-selection"
+      .card.section-card.admin-list-card
+        .admin-list-card__head
+          .admin-list-card__copy
+            h2.admin-list-card__title Team members
+            p.admin-list-card__meta Select several accounts to change role presets or remove them at once.
+          .admin-badge-stack.admin-badge-stack--start
+            span.admin-pill.admin-pill--accent = "#{@users.size} accounts"
+            span class="admin-pill admin-pill--#{superadmin_count.positive? ? 'success' : 'muted'}" = "#{superadmin_count} superadmins"
+            span class="admin-pill admin-pill--#{editor_count.positive? ? 'accent' : 'muted'}" = "#{editor_count} editors"
+            span class="admin-pill admin-pill--#{viewer_count.positive? ? 'muted' : 'warning'}" = "#{viewer_count} viewers"
+        = form_with url: bulk_update_admin_users_path, method: :patch, class: "admin-bulk-form", id: "admin_users_bulk_form" do
+          = hidden_field_tag :role_preset, "", data: { bulk_selection_target: "rolePreset" }
+          .admin-bulk-toolbar
+            .admin-bulk-toolbar__group
+              span.admin-bulk-toolbar__count data-bulk-selection-target="count" 0 selected
+            .admin-bulk-toolbar__group
+              = button_tag "Change role", type: "button", class: "btn btn-outline-primary btn-sm", data: { bulk_selection_target: "action", action: "bulk-selection#openRoleModal" }, disabled: true
+              = button_tag "Delete selected", type: "submit", class: "btn btn-outline-danger btn-sm", name: "bulk_operation", value: "delete", data: { bulk_selection_target: "action", turbo_confirm: "Delete selected users?" }, disabled: true
+          .admin-list-table-wrap
+            table.table.table-hover.align-middle.mb-0.admin-home-table.admin-home-table--users
+              thead
+                tr
+                  th scope="col" class="admin-home-table__col-select"
+                    label.admin-row-select.admin-row-select--master
+                      = check_box_tag "select_all_users", "1", false, class: "admin-row-select__input", data: { bulk_selection_target: "master", action: "bulk-selection#toggleAll" }
+                      span.admin-row-select__mark
+                        svg viewBox="0 0 16 16" fill="none" aria-hidden="true"
+                          path d="M3.5 8.1 6.3 10.9 12.6 4.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"
+                  th scope="col" class="admin-home-table__col-home" User
+                  th scope="col" class="admin-home-table__col-status" Access
+                  th scope="col" class="admin-home-table__col-updated" Updated
+                  th scope="col" class="admin-home-table__col-actions text-end" Actions
+              tbody
+                - @users.each do |user|
+                  - roles = admin_user_roles(user)
+                  - base_email = user.email.to_s
+                  - account_label = user.try(:name).presence || base_email.split("@").first || base_email
+                  - thumb_label = account_label.to_s.strip.first(2).to_s.upcase.presence || "US"
+                  - delete_locked = admin_user_delete_locked?(user, current_user, superadmin_count)
+                  - delete_lock_message = admin_user_delete_lock_message(user, current_user, superadmin_count)
+                  tr data-bulk-selection-target="row" data-current-user=(current_user == user) data-last-superadmin=admin_last_superadmin?(user, superadmin_count)
+                    td class="admin-home-table__col-select"
+                      label.admin-row-select
+                        = check_box_tag "user_ids[]", user.id, false, id: "user_ids_#{user.id}", class: "admin-row-select__input", data: { bulk_selection_target: "checkbox", action: "bulk-selection#toggleOne" }
+                        span.admin-row-select__mark
+                          svg viewBox="0 0 16 16" fill="none" aria-hidden="true"
+                            path d="M3.5 8.1 6.3 10.9 12.6 4.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"
+                    td class="admin-home-table__col-home"
+                      .admin-home-table__identity
+                        .admin-home-table__thumb.admin-home-table__thumb--user
+                          span.admin-home-table__thumb-fallback = thumb_label
+                        .admin-table-stack
+                          strong.admin-table-stack__title = account_label
+                          span.admin-table-stack__meta = "User ##{user.id}"
+                          - if base_email.present?
+                            p.admin-home-table__summary = base_email
+                    td class="admin-home-table__col-status"
+                      .admin-home-table__signals
+                        .admin-badge-stack.admin-badge-stack--start
+                          - roles.each do |role|
+                            - tone = role == "Superadmin" ? "success" : role == "Editor" ? "accent" : "muted"
+                            span class="admin-pill admin-pill--#{tone}" = role
+                    td class="admin-home-table__col-updated"
+                      .admin-table-stack
+                        strong.admin-table-stack__title = l(user.updated_at, format: :short)
+                        span.admin-table-stack__meta = "#{time_ago_in_words(user.updated_at)} ago"
+                    td class="admin-home-table__col-actions text-end"
+                      .table-actions
+                        = link_to "Edit", edit_admin_user_path(user), class: "btn btn-outline-primary btn-sm"
+                        - if delete_locked
+                          = button_tag "Delete", type: "button", class: "btn btn-outline-danger btn-sm", disabled: true, title: delete_lock_message
+                        - else
+                          = link_to "Delete", admin_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?", confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+      .admin-modal-backdrop.admin-bulk-modal data-bulk-selection-target="roleModal" data-action="click->bulk-selection#closeRoleModalOnBackdrop" hidden=true role="dialog" aria-modal="true" aria-labelledby="bulk-role-title"
+        .admin-modal__dialog.admin-bulk-modal__dialog role="document"
+          .section-card.admin-modal__card.admin-bulk-modal__card
+            .admin-modal__header
+              div
+                h4.admin-modal__title id="bulk-role-title" Change role
+                p.admin-modal__subtitle Apply one role preset to all selected accounts.
+              button.admin-modal__close.btn-close type="button" aria-label="Close" data-action="click->bulk-selection#closeRoleModal"
+            .admin-modal__body
+              p.admin-bulk-role-note data-bulk-selection-target="roleNote" hidden=true
+              .admin-bulk-role-grid
+                button.admin-bulk-role-option type="submit" form="admin_users_bulk_form" name="bulk_operation" value="set_role" data-action="click->bulk-selection#setRolePreset" data-role-preset="viewer" data-bulk-selection-target="roleOption"
+                  strong.admin-bulk-role-option__title Viewer
+                  span.admin-bulk-role-option__copy Dashboard-only access for review.
+                button.admin-bulk-role-option type="submit" form="admin_users_bulk_form" name="bulk_operation" value="set_role" data-action="click->bulk-selection#setRolePreset" data-role-preset="editor" data-bulk-selection-target="roleOption"
+                  strong.admin-bulk-role-option__title Editor
+                  span.admin-bulk-role-option__copy Content and gallery management without full control.
+                button.admin-bulk-role-option type="submit" form="admin_users_bulk_form" name="bulk_operation" value="set_role" data-action="click->bulk-selection#setRolePreset" data-role-preset="superadmin" data-bulk-selection-target="roleOption"
+                  strong.admin-bulk-role-option__title Superadmin
+                  span.admin-bulk-role-option__copy Full admin access across the site and team settings.
+              .admin-modal__actions
+                = button_tag "Cancel", type: "button", class: "btn btn-outline-secondary", data: { action: "bulk-selection#closeRoleModal" }
   - else
     .card.section-card.admin-empty-state
       h2.admin-empty-state__title No team members found

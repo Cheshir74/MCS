@@ -1,52 +1,64 @@
-- total_words = @pages.sum { |page| page.body.to_s.split.size }
-- longest_page = @pages.max_by { |page| page.body.to_s.length }
-- stats = [{ label: "Pages", value: @pages.size, note: "Standalone content records", tone: "accent" }, { label: "Words", value: total_words, note: @pages.any? ? "Across all static pages" : "No content yet", tone: @pages.any? ? "muted" : "warning" }, { label: "Longest page", value: longest_page ? longest_page.body.to_s.split.size : 0, note: longest_page ? longest_page.title : "No pages yet", tone: longest_page ? "accent" : "muted" }]
-
 section.admin-workspace
   .admin-workspace__header
     .admin-workspace__header-copy
       p.admin-kicker Pages
-      h1.admin-workspace__title Static pages and long-form copy
-      p.admin-workspace__lead Standalone pages are now presented as readable content cards with word-count signals, not as an oversized table that hides the actual copy quality.
+      h1.admin-workspace__title Static pages
+      p.admin-workspace__lead Compact list preview. Editing opens later.
     .admin-workspace__actions
-      = link_to "New page", new_admin_page_path, class: "btn btn-primary"
+      = link_to "Open dashboard", admin_dashboard_path, class: "btn btn-outline-secondary"
+      = button_tag "New page", type: "button", class: "btn btn-primary", disabled: true, title: "Coming later"
 
-  .admin-overview-grid.admin-overview-grid--tight.admin-overview-grid--three
-    - stats.each do |stat|
-      article.card.section-card.admin-stat-card
-        span.admin-stat-card__label = stat[:label]
-        strong.admin-stat-card__value = stat[:value]
-        span class="admin-pill admin-pill--#{stat[:tone]}" = stat[:note]
+  .card.section-card.admin-list-card.admin-pages-card
+    .admin-list-card__head
+      .admin-list-card__copy
+        h2.admin-list-card__title Pages list
+        p.admin-list-card__meta Short rows, same structure as the homepage and users sections.
+      .admin-badge-stack.admin-badge-stack--start
+        span.admin-pill.admin-pill--accent = "#{@pages.size} page#{'s' unless @pages.size == 1}"
+        span.admin-pill.admin-pill--muted Locked
 
-  - if @pages.any?
-    .admin-record-grid.admin-record-grid--two
-      - @pages.each do |page|
-        - clean_body = strip_tags(page.body.to_s)
-        article.card.section-card.admin-record-card
-          .admin-record-card__head
-            .admin-record-card__title-group
-              p.admin-record-card__eyebrow = "Page ##{page.id}"
-              h2.admin-record-card__title = page.title
-              p.admin-record-card__summary = truncate(clean_body, length: 180)
-          .admin-record-card__metric-grid
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Words
-              strong.admin-record-card__metric-value = clean_body.split.size
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Characters
-              strong.admin-record-card__metric-value = clean_body.length
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Updated
-              strong.admin-record-card__metric-value = l(page.updated_at, format: :short)
-          .admin-record-card__footer
-            .admin-record-card__meta
-              span Static page
-            .table-actions
-              = link_to "Edit", edit_admin_page_path(page), class: "btn btn-outline-primary btn-sm"
-              = link_to "Delete", admin_page_path(page), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
-  - else
-    .card.section-card.admin-empty-state
-      h2.admin-empty-state__title No static pages yet
-      p.admin-empty-state__copy Create a page to manage standalone site copy without touching homepage records.
-      .admin-empty-state__actions
-        = link_to "Create page", new_admin_page_path, class: "btn btn-primary"
+    .admin-future-lock.admin-pages-lock
+      .admin-future-lock__content
+        .admin-list-table-wrap
+          table.table.table-hover.align-middle.mb-0.admin-home-table.admin-home-table--pages
+            thead
+              tr
+                th scope="col" class="admin-home-table__col-home" Page
+                th scope="col" class="admin-home-table__col-updated" Updated
+                th scope="col" class="admin-home-table__col-actions text-end" Actions
+            tbody
+              - if @pages.any?
+                - @pages.each do |page|
+                  - clean_body = strip_tags(page.body.to_s)
+                  - page_title = page.title.presence || "Untitled page"
+                  - thumb_label = page_title.to_s.strip.first(2).to_s.upcase.presence || "PG"
+                  tr
+                    td class="admin-home-table__col-home"
+                      .admin-home-table__identity
+                        .admin-home-table__thumb.admin-home-table__thumb--page
+                          span.admin-home-table__thumb-fallback = thumb_label
+                        .admin-table-stack
+                          strong.admin-table-stack__title = page_title
+                          span.admin-table-stack__meta = "Page ##{page.id} • #{clean_body.split.size} words"
+                          - if clean_body.present?
+                            p.admin-home-table__summary = truncate(clean_body.squish, length: 122)
+                    td class="admin-home-table__col-updated"
+                      .admin-table-stack
+                        strong.admin-table-stack__title = l(page.updated_at, format: :short)
+                        span.admin-table-stack__meta = "#{time_ago_in_words(page.updated_at)} ago"
+                    td class="admin-home-table__col-actions text-end"
+                      .table-actions
+                        = link_to "Edit", edit_admin_page_path(page), class: "btn btn-outline-primary btn-sm"
+                        = link_to "Delete", admin_page_path(page), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+              - else
+                tr
+                  td colspan="3"
+                    .admin-pages-placeholder
+                      strong.admin-pages-placeholder__title No static pages yet
+                      span.admin-pages-placeholder__copy Records will appear here once this workspace opens.
+
+      .admin-future-lock__overlay
+        .card.section-card.admin-future-lock__card
+          p.admin-kicker Future feature
+          h2.admin-future-lock__title Pages
+          p.admin-future-lock__copy Coming later.

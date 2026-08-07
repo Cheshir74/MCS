@@ -9,6 +9,8 @@ class SiteSetting < ApplicationRecord
   after_commit :purge_logo, if: -> { remove_logo.to_s == '1' }
   after_commit :purge_favicon, if: -> { remove_favicon.to_s == '1' }
 
+  attribute :pages_enabled, :boolean, default: true
+
   def update_mailer_settings
     ActionMailer::Base.smtp_settings = {
       address: SiteSetting.get_value('email_address', 'localhost'),

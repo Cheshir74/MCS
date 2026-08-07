@@ -93156,6 +93156,136 @@ var select_menu_controller_default = class extends Controller {
   }
 };
 
+// app/javascript/controllers/bulk_selection_controller.js
+var bulk_selection_controller_default = class extends Controller {
+  static targets = ["master", "checkbox", "count", "action", "row", "roleModal", "rolePreset", "roleOption", "roleNote"];
+  connect() {
+    this.refresh();
+    this.boundHandleKeydown = this.handleKeydown.bind(this);
+    window.addEventListener("keydown", this.boundHandleKeydown);
+  }
+  disconnect() {
+    window.removeEventListener("keydown", this.boundHandleKeydown);
+    document.body.classList.remove("modal-open");
+  }
+  toggleAll(event2) {
+    const checked = event2.currentTarget.checked;
+    this.checkboxTargets.forEach((checkbox) => {
+      checkbox.checked = checked;
+    });
+    this.refresh();
+  }
+  toggleOne() {
+    this.refresh();
+  }
+  openRoleModal() {
+    if (!this.hasRoleModalTarget || this.selectedCount === 0) return;
+    this.syncRoleOptions();
+    this.roleModalTarget.hidden = false;
+    document.body.classList.add("modal-open");
+  }
+  closeRoleModal() {
+    if (!this.hasRoleModalTarget) return;
+    this.roleModalTarget.hidden = true;
+    document.body.classList.remove("modal-open");
+  }
+  closeRoleModalOnBackdrop(event2) {
+    if (event2.target === this.roleModalTarget) {
+      this.closeRoleModal();
+    }
+  }
+  setRolePreset(event2) {
+    const preset = event2.currentTarget.dataset.rolePreset;
+    if (!preset || !this.hasRolePresetTarget) return;
+    this.rolePresetTarget.value = preset;
+    this.closeRoleModal();
+  }
+  refresh() {
+    const selectedCount = this.checkboxTargets.filter((checkbox) => checkbox.checked).length;
+    const totalCount = this.checkboxTargets.length;
+    this.selectedCount = selectedCount;
+    this.countTargets.forEach((element) => {
+      element.textContent = `${selectedCount} selected`;
+    });
+    this.actionTargets.forEach((element) => {
+      element.disabled = selectedCount === 0;
+    });
+    if (this.hasMasterTarget) {
+      this.masterTarget.checked = totalCount > 0 && selectedCount === totalCount;
+      this.masterTarget.indeterminate = selectedCount > 0 && selectedCount < totalCount;
+    }
+    this.rowTargets.forEach((row, index) => {
+      row.classList.toggle("is-selected", this.checkboxTargets[index]?.checked);
+    });
+    this.syncRoleOptions();
+  }
+  handleKeydown(event2) {
+    if (event2.key === "Escape" && this.hasRoleModalTarget && !this.roleModalTarget.hidden) {
+      this.closeRoleModal();
+    }
+  }
+  syncRoleOptions() {
+    if (!this.hasRoleOptionTarget) return;
+    const selectedRows = this.rowTargets.filter((row, index) => this.checkboxTargets[index]?.checked);
+    const includesCurrentUser = selectedRows.some((row) => row.dataset.currentUser === "true");
+    const includesLastSuperadmin = selectedRows.some((row) => row.dataset.lastSuperadmin === "true");
+    this.roleOptionTargets.forEach((button) => {
+      const preset = button.dataset.rolePreset;
+      const disabled = preset === "viewer" && (includesCurrentUser || includesLastSuperadmin) || preset === "editor" && includesLastSuperadmin;
+      button.disabled = disabled;
+      button.classList.toggle("is-disabled", disabled);
+    });
+    if (!this.hasRoleNoteTarget) return;
+    let note = "";
+    if (includesLastSuperadmin) {
+      note = "The selected set includes the last superadmin. Viewer and Editor are locked.";
+    } else if (includesCurrentUser) {
+      note = "Your account is selected. Viewer is locked for self-protection.";
+    }
+    this.roleNoteTarget.textContent = note;
+    this.roleNoteTarget.hidden = note.length === 0;
+  }
+};
+
+// app/javascript/controllers/user_access_guard_controller.js
+var user_access_guard_controller_default = class extends Controller {
+  static values = {
+    self: Boolean,
+    lastSuperadmin: Boolean
+  };
+  static targets = ["superadmin", "supervisor", "warning"];
+  connect() {
+    this.sync();
+  }
+  enforce(event2) {
+    if (!this.selfValue) return;
+    if (this.lastSuperadminValue && this.hasSuperadminTarget) {
+      this.superadminTarget.checked = true;
+      this.superadminTarget.disabled = true;
+    }
+    if (!this.superadminChecked() && !this.supervisorChecked()) {
+      if (event2?.currentTarget) {
+        event2.currentTarget.checked = true;
+      }
+    }
+    this.sync();
+  }
+  sync() {
+    if (!this.selfValue || !this.hasWarningTarget) return;
+    if (this.lastSuperadminValue && this.hasSuperadminTarget) {
+      this.superadminTarget.checked = true;
+      this.superadminTarget.disabled = true;
+    }
+    this.warningTarget.hidden = false;
+  }
+  superadminChecked() {
+    return this.hasSuperadminTarget && this.superadminTarget.checked;
+  }
+  supervisorChecked() {
+    return this.hasSupervisorTarget && this.supervisorTarget.checked;
+  }
+};
+
 // app/javascript/controllers/index.js
 application.register("dropzone", dropzone_controller_default);
 application.register("modal", modal_controller_default);
@@ -93171,6 +93301,8 @@ application.register("editorial-home", editorial_home_controller_default);
 application.register("home-editor", home_editor_controller_default);
 application.register("gallery-preview", gallery_preview_controller_default);
 application.register("select-menu", select_menu_controller_default);
+application.register("bulk-selection", bulk_selection_controller_default);
+application.register("user-access-guard", user_access_guard_controller_default);
 
 // app/javascript/application.js
 var import_react7 = __toESM(require_react());

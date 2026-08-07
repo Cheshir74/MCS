@@ -60,7 +60,33 @@ module AdminHelper
     roles = []
     roles << "Superadmin" if user.superadmin_role?
     roles << "Editor" if user.supervisor_role?
-    roles << "Viewer" if user.user_role? || roles.empty?
+    roles << "Viewer" if roles.empty? || (user.user_role? && !user.superadmin_role? && !user.supervisor_role?)
     roles
+  end
+
+  def admin_last_superadmin?(user, total_superadmins = nil)
+    superadmin_total = total_superadmins || User.where(superadmin_role: true).count
+    user.superadmin_role? && superadmin_total == 1
+  end
+
+  def admin_user_delete_locked?(user, actor = current_user, total_superadmins = nil)
+    actor == user || admin_last_superadmin?(user, total_superadmins)
+  end
+
+  def admin_user_delete_lock_message(user, actor = current_user, total_superadmins = nil)
+    return "You cannot delete the current account." if actor == user
+    return "At least one superadmin must remain." if admin_last_superadmin?(user, total_superadmins)
+
+    nil
+  end
+
+  def admin_user_role_guard_message(user, actor = current_user, total_superadmins = nil)
+    return nil unless actor == user
+
+    if admin_last_superadmin?(user, total_superadmins)
+      "You are the last superadmin. Assign another superadmin before removing this access."
+    else
+      "Your account must keep at least one admin role."
+    end
   end
 end

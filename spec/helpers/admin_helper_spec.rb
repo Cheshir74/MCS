@@ -11,5 +11,17 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe AdminHelper, type: :helper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe "#admin_user_roles" do
+    it "returns viewer for a viewer-only account" do
+      user = build(:user, user_role: true, supervisor_role: false, superadmin_role: false)
+
+      expect(helper.admin_user_roles(user)).to eq(["Viewer"])
+    end
+
+    it "hides the viewer badge when an elevated role exists" do
+      user = build(:user, user_role: true, supervisor_role: true, superadmin_role: false)
+
+      expect(helper.admin_user_roles(user)).to eq(["Editor"])
+    end
+  end
 end

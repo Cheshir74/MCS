@@ -1,5 +1,7 @@
 - roles = admin_user_roles(@user)
 - summary_rows = [["Roles", roles.join(", "), roles.any? ? "accent" : "muted"], ["Email", @user.email, "muted"], ["Updated", l(@user.updated_at, format: :short), "muted"]]
+- self_role_guard_message = admin_user_role_guard_message(@user, current_user)
+- last_superadmin = admin_last_superadmin?(@user)
 
 div.page-header
   h3.page-headline Edit User
@@ -48,7 +50,7 @@ div.page-header
           = button_tag "Change password", type: "button", class: "btn btn-outline-primary", onclick: "Stimulus.getControllerForElementAndIdentifier(document.getElementById('change_password_modal'), 'change-password').open()"
 
     .admin-editor__main
-      section.card.section-card.admin-editor__section
+      section.card.section-card.admin-editor__section data-controller="user-access-guard" data-user-access-guard-self-value=(current_user == @user) data-user-access-guard-last-superadmin-value=last_superadmin
         .card-header
           h4.card-title
             span.card-chip Roles
@@ -58,6 +60,11 @@ div.page-header
           - superadmin_id = dom_id(@user, :superadmin_role)
           - supervisor_id = dom_id(@user, :supervisor_role)
           - user_role_id = dom_id(@user, :user_role)
+          - role_switch_data = { action: "change->user-access-guard#enforce" }
+
+          - if self_role_guard_message.present?
+            .alert.alert-warning.mb-3 data-user-access-guard-target="warning"
+              = self_role_guard_message
 
           .admin-section-grid
             .input-card.input-card--switch
@@ -65,7 +72,7 @@ div.page-header
               p.input-card__hint Full access to homepage publishing, site settings and team administration
               .form-switch-row.mt-2
                 .form-check.form-switch
-                  = f.check_box :superadmin_role, class: "form-check-input input-card__switch", id: superadmin_id
+                  = f.check_box :superadmin_role, class: "form-check-input input-card__switch", id: superadmin_id, disabled: (current_user == @user && last_superadmin), data: role_switch_data.merge(user_access_guard_target: "superadmin")
                   = f.label :superadmin_role, "Grant superadmin privileges", class: "form-check-label", for: superadmin_id
 
             .input-card.input-card--switch
@@ -73,7 +80,7 @@ div.page-header
               p.input-card__hint Manage content, galleries and homepage records without system-wide control
               .form-switch-row.mt-2
                 .form-check.form-switch
-                  = f.check_box :supervisor_role, class: "form-check-input input-card__switch", id: supervisor_id
+                  = f.check_box :supervisor_role, class: "form-check-input input-card__switch", id: supervisor_id, data: role_switch_data.merge(user_access_guard_target: "supervisor")
                   = f.label :supervisor_role, "Enable editor capabilities", class: "form-check-label", for: supervisor_id
 
             .input-card.input-card--switch

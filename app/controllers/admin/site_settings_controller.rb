@@ -42,6 +42,7 @@ class Admin::SiteSettingsController < ApplicationController
       :email_port,
       :email_tls,
       :email_ssl,
+      :pages_enabled,
       :favicon,
       :remove_favicon,
       :logo,
