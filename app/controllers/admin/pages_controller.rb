@@ -7,7 +7,7 @@ class Admin::PagesController < Admin::AdminController
   end
 
   def index
-    @pages = Page.all
+    @pages = Page.order(updated_at: :desc)
   end
 
   def edit
@@ -15,7 +15,12 @@ class Admin::PagesController < Admin::AdminController
   end
 
   def update
-
+    if @page.update(page_params)
+      flash[:notice] = "Page updated"
+      redirect_to edit_admin_page_path(@page)
+    else
+      render 'edit'
+    end
   end
 
   def create

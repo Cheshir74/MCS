@@ -1,38 +1,54 @@
-div class="page-header"
-  h3 class="page-headline" Team Access
-  div class="page-header__meta"
-    span.page-header__chip Admin
-    span.page-header__text Manage member roles and account credentials
+- superadmin_count = @users.count(&:superadmin_role?)
+- editor_count = @users.count(&:supervisor_role?)
+- viewer_count = @users.count { |user| admin_user_roles(user).include?("Viewer") }
+- stats = [{ label: "Accounts", value: @users.size, note: "Administrative members", tone: "accent" }, { label: "Superadmins", value: superadmin_count, note: "Full system access", tone: superadmin_count.positive? ? "success" : "muted" }, { label: "Editors", value: editor_count, note: "Content and gallery operations", tone: editor_count.positive? ? "accent" : "muted" }, { label: "Viewers", value: viewer_count, note: "Read-oriented access", tone: viewer_count.positive? ? "muted" : "warning" }]
 
-div class="row"
-  div class="col-sm-12"
-    div class="card section-card"
-      .card-header.d-flex.justify-content-between.align-items-center
-        span Team members
-        / Placeholder for future "New user" button
-      .card-body.px-0.overflow-auto
-        table class="table table-hover align-middle mb-0"
-          thead class="bg-light text-muted"
-            tr
-              th scope="col" class="text-nowrap px-4" #
-              th scope="col" class="text-nowrap" Account
-              th scope="col" class="text-nowrap" Email
-              th scope="col" class="text-nowrap" Roles
-              th scope="col" class="text-nowrap text-end px-4" Actions
-          tbody
-            - @users.each_with_index do |user, index|
-              tr
-                td class="px-4 text-muted"= index + 1
-                td
-                  - base_email = user.email.to_s
-                  - account_label = user.try(:name).presence || base_email.split("@").first || base_email
-                  strong= account_label
-                td= mail_to user.email
-                td
-                  - roles = []
-                  - roles << "Admin" if user.superadmin_role?
-                  - roles << "Editor" if user.supervisor_role?
-                  = roles.present? ? roles.join(", ") : "Viewer"
-                td class="text-end px-4"
-                  = link_to 'Edit', edit_admin_user_path(user), class: 'btn btn-outline-primary btn-sm me-2'
-                  = link_to 'Delete', admin_user_path(user), data: { turbo_method: :delete, turbo_confirm: 'Are you sure?', confirm: 'Are you sure?' }, class: 'btn btn-outline-danger btn-sm'
+section.admin-workspace
+  .admin-workspace__header
+    .admin-workspace__header-copy
+      p.admin-kicker Team access
+      h1.admin-workspace__title Roles, permissions and member accounts
+      p.admin-workspace__lead The team screen now reads like an access matrix instead of a flat table: you immediately see who can publish, who edits content and who only reviews.
+    .admin-workspace__actions
+      = link_to "Open dashboard", admin_dashboard_path, class: "btn btn-outline-secondary"
+
+  .admin-overview-grid.admin-overview-grid--tight
+    - stats.each do |stat|
+      article.card.section-card.admin-stat-card
+        span.admin-stat-card__label = stat[:label]
+        strong.admin-stat-card__value = stat[:value]
+        span class="admin-pill admin-pill--#{stat[:tone]}" = stat[:note]
+
+  - if @users.any?
+    .admin-record-grid.admin-record-grid--three
+      - @users.each do |user|
+        - roles = admin_user_roles(user)
+        - base_email = user.email.to_s
+        - account_label = user.try(:name).presence || base_email.split("@").first || base_email
+        article.card.section-card.admin-record-card
+          .admin-record-card__head
+            .admin-record-card__title-group
+              p.admin-record-card__eyebrow = "User ##{user.id}"
+              h2.admin-record-card__title = account_label
+              p.admin-record-card__summary = user.email
+            .admin-badge-stack
+              - roles.each do |role|
+                - tone = role == "Superadmin" ? "success" : role == "Editor" ? "accent" : "muted"
+                span class="admin-pill admin-pill--#{tone}" = role
+          .admin-record-card__metric-grid
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Roles enabled
+              strong.admin-record-card__metric-value = roles.size
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Updated
+              strong.admin-record-card__metric-value = l(user.updated_at, format: :short)
+          .admin-record-card__footer
+            .admin-record-card__meta
+              span Account permissions
+            .table-actions
+              = link_to "Edit", edit_admin_user_path(user), class: "btn btn-outline-primary btn-sm"
+              = link_to "Delete", admin_user_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure?", confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+  - else
+    .card.section-card.admin-empty-state
+      h2.admin-empty-state__title No team members found
+      p.admin-empty-state__copy Administrative accounts will appear here once they have access to the system.

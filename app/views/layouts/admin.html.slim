@@ -11,14 +11,24 @@ html
     = javascript_include_tag "admin", "data-turbo-track": "reload", type: "module"
     = stylesheet_link_tag 'admin', media: 'all'
 
-  body class="admin-layout"
+  body class="admin-layout admin-layout--future" data-admin-sidebar-storage-key="admin:sidebar:state"
+    = javascript_tag nonce: true do
+      | (() => {
+      |   try {
+      |     const storageKey = "admin:sidebar:state";
+      |     if (window.matchMedia("(min-width: 1181px)").matches && window.localStorage.getItem(storageKey) === "collapsed") {
+      |       document.body.classList.add("sidebar-icon-only");
+      |     }
+      |   } catch (error) {
+      |   }
+      | })();
     - unless flash.empty?
       = render 'layouts/notice'
-    div class="container-scroller"
+    div.admin-shell
       = render 'layouts/admin/sidebar'
-      div class="container-fluid page-body-wrapper"
+      div.admin-shell__body
         = render 'layouts/admin/header'
-        div class='main-panel'
-          div class="content-wrapper"
+        div.admin-shell__main
+          main.admin-shell__content
             = yield
           = render 'layouts/admin/footer'

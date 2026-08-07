@@ -1,6 +1,7 @@
 import "@hotwired/turbo-rails"
 import * as bootstrap from "bootstrap"
 import "./controllers"
+import "./helpers/admin_confirm"
 
 import "./add_jquery"
 import "./misc"
@@ -19,7 +20,6 @@ import "@fortawesome/fontawesome-free/js/all"
 
 import toastr from 'toastr'
 window.toastr = toastr
-
 
 
 

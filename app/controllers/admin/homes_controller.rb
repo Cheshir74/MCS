@@ -3,7 +3,7 @@ class Admin::HomesController < Admin::AdminController
   before_action :load_resources, only: [:edit, :new]
 
   def index
-    @homes = Home.all
+    @homes = Home.with_attached_image.with_attached_images.order(updated_at: :desc)
   end
 
   def update
@@ -29,12 +29,10 @@ class Admin::HomesController < Admin::AdminController
     attachments_scope.find_each(&:purge) if attachments_scope.exists?
 
     permitted_params = home_params
-    params_without_images = permitted_params.except(:images)
+    params_without_images = permitted_params.except(:images, :editorial_hero_image)
 
     if @home.update(params_without_images)
-      Array(permitted_params[:images]).each do |image|
-        @home.images.attach(image)
-      end
+      persist_home_media!(@home, permitted_params)
 
       flash[:notice] = "Домашняя страница обновлена"
       redirect_back(fallback_location: edit_admin_home_path(@home))
@@ -76,8 +74,11 @@ class Admin::HomesController < Admin::AdminController
   end
 
   def create
-    @home = Home.new(home_params)
+    permitted_params = home_params
+    @home = Home.new(permitted_params.except(:images, :editorial_hero_image))
+
     if @home.save
+      persist_home_media!(@home, permitted_params)
       flash[:notice] = "Home Created"
       redirect_to admin_homes_path
     else
@@ -156,6 +157,35 @@ class Admin::HomesController < Admin::AdminController
     params[:home][:images].each { |image| @home.images.attach(image) }
   end
 
+  def persist_home_media!(home, permitted_params)
+    attach_slider_images!(home, Array(permitted_params[:images]))
+    attach_editorial_hero_image!(home, permitted_params[:editorial_hero_image])
+  end
+
+  def attach_slider_images!(home, uploads)
+    uploads.reject(&:blank?).each do |image|
+      home.images.attach(image)
+    end
+  end
+
+  def attach_editorial_hero_image!(home, upload)
+    return if upload.blank?
+
+    existing_attachment_ids = home.images.attachments.ids
+    home.images.attach(upload)
+
+    fresh_attachment = home.images.attachments.where.not(id: existing_attachment_ids).order(created_at: :desc).first
+    promote_hero_attachment!(home, fresh_attachment) if fresh_attachment.present?
+  end
+
+  def promote_hero_attachment!(home, attachment)
+    ordered_attachments = home.ordered_images.reject { |item| item.id == attachment.id }
+
+    ([attachment] + ordered_attachments).each_with_index do |item, index|
+      ActiveStorage::Attachment.where(id: item.id).update_all(position: index + 1)
+    end
+  end
+
   def home_params
     params.require(:home).permit(
       :title,
@@ -167,9 +197,22 @@ class Admin::HomesController < Admin::AdminController
       :visible,
       :visible_cf,
       :design_variant,
+      :editorial_hero_image,
       :image,
       *Home::EDITORIAL_GALLERY_FIELDS,
-      *Home::EDITORIAL_FIELDS,
+      *Home::EDITORIAL_FIELDS.excluding(
+        :hero_primary_cta_label,
+        :hero_secondary_cta_label,
+        :scroll_cue_label,
+        :reports_eyebrow,
+        :reports_title,
+        :about_eyebrow,
+        :about_photo_caption,
+        :contacts_location_label,
+        :contacts_phone_label,
+        :contacts_email_label,
+        :contacts_social_label
+      ),
       images: []
     )
   end

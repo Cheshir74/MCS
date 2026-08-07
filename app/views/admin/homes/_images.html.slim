@@ -1,24 +1,43 @@
-#edit_images
-  .section-card.section-card--gallery
-    .section-card__actions
-      span.section-card__hint Select photos to delete from the home gallery
-      button.btn.btn-outline-danger.btn-sm type="submit" name="delete_selected" value="1"
-        | Delete selected
+#edit_images.admin-gallery-manager.admin-gallery-manager--compact data-controller="gallery-preview"
+  .admin-gallery-manager__toolbar
+    p.admin-gallery-manager__hint Select frames to delete. Drag to set slider order and the first frame for the new homepage.
+    button.btn.btn-outline-danger.btn-sm type="submit" name="delete_selected" value="1"
+      | Delete selected
 
-    - if home.images.present?
-      .gallery-grid.home-gallery-grid.sortable#lightgallery
-        - home.ordered_images.each do |image|
-          .gallery-item data-id=image.id
-            .gallery-thumb.bg-light
-              = link_to url_for(image.variant(resize_to_limit: [1000, 670])), data: { turbo: false }, class: "gallery-thumb__link" do
-                = image_tag image.variant(resize_to_limit: [220, 220]), class: "gallery-thumb__image", alt: ""
-            = label_tag "delete_img_ids_#{image.id}", class: "gallery-select" do
-              = check_box_tag "delete_img_ids[]", image.id, false, id: "delete_img_ids_#{image.id}", class: "gallery-select__checkbox"
-              span.gallery-select__mark
-            .gallery-item__footer
-              span.text-muted.small Image ##{image.id}
-              = link_to delete_image_attachment_admin_home_path(home, image_id: image.id), data: { turbo_method: :delete, turbo_confirm: "Remove this photo?" }, class: 'gallery-item__delete' do
-                i class="fa-solid fa-trash" aria-hidden="true"
-                |  Remove
-    - else
-      p.text-muted.mb-0 There are no images yet.
+  - if home.images.present?
+    .admin-gallery-grid.admin-gallery-grid--compact.sortable#lightgallery
+      - home.ordered_images.each_with_index do |image, index|
+        .admin-gallery-tile.admin-gallery-tile--hero data-id=image.id
+          .admin-gallery-thumb.bg-light
+            button.admin-gallery-thumb__button.admin-gallery-thumb__button--preview type="button" data-action="click->gallery-preview#open" data-preview-url=url_for(image.variant(resize_to_limit: [1600, 1100])) data-preview-alt="Hero frame #{index + 1}" data-preview-delete-url=delete_image_attachment_admin_home_path(home, image_id: image.id) aria-label="Open hero frame #{index + 1} preview"
+              = image_tag image.variant(resize_to_fill: [240, 168]), class: "admin-gallery-thumb__image", alt: ""
+            = label_tag "delete_img_ids_#{image.id}", class: "admin-gallery-thumb__control admin-gallery-thumb__control--select" do
+              = check_box_tag "delete_img_ids[]", image.id, false, id: "delete_img_ids_#{image.id}", class: "admin-gallery-select__checkbox"
+              svg.admin-gallery-thumb__icon.admin-gallery-thumb__icon--select viewBox="0 0 16 16" aria-hidden="true"
+                circle.admin-gallery-thumb__icon-ring cx="8" cy="8" r="5.05"
+                path.admin-gallery-thumb__icon-check d="M5.35 8.25 7.05 9.95 10.55 6.45"
+            = link_to delete_image_attachment_admin_home_path(home, image_id: image.id), data: { turbo_method: :delete, turbo_confirm: "Remove this photo?" }, class: "admin-gallery-thumb__control admin-gallery-thumb__control--delete", aria: { label: "Remove image ##{image.id}" } do
+              svg.admin-gallery-thumb__icon viewBox="0 0 16 16" aria-hidden="true"
+                path d="M5.8 3.1h4.4"
+                path d="M3.25 4.4h9.5"
+                path d="M5.1 4.75v6.1c0 .91.74 1.65 1.65 1.65h2.5c.91 0 1.65-.74 1.65-1.65v-6.1"
+                path d="M6.95 6.55v3.5"
+                path d="M9.05 6.55v3.5"
+  - else
+    p.text-muted.mb-0 There are no images yet.
+
+  .admin-gallery-preview data-gallery-preview-target="modal" hidden=true role="dialog" aria-modal="true"
+    .admin-gallery-preview__dialog
+      .admin-gallery-preview__toolbar
+        a.admin-gallery-preview__control.admin-gallery-preview__control--delete data-gallery-preview-target="deleteLink" data-turbo-method="delete" data-turbo-confirm="Remove this photo?" href="#" aria-label="Remove current photo"
+          svg.admin-gallery-preview__icon viewBox="0 0 16 16" aria-hidden="true"
+            path d="M6.25 2.25h3.5"
+            path d="M2.75 4.25h10.5"
+            path d="M5.25 4.25v7.25c0 .83.67 1.5 1.5 1.5h2.5c.83 0 1.5-.67 1.5-1.5V4.25"
+            path d="M6.75 6.5v3.75"
+            path d="M9.25 6.5v3.75"
+        button.admin-gallery-preview__control.admin-gallery-preview__control--close type="button" aria-label="Close preview"
+          svg.admin-gallery-preview__icon viewBox="0 0 16 16" aria-hidden="true"
+            path d="M4.5 4.5 11.5 11.5"
+            path d="M11.5 4.5 4.5 11.5"
+      img.admin-gallery-preview__image data-gallery-preview-target="image" alt=""

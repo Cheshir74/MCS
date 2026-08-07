@@ -1,76 +1,110 @@
+- roles = admin_user_roles(@user)
+- summary_rows = [["Roles", roles.join(", "), roles.any? ? "accent" : "muted"], ["Email", @user.email, "muted"], ["Updated", l(@user.updated_at, format: :short), "muted"]]
+
 div.page-header
   h3.page-headline Edit User
   div.page-header__meta
     span.page-header__chip Team Access
     span.page-header__text Adjust administrative permissions for this account
 
-= form_for [:admin, @user] do |f|
+= form_for [:admin, @user], html: { class: "admin-editor admin-editor--user" } do |f|
   - if @user.errors.any?
-    - @user.errors.full_messages.each do |msg|
-      .alert.alert-danger.mb-3 = msg
+    .admin-form-errors
+      - @user.errors.full_messages.each do |msg|
+        .alert.alert-danger.mb-3 = msg
 
-  .row.g-4
-    .col-12.col-xl-6
-      .card.section-card
+  .admin-editor__layout
+    aside.admin-editor__rail
+      .card.section-card.admin-editor__rail-card
+        .admin-editor__rail-head
+          .admin-editor__rail-copy-group
+            p.admin-kicker Team member
+            h4.admin-editor__rail-title Quick actions
+          span class="admin-pill #{roles.include?('Superadmin') ? 'admin-pill--success' : roles.include?('Editor') ? 'admin-pill--accent' : 'admin-pill--muted'}" = roles.first
+        p.admin-editor__rail-copy This editor is focused on access control only, so roles stay readable on desktop and still usable on smaller screens.
+        .admin-editor__rail-actions
+          = f.submit "Save changes", class: "btn btn-primary"
+          = link_to "Back to team", admin_users_path, class: "btn btn-outline-secondary"
+
+      .card.section-card.admin-editor__rail-card
+        .card-header
+          h4.card-title
+            span.card-chip Summary
+            |  Account snapshot
+          p.card-subtitle.text-muted.small Current permissions and identity data
+        .admin-summary-list
+          - summary_rows.each do |label, value, tone|
+            .admin-summary-list__item
+              span.admin-summary-list__label = label
+              span class="admin-summary-list__value admin-summary-list__value--#{tone}" = value
+
+      .card.section-card.admin-editor__rail-card
+        .card-header
+          h4.card-title
+            span.card-chip Security
+            |  Password action
+          p.card-subtitle.text-muted.small Open the password flow only when needed
+        .admin-editor__rail-actions
+          = button_tag "Change password", type: "button", class: "btn btn-outline-primary", onclick: "Stimulus.getControllerForElementAndIdentifier(document.getElementById('change_password_modal'), 'change-password').open()"
+
+    .admin-editor__main
+      section.card.section-card.admin-editor__section
         .card-header
           h4.card-title
             span.card-chip Roles
             |  Access levels
-          p.card-subtitle.text-muted.small Enable or disable elevated privileges
+          p.card-subtitle.text-muted.small Enable only the capabilities this account actually needs
         .card-body
           - superadmin_id = dom_id(@user, :superadmin_role)
           - supervisor_id = dom_id(@user, :supervisor_role)
           - user_role_id = dom_id(@user, :user_role)
 
-          .input-card.input-card--switch
-            h5.input-card__title Superadmin
-            p.input-card__hint Full access to all administrative features
-            .form-switch-row.mt-2
-              .form-check.form-switch
-                = f.check_box :superadmin_role, class: 'form-check-input input-card__switch', id: superadmin_id
-                = f.label :superadmin_role, "Grant superadmin privileges", class: 'form-check-label', for: superadmin_id
+          .admin-section-grid
+            .input-card.input-card--switch
+              h5.input-card__title Superadmin
+              p.input-card__hint Full access to homepage publishing, site settings and team administration
+              .form-switch-row.mt-2
+                .form-check.form-switch
+                  = f.check_box :superadmin_role, class: "form-check-input input-card__switch", id: superadmin_id
+                  = f.label :superadmin_role, "Grant superadmin privileges", class: "form-check-label", for: superadmin_id
 
-          .input-card.input-card--switch.mt-3
-            h5.input-card__title Editor
-            p.input-card__hint Manage content while skipping system settings
-            .form-switch-row.mt-2
-              .form-check.form-switch
-                = f.check_box :supervisor_role, class: 'form-check-input input-card__switch', id: supervisor_id
-                = f.label :supervisor_role, "Enable editor capabilities", class: 'form-check-label', for: supervisor_id
+            .input-card.input-card--switch
+              h5.input-card__title Editor
+              p.input-card__hint Manage content, galleries and homepage records without system-wide control
+              .form-switch-row.mt-2
+                .form-check.form-switch
+                  = f.check_box :supervisor_role, class: "form-check-input input-card__switch", id: supervisor_id
+                  = f.label :supervisor_role, "Enable editor capabilities", class: "form-check-label", for: supervisor_id
 
-          .input-card.input-card--switch.mt-3
-            h5.input-card__title Viewer
-            p.input-card__hint Minimal access for reviewing dashboards
-            .form-switch-row.mt-2
-              .form-check.form-switch
-                = f.check_box :user_role, class: 'form-check-input input-card__switch', id: user_role_id
-                = f.label :user_role, "Allow dashboard access", class: 'form-check-label', for: user_role_id
+            .input-card.input-card--switch
+              h5.input-card__title Viewer
+              p.input-card__hint Minimal access for reviewing dashboards and admin states
+              .form-switch-row.mt-2
+                .form-check.form-switch
+                  = f.check_box :user_role, class: "form-check-input input-card__switch", id: user_role_id
+                  = f.label :user_role, "Allow dashboard access", class: "form-check-label", for: user_role_id
 
-    .col-12.col-xl-6
-      .card.section-card
+      section.card.section-card.admin-editor__section
         .card-header
           h4.card-title
             span.card-chip Account
-            |  Contact details
-          p.card-subtitle.text-muted.small Reference primary email and manage password resets
+            |  Reference details
+          p.card-subtitle.text-muted.small The sign-in email is displayed here for context while role editing
         .card-body
-          .input-card
-            h5.input-card__title Email
-            p.input-card__hint Sign-in address for this user
-            span.d-block.fw-semibold = @user.email
-            span.form-hint.mb-0 To update the email, edit the account from the authentication panel.
+          .admin-note-grid
+            .admin-note
+              strong Email
+              p = @user.email
+            .admin-note
+              strong Role composition
+              p Combine privileges only when there is a real operational need. Overlapping roles should be deliberate.
+            .admin-note
+              strong Password changes
+              p Use the password action from the rail when credentials need to be reset or rotated.
 
-          ul.list-unstyled.form-hint.mt-4.mb-0
-            li.d-flex.gap-2.mb-2
-              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
-              span.small Combine roles to tailor access (e.g., Editor + Viewer)
-            li.d-flex.gap-2
-              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
-              span.small Use the password action below to send a reset request
-
-  .form-actions.mt-4
-    = f.submit "Save changes", class: 'btn btn-primary'
-    = link_to "Cancel", admin_users_path, class: 'btn btn-outline-secondary'
+  .form-actions.mt-4.admin-editor__footer-actions
+    = f.submit "Save changes", class: "btn btn-primary"
+    = link_to "Cancel", admin_users_path, class: "btn btn-outline-secondary"
     = button_tag "Change password", type: "button", class: "btn btn-outline-primary", onclick: "Stimulus.getControllerForElementAndIdentifier(document.getElementById('change_password_modal'), 'change-password').open()"
 
 #change_password_modal[data-controller="change-password" data-url=change_password_admin_user_path(@user)]

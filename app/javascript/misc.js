@@ -3,13 +3,12 @@
 
   const MINIMIZE_SELECTOR = '[data-toggle="minimize"]';
   const FULLSCREEN_SELECTOR = '#fullscreen-button';
+  const SIDEBAR_STORAGE_KEY = 'admin:sidebar:state';
+  const DESKTOP_SIDEBAR_QUERY = '(min-width: 1181px)';
 
   function initializeSidebar() {
     const body = $('body');
-    const contentWrapper = $('.content-wrapper');
-    const scroller = $('.container-scroller');
-    const footer = $('.footer');
-    const sidebar = $('.sidebar');
+    const sidebar = $('.admin-sidebar');
 
     if (!sidebar.length) return;
 
@@ -17,40 +16,76 @@
     sidebar.off('show.bs.collapse', '.collapse');
     $(document).off('click', MINIMIZE_SELECTOR);
     $(document).off('click', FULLSCREEN_SELECTOR);
+    $(window).off('resize.adminSidebar');
 
     //Add active class to nav-link based on url dynamically
     //Active class can be hard coded directly in html file also as required
+    function normalizePath(path) {
+      return (path || '').replace(/\/+$/, '') || '/';
+    }
+
     function addActiveClass(element) {
-      if (current === "") {
-        //for root url
-        if (element.attr('href').indexOf("index.html") !== -1) {
-          element.parents('.nav-item').last().addClass('active');
-          if (element.parents('.sub-menu').length) {
-            element.closest('.collapse').addClass('show');
-            element.addClass('active');
-          }
-        }
-      } else {
-        //for other url
-        if (element.attr('href').indexOf(current) !== -1) {
-          element.parents('.nav-item').last().addClass('active');
-          if (element.parents('.sub-menu').length) {
-            element.closest('.collapse').addClass('show');
-            element.addClass('active');
-          }
-          if (element.parents('.submenu-item').length) {
-            element.addClass('active');
-          }
-        }
+      const href = element.attr('href');
+      if (!href) return;
+
+      const linkPath = normalizePath(new URL(href, window.location.origin).pathname);
+      if (linkPath === '/' ? current === '/' : current === linkPath || current.startsWith(linkPath + '/')) {
+        element.closest('.admin-sidebar__item').addClass('is-active');
+        element.addClass('is-active');
       }
     }
 
-    sidebar.find('.nav-item').removeClass('active');
-    sidebar.find('.nav-link.active').removeClass('active');
+    sidebar.find('.admin-sidebar__item').removeClass('is-active');
+    sidebar.find('.admin-sidebar__link').removeClass('is-active');
     sidebar.find('.collapse.show').removeClass('show');
 
-    var current = window.location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
-    $('.nav li a', sidebar).each(function() {
+    function sidebarStorageKey() {
+      return body.data('admin-sidebar-storage-key') || SIDEBAR_STORAGE_KEY;
+    }
+
+    function desktopSidebarEnabled() {
+      return window.matchMedia(DESKTOP_SIDEBAR_QUERY).matches;
+    }
+
+    function readSidebarState() {
+      try {
+        return window.localStorage.getItem(sidebarStorageKey());
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function writeSidebarState(collapsed) {
+      try {
+        window.localStorage.setItem(sidebarStorageKey(), collapsed ? 'collapsed' : 'expanded');
+      } catch (error) {
+      }
+    }
+
+    function syncSidebarToggle() {
+      const collapsed = body.hasClass('sidebar-icon-only');
+      const label = collapsed ? 'Expand sidebar' : 'Collapse sidebar';
+
+      $(MINIMIZE_SELECTOR)
+        .attr('aria-pressed', String(collapsed))
+        .attr('aria-expanded', String(!collapsed))
+        .attr('aria-label', label)
+        .attr('title', label);
+    }
+
+    function applyStoredSidebarState() {
+      if (!desktopSidebarEnabled()) {
+        body.removeClass('sidebar-icon-only');
+        syncSidebarToggle();
+        return;
+      }
+
+      body.toggleClass('sidebar-icon-only', readSidebarState() === 'collapsed');
+      syncSidebarToggle();
+    }
+
+    var current = normalizePath(window.location.pathname);
+    $('.admin-sidebar__link', sidebar).each(function() {
       var $this = $(this);
       addActiveClass($this);
     })
@@ -66,8 +101,12 @@
       sidebar.find('.collapse.show').collapse('hide');
     });
 
+    applyStoredSidebarState();
+    $(window).on('resize.adminSidebar', function() {
+      applyStoredSidebarState();
+    });
 
-    //Change sidebar and content-wrapper height
+    // Initialize admin shell helpers
     applyStyles();
 
     function applyStyles() {
@@ -80,17 +119,18 @@
           const chatsScroll = new PerfectScrollbar('.chats');
         }
         if (body.hasClass("sidebar-fixed")) {
-          var fixedSidebarScroll = new PerfectScrollbar('#sidebar .nav');
+          var fixedSidebarScroll = new PerfectScrollbar('#sidebar .admin-sidebar__nav');
         }
       }
     }
 
     $(document).on("click", MINIMIZE_SELECTOR, function() {
-      if ((body.hasClass('sidebar-toggle-display')) || (body.hasClass('sidebar-absolute'))) {
-        body.toggleClass('sidebar-hidden');
-      } else {
-        body.toggleClass('sidebar-icon-only');
-      }
+      if (!desktopSidebarEnabled()) return;
+
+      const collapsed = !body.hasClass('sidebar-icon-only');
+      body.toggleClass('sidebar-icon-only', collapsed);
+      writeSidebarState(collapsed);
+      syncSidebarToggle();
     });
 
     //checkbox and radios

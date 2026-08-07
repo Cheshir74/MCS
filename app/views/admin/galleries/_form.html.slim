@@ -1,101 +1,163 @@
-= form_for [:admin, gallery] do |f|
-  - if gallery.errors.any?
-    - gallery.errors.full_messages.each do |msg|
-      .alert.alert-danger.mb-3 = msg
+- nav_sections = [{ id: "gallery-basics", title: "Basics", hint: "name and visibility" }, { id: "gallery-copy", title: "Homepage copy", hint: "title and description" }, { id: "gallery-meta", title: "Meta & tags", hint: "overlay and labels" }, { id: "gallery-media", title: "Media", hint: "cover and ordering" }]
+- attached_images_count = gallery.images.attachments.size
+- filled_homepage_fields = Gallery::HOMEPAGE_FIELDS.count { |field| gallery.public_send(field).present? }
+- summary_rows = [["Status", gallery.visible? ? "Visible" : "Hidden", gallery.visible? ? "success" : "muted"], ["Images", "#{attached_images_count} file#{'s' unless attached_images_count == 1}", attached_images_count.positive? ? "accent" : "warning"], ["Cover", gallery.primary_image.present? ? "Ready" : "Missing", gallery.primary_image.present? ? "success" : "warning"], ["Homepage fields", "#{filled_homepage_fields}/#{Gallery::HOMEPAGE_FIELDS.size}", filled_homepage_fields.positive? ? "accent" : "muted"]]
 
-  div class="row g-4"
-    div class="col-12"
-      div class="card section-card"
+= form_for [:admin, gallery], html: { class: "admin-editor admin-editor--gallery" } do |f|
+  - if gallery.errors.any?
+    .admin-form-errors
+      - gallery.errors.full_messages.each do |msg|
+        .alert.alert-danger.mb-3 = msg
+
+  .admin-editor__layout
+    aside.admin-editor__rail
+      .card.section-card.admin-editor__rail-card
+        .admin-editor__rail-head
+          .admin-editor__rail-copy-group
+            p.admin-kicker Gallery
+            h4.admin-editor__rail-title Quick actions
+          span class="admin-pill #{gallery.visible? ? 'admin-pill--success' : 'admin-pill--muted'}" = gallery.visible? ? "Visible" : "Hidden"
+        p.admin-editor__rail-copy Configure gallery content for the public gallery list and for cards on the new homepage.
+        .admin-editor__rail-actions
+          = f.submit gallery.persisted? ? "Save gallery" : "Create gallery", class: "btn btn-primary"
+          = link_to "Back to list", admin_galleries_path, class: "btn btn-outline-secondary"
+
+      .card.section-card.admin-editor__rail-card
+        .card-header
+          h4.card-title
+            span.card-chip Navigate
+            |  Sections
+          p.card-subtitle.text-muted.small Jump to the exact block you want to edit
+        nav.admin-editor__nav
+          - nav_sections.each do |item|
+            a.admin-editor__nav-link href="##{item[:id]}"
+              span.admin-editor__nav-title = item[:title]
+              span.admin-editor__nav-hint = item[:hint]
+
+      .card.section-card.admin-editor__rail-card
+        .card-header
+          h4.card-title
+            span.card-chip Summary
+            |  Card readiness
+          p.card-subtitle.text-muted.small Quick check before assigning this gallery to the homepage
+        .admin-summary-list
+          - summary_rows.each do |label, value, tone|
+            .admin-summary-list__item
+              span.admin-summary-list__label = label
+              span class="admin-summary-list__value admin-summary-list__value--#{tone}" = value
+
+    .admin-editor__main
+      section.card.section-card.admin-editor__section id="gallery-basics"
         .card-header
           h4.card-title
             span.card-chip Settings
-            |  Gallery details
-          p.card-subtitle.text-muted.small Internal identity, public visibility and home-card metadata
+            |  Basics
+          p.card-subtitle.text-muted.small Internal identity and public visibility
         .card-body
-          .row.g-4
-            .col-12.col-md-6
-              .input-card
-                h5.input-card__title Name
-                p.input-card__hint Internal gallery name and fallback title
-                = f.text_field :name, class: "form-control input-card__control", placeholder: "Gallery title"
+          .admin-section-grid.admin-section-grid--two
+            .input-card
+              h5.input-card__title Name
+              p.input-card__hint Internal gallery name and fallback title for homepage cards
+              = f.text_field :name, class: "form-control input-card__control", placeholder: "Gallery title"
+            .input-card.input-card--switch
+              h5.input-card__title Visibility
+              p.input-card__hint Controls whether this gallery appears on the public gallery list
+              .form-switch-row.mt-2
+                .form-check.form-switch
+                  = f.check_box :visible, class: "form-check-input input-card__switch", id: dom_id(gallery, :visible)
+                  = f.label :visible, "Show on site", class: "form-check-label", for: dom_id(gallery, :visible)
 
-            .col-12.col-md-6
-              .input-card.input-card--switch
-                h5.input-card__title Visibility
-                p.input-card__hint Controls whether this gallery is visible on the public gallery list
-                .form-switch-row.mt-2
-                  .form-check.form-switch
-                    = f.check_box :visible, class: "form-check-input input-card__switch", id: dom_id(gallery, :visible)
-                    = f.label :visible, "Show on site", class: "form-check-label", for: dom_id(gallery, :visible)
+      section.card.section-card.admin-editor__section id="gallery-copy"
+        .card-header
+          h4.card-title
+            span.card-chip Homepage
+            |  Card copy
+          p.card-subtitle.text-muted.small Text shown on lead, feature, compact and mini cards on the new homepage
+        .card-body
+          .admin-section-grid.admin-section-grid--two
+            .input-card
+              h5.input-card__title Homepage title
+              p.input-card__hint Used on the larger homepage cards
+              = f.text_field :homepage_title, class: "form-control input-card__control"
+            .input-card
+              h5.input-card__title Overlay title
+              p.input-card__hint Short title shown on the mini-card overlay
+              = f.text_field :homepage_overlay_title, class: "form-control input-card__control"
+            .input-card.admin-editor__full
+              h5.input-card__title Homepage description
+              p.input-card__hint Main caption text for lead, feature and compact cards
+              = f.text_area :homepage_description, class: "form-control input-card__control", rows: 4
+            .input-card
+              h5.input-card__title Footer label 1
+              = f.text_field :homepage_footer_primary, class: "form-control input-card__control"
+            .input-card
+              h5.input-card__title Footer label 2
+              = f.text_field :homepage_footer_secondary, class: "form-control input-card__control"
 
-          .row.g-4.mt-1
-            .col-12.col-lg-6
-              .input-card
-                h5.input-card__title Homepage title
-                p.input-card__hint Title rendered on lead, feature and compact cards
-                = f.text_field :homepage_title, class: "form-control input-card__control"
-            .col-12.col-lg-6
-              .input-card
-                h5.input-card__title Overlay title
-                p.input-card__hint Short title shown on the three mini-cards
-                = f.text_field :homepage_overlay_title, class: "form-control input-card__control"
-            .col-12
-              .input-card
-                h5.input-card__title Homepage description
-                p.input-card__hint Main caption text for the larger cards on the editorial home
-                = f.text_area :homepage_description, class: "form-control input-card__control", rows: 4
-            .col-12.col-md-4
-              .input-card
-                h5.input-card__title Meta 1
-                = f.text_field :homepage_meta_primary, class: "form-control input-card__control", placeholder: "Москва"
-            .col-12.col-md-4
-              .input-card
-                h5.input-card__title Meta 2
-                = f.text_field :homepage_meta_secondary, class: "form-control input-card__control", placeholder: "Июль 2026"
-            .col-12.col-md-4
-              .input-card
-                h5.input-card__title Meta 3
-                = f.text_field :homepage_meta_tertiary, class: "form-control input-card__control", placeholder: "Открытие выставки"
-            .col-12.col-md-6
-              .input-card
-                h5.input-card__title Footer 1
-                = f.text_field :homepage_footer_primary, class: "form-control input-card__control"
-            .col-12.col-md-6
-              .input-card
-                h5.input-card__title Footer 2
-                = f.text_field :homepage_footer_secondary, class: "form-control input-card__control"
-            .col-12.col-md-6
-              .input-card
-                h5.input-card__title Overlay meta 1
-                = f.text_field :homepage_overlay_meta_primary, class: "form-control input-card__control"
-            .col-12.col-md-6
-              .input-card
-                h5.input-card__title Overlay meta 2
-                = f.text_field :homepage_overlay_meta_secondary, class: "form-control input-card__control"
-            .col-12
-              .input-card
-                h5.input-card__title Tags
-                p.input-card__hint Comma-separated tags displayed under the three mini-cards
-                = f.text_field :homepage_tags, class: "form-control input-card__control", placeholder: "backstage, детали, хроника"
+      section.card.section-card.admin-editor__section id="gallery-meta"
+        .card-header
+          h4.card-title
+            span.card-chip Homepage
+            |  Meta, overlay & tags
+          p.card-subtitle.text-muted.small Small labels that shape the card hierarchy on the new homepage
+        .card-body
+          .admin-section-grid.admin-section-grid--three
+            .input-card
+              h5.input-card__title Meta 1
+              = f.text_field :homepage_meta_primary, class: "form-control input-card__control", placeholder: "Moscow"
+            .input-card
+              h5.input-card__title Meta 2
+              = f.text_field :homepage_meta_secondary, class: "form-control input-card__control", placeholder: "July 2026"
+            .input-card
+              h5.input-card__title Meta 3
+              = f.text_field :homepage_meta_tertiary, class: "form-control input-card__control", placeholder: "Exhibition opening"
+            .input-card
+              h5.input-card__title Overlay meta 1
+              = f.text_field :homepage_overlay_meta_primary, class: "form-control input-card__control"
+            .input-card
+              h5.input-card__title Overlay meta 2
+              = f.text_field :homepage_overlay_meta_secondary, class: "form-control input-card__control"
+            .input-card.admin-editor__full
+              h5.input-card__title Tags
+              p.input-card__hint Comma-separated tags displayed under the three mini-cards
+              = f.text_field :homepage_tags, class: "form-control input-card__control", placeholder: "backstage, details, chronicle"
 
-          .mb-5.mt-4
-            label.form-label.form-label--strong Upload images
-            p.form-hint Drag & drop photos or browse to add new items. The first image becomes the cover on the new home page.
-            .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
-              = f.file_field :images, multiple: true, as: :file, direct_upload: true, "data-dropzone-target": "input"
-              .dropzone-msg.dz-message.needsclick
-                i class="fa-solid fa-cloud-arrow-up dropzone-icon" aria-hidden="true"
-                span.dropzone-title Drag files here or click to browse
-                span.dropzone-subtitle.text-muted.small Reorder uploaded images below to control the homepage cover
+      section.card.section-card.admin-editor__section id="gallery-media"
+        .card-header
+          h4.card-title
+            span.card-chip Media
+            |  Cover & ordering
+          p.card-subtitle.text-muted.small The first image in the ordered list becomes the homepage cover
+        .card-body
+          .home-media-grid
+            .home-media-grid__dropzone
+              label.form-label.form-label--strong Upload images
+              .dropzone.dropzone-default.dropzone-modern.dz-clickable data-controller="dropzone"
+                = f.file_field :images, multiple: true, as: :file, direct_upload: true, "data-dropzone-target": "input"
+                .dropzone-msg.dz-message.needsclick
+                  i.fa-solid.fa-cloud-arrow-up.dropzone-icon aria-hidden="true"
+                  span.dropzone-title Drag files here or click to browse
+                  span.dropzone-subtitle.text-muted.small Reorder below to control the homepage cover frame
+            .home-media-grid__info
+              .admin-note-stack
+                .admin-note
+                  strong Homepage cover
+                  p.mb-0 The first ordered image is used as the lead visual when this gallery is placed on the homepage.
+                .admin-note
+                  strong Mini cards
+                  p.mb-0 Overlay title, overlay meta and tags come from the fields above, not from the file names.
+                .admin-note
+                  strong Public gallery
+                  p.mb-0 All uploaded files remain available inside the gallery page itself.
 
-          .form-actions.mt-4
-            = f.submit gallery.persisted? ? "Save changes" : "Create gallery", class: "btn btn-primary"
-            = link_to "Cancel", admin_galleries_path, class: "btn btn-outline-secondary"
+      - if gallery.persisted?
+        section.card.section-card.admin-editor__section
+          .section-header
+            div
+              h4.section-header__title Media library
+              p.section-header__meta Manage, reorder or delete uploaded photos
+          = render "admin/galleries/images"
 
-- if gallery.persisted?
-  div class="section-header mt-5"
-    div
-      h4 class="section-header__title" Images in #{gallery.name}
-      p class="section-header__meta" Manage, reorder or delete uploaded photos
-
-  = render "admin/galleries/images"
+  .form-actions.mt-4.admin-editor__footer-actions
+    = f.submit gallery.persisted? ? "Save gallery" : "Create gallery", class: "btn btn-primary"
+    = link_to "Cancel", admin_galleries_path, class: "btn btn-outline-secondary"

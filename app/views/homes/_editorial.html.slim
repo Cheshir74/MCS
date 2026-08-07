@@ -1,13 +1,58 @@
 - hero_image = home.ordered_images.first
 - social_links = editorial_social_links(@site_setting)
+- brand_title = editorial_brand_title(home)
+- brand_subtitle = editorial_brand_subtitle(home)
+- hero_eyebrow = home.editorial_content(:hero_eyebrow)
+- hero_title = home.editorial_content(:hero_title)
+- hero_body_html = editorial_rich_text(home.editorial_content(:hero_body))
+- hero_primary_cta_label = home.editorial_content(:hero_primary_cta_label)
+- hero_secondary_cta_label = home.editorial_content(:hero_secondary_cta_label)
+- scroll_cue_label = home.editorial_content(:scroll_cue_label)
+- headline_strip_text = home.editorial_content(:headline_strip_text)
+- reports_eyebrow = home.editorial_content(:reports_eyebrow)
+- reports_title = home.editorial_content(:reports_title)
+- reports_body_html = editorial_rich_text(home.editorial_content(:reports_body))
+- reports_intro_title = home.editorial_content(:reports_intro_title)
+- reports_intro_text_html = editorial_rich_text(home.editorial_content(:reports_intro_text))
+- reports_focus_title = home.editorial_content(:reports_focus_title)
+- reports_focus_text_html = editorial_rich_text(home.editorial_content(:reports_focus_text))
+- reports_delivery_title = home.editorial_content(:reports_delivery_title)
+- reports_delivery_text_html = editorial_rich_text(home.editorial_content(:reports_delivery_text))
+- reports_result_title = home.editorial_content(:reports_result_title)
+- reports_result_text_html = editorial_rich_text(home.editorial_content(:reports_result_text))
+- about_eyebrow = home.editorial_content(:about_eyebrow)
+- about_title = home.editorial_content(:about_title)
+- about_body_html = editorial_text_block(home.editorial_content(:about_body))
+- about_body_secondary_html = editorial_text_block(home.editorial_content(:about_body_secondary))
+- about_quote = home.editorial_content(:about_quote)
+- about_photo_caption = home.editorial_content(:about_photo_caption)
+- about_aside_index = home.editorial_content(:about_aside_index)
+- about_aside_title = home.editorial_content(:about_aside_title)
+- about_aside_text_html = editorial_rich_text(home.editorial_content(:about_aside_text))
+- about_fact_pairs = home.editorial_fact_pairs
+- about_metrics = home.editorial_metrics
+- contacts_eyebrow = home.editorial_content(:contacts_eyebrow)
+- contacts_title = home.editorial_content(:contacts_title)
+- contacts_body_html = editorial_rich_text(home.editorial_content(:contacts_body))
+- contacts_card_eyebrow = home.editorial_content(:contacts_card_eyebrow)
+- contacts_location_label = home.editorial_content(:contacts_location_label)
+- contacts_location_value = home.editorial_content(:contacts_location_value)
+- contacts_phone_label = home.editorial_content(:contacts_phone_label)
+- contacts_phone_value = home.editorial_content(:contacts_phone_value)
+- contacts_email_label = home.editorial_content(:contacts_email_label)
+- contacts_email_value = home.editorial_content(:contacts_email_value)
+- contacts_social_label = home.editorial_content(:contacts_social_label)
 
 .shell.home-editorial data-controller="editorial-home"
   header.site-header data-editorial-home-target="header"
     .site-header__inner
       a.brand href="#top" aria-label="Наверх"
-        span.brand__meta
-          span.brand__title = editorial_brand_title(home)
-          span.brand__subtitle = editorial_brand_subtitle(home)
+        - if brand_title.present? || brand_subtitle.present?
+          span.brand__meta
+            - if brand_title.present?
+              span.brand__title = brand_title
+            - if brand_subtitle.present?
+              span.brand__subtitle = brand_subtitle
 
       button.nav-toggle type="button" aria-label="Открыть навигацию" aria-expanded="false" data-action="editorial-home#toggleNav" data-editorial-home-target="toggle"
         span
@@ -25,42 +70,68 @@
       .hero__noise aria-hidden="true"
 
       .hero__content
-        .hero-card
-          p.eyebrow = home.editorial_content(:hero_eyebrow)
-          h1 = home.editorial_content(:hero_title)
-          p = home.editorial_content(:hero_body)
-          .hero-card__actions
-            a.button.button--solid href="#reports" = home.editorial_content(:hero_primary_cta_label)
-            a.button.button--ghost href="#contacts" = home.editorial_content(:hero_secondary_cta_label)
+        - if hero_eyebrow.present? || hero_title.present? || hero_body_html.present? || hero_primary_cta_label.present? || hero_secondary_cta_label.present?
+          .hero-card
+            - if hero_eyebrow.present?
+              p.eyebrow = hero_eyebrow
+            - if hero_title.present?
+              h1 = hero_title
+            - if hero_body_html.present?
+              == hero_body_html
+            - if hero_primary_cta_label.present? || hero_secondary_cta_label.present?
+              .hero-card__actions
+                - if hero_primary_cta_label.present?
+                  a.button.button--solid href="#reports" = hero_primary_cta_label
+                - if hero_secondary_cta_label.present?
+                  a.button.button--ghost href="#contacts" = hero_secondary_cta_label
 
-      a.scroll-cue href="#reports" = home.editorial_content(:scroll_cue_label)
+      - if scroll_cue_label.present?
+        a.scroll-cue href="#reports" = scroll_cue_label
 
-    .headline-strip aria-hidden="true"
-      .headline-strip__inner data-editorial-home-target="brandTrigger"
-        .headline-strip__text = home.editorial_content(:headline_strip_text)
+    - if headline_strip_text.present?
+      .headline-strip aria-hidden="true"
+        .headline-strip__inner data-editorial-home-target="brandTrigger"
+          .headline-strip__text = headline_strip_text
 
     section.section id="reports"
       .container
-        .section__header
-          div
-            p.eyebrow = home.editorial_content(:reports_eyebrow)
-            h2 = home.editorial_content(:reports_title)
-          p = home.editorial_content(:reports_body)
+        - if reports_eyebrow.present? || reports_title.present? || reports_body_html.present?
+          .section__header
+            div
+              - if reports_eyebrow.present?
+                p.eyebrow = reports_eyebrow
+              - if reports_title.present?
+                h2 = reports_title
+            - if reports_body_html.present?
+              == reports_body_html
 
         .reports-stage
-          .reports-stage__top
-            .reports-stage__intro
-              strong = home.editorial_content(:reports_intro_title)
-              p = home.editorial_content(:reports_intro_text)
-            .reports-stage__meta
-              strong = home.editorial_content(:reports_focus_title)
-              p = home.editorial_content(:reports_focus_text)
-            .reports-stage__meta
-              strong = home.editorial_content(:reports_delivery_title)
-              p = home.editorial_content(:reports_delivery_text)
-            .reports-stage__meta
-              strong = home.editorial_content(:reports_result_title)
-              p = home.editorial_content(:reports_result_text)
+          - if reports_intro_title.present? || reports_intro_text_html.present? || reports_focus_title.present? || reports_focus_text_html.present? || reports_delivery_title.present? || reports_delivery_text_html.present? || reports_result_title.present? || reports_result_text_html.present?
+            .reports-stage__top
+              - if reports_intro_title.present? || reports_intro_text_html.present?
+                .reports-stage__intro
+                  - if reports_intro_title.present?
+                    strong = reports_intro_title
+                  - if reports_intro_text_html.present?
+                    == reports_intro_text_html
+              - if reports_focus_title.present? || reports_focus_text_html.present?
+                .reports-stage__meta
+                  - if reports_focus_title.present?
+                    strong = reports_focus_title
+                  - if reports_focus_text_html.present?
+                    == reports_focus_text_html
+              - if reports_delivery_title.present? || reports_delivery_text_html.present?
+                .reports-stage__meta
+                  - if reports_delivery_title.present?
+                    strong = reports_delivery_title
+                  - if reports_delivery_text_html.present?
+                    == reports_delivery_text_html
+              - if reports_result_title.present? || reports_result_text_html.present?
+                .reports-stage__meta
+                  - if reports_result_title.present?
+                    strong = reports_result_title
+                  - if reports_result_text_html.present?
+                    == reports_result_text_html
 
           .story-grid
             .story-primary-column
@@ -80,59 +151,95 @@
       .container
         .about-grid
           .about-panel.panel
-            p.eyebrow = home.editorial_content(:about_eyebrow)
+            - if about_eyebrow.present?
+              p.eyebrow = about_eyebrow
             .about-panel__copy
-              h3 = home.editorial_content(:about_title)
-              == editorial_text_block(home.editorial_content(:about_body))
-              == editorial_text_block(home.editorial_content(:about_body_secondary))
-            .about-panel__quote
-              | “
-              = home.editorial_content(:about_quote)
-              | ”
+              - if about_title.present?
+                h3 = about_title
+              - if about_body_html.present?
+                == about_body_html
+              - if about_body_secondary_html.present?
+                == about_body_secondary_html
+            - if about_quote.present?
+              .about-panel__quote
+                | “
+                = about_quote
+                | ”
 
           .about-side
-            .about-photo aria-hidden="true" data-photo-caption=home.editorial_content(:about_photo_caption) style=editorial_media_style(home.image, resize_to_limit: [1200, 1200], position: "72% center")
-            aside.about-aside.panel
-              .hero-aside__top
-                span.hero-aside__index = home.editorial_content(:about_aside_index)
-              h2 = home.editorial_content(:about_aside_title)
-              p = home.editorial_content(:about_aside_text)
-              .hero-aside__facts
-                - home.editorial_fact_pairs.each do |label, value|
-                  .hero-aside__fact
-                    span.hero-aside__label = label
-                    span.hero-aside__value = value
-            .metric-grid
-              - home.editorial_metrics.each do |value, label|
-                .metric-card
-                  p.metric-card__value = value
-                  p.metric-card__label = label
+            .about-photo aria-hidden="true" data-photo-caption=about_photo_caption style=editorial_media_style(home.image, resize_to_limit: [1200, 1200], position: "72% center")
+            - if about_aside_index.present? || about_aside_title.present? || about_aside_text_html.present? || about_fact_pairs.present?
+              aside.about-aside.panel
+                - if about_aside_index.present?
+                  .hero-aside__top
+                    span.hero-aside__index = about_aside_index
+                - if about_aside_title.present?
+                  h2 = about_aside_title
+                - if about_aside_text_html.present?
+                  == about_aside_text_html
+                - if about_fact_pairs.present?
+                  .hero-aside__facts
+                    - about_fact_pairs.each do |label, value|
+                      .hero-aside__fact
+                        - if label.present?
+                          span.hero-aside__label = label
+                        - if value.present?
+                          span.hero-aside__value = value
+            - if about_metrics.present?
+              .metric-grid
+                - about_metrics.each do |value, label|
+                  .metric-card
+                    - if value.present?
+                      p.metric-card__value = value
+                    - if label.present?
+                      p.metric-card__label = label
 
     section.section id="contacts"
       .container
         .contact-panel.panel
           .contact-panel__copy
-            p.eyebrow = home.editorial_content(:contacts_eyebrow)
-            h3 = home.editorial_content(:contacts_title)
-            p = home.editorial_content(:contacts_body)
+            - if contacts_eyebrow.present?
+              p.eyebrow = contacts_eyebrow
+            - if contacts_title.present?
+              h3 = contacts_title
+            - if contacts_body_html.present?
+              == contacts_body_html
           aside.contact-card aria-label="Контактная информация"
-            .contact-card__eyebrow = home.editorial_content(:contacts_card_eyebrow)
+            - if contacts_card_eyebrow.present?
+              .contact-card__eyebrow = contacts_card_eyebrow
             .contact-card__list
-              .contact-card__row
-                .contact-card__label = home.editorial_content(:contacts_location_label)
-                .contact-card__value = home.editorial_content(:contacts_location_value)
-              .contact-card__row
-                .contact-card__label = home.editorial_content(:contacts_phone_label)
-                .contact-card__value
-                  a href="tel:#{home.editorial_content(:contacts_phone_value).gsub(/[^\d+]/, '')}" = home.editorial_content(:contacts_phone_value)
-              .contact-card__row
-                .contact-card__label = home.editorial_content(:contacts_email_label)
-                .contact-card__value
-                  a href="mailto:#{home.editorial_content(:contacts_email_value)}" = home.editorial_content(:contacts_email_value)
+              - if contacts_location_label.present? || contacts_location_value.present?
+                .contact-card__row
+                  - if contacts_location_label.present?
+                    .contact-card__label = contacts_location_label
+                  - if contacts_location_value.present?
+                    .contact-card__value = contacts_location_value
+              - if contacts_phone_label.present? || contacts_phone_value.present?
+                .contact-card__row
+                  - if contacts_phone_label.present?
+                    .contact-card__label = contacts_phone_label
+                  - if contacts_phone_value.present?
+                    .contact-card__value
+                      a href="tel:#{contacts_phone_value.gsub(/[^\d+]/, '')}" = contacts_phone_value
+              - if contacts_email_label.present? || contacts_email_value.present?
+                .contact-card__row
+                  - if contacts_email_label.present?
+                    .contact-card__label = contacts_email_label
+                  - if contacts_email_value.present?
+                    .contact-card__value
+                      a href="mailto:#{contacts_email_value}" = contacts_email_value
               - if social_links.present?
                 .contact-card__row
-                  .contact-card__label = home.editorial_content(:contacts_social_label)
+                  - if contacts_social_label.present?
+                    .contact-card__label = contacts_social_label
                   .contact-card__socials
                     - social_links.each do |link|
                       = link_to link[:url], class: "contact-card__social contact-card__social--#{link[:name]}", target: "_blank", rel: "noopener noreferrer", aria: { label: link[:name].to_s.titleize } do
                         i class=link[:icon_class] aria-hidden="true"
+        - if home.visible_cf?
+          .editorial-contact-form.panel
+            .editorial-contact-form__intro
+              p.eyebrow Форма запроса
+              h4 Отправить сообщение
+              p Если удобнее написать прямо с сайта, заполните форму. Сообщение уйдет на рабочую почту и вернется в тот же поток работы, что и остальные съемочные запросы.
+            = render "contact_form", form_shell_class: "editorial-contact-form__shell", form_wrap_class: "editorial-contact-form__wrap", form_id: "contact-form"

@@ -1,22 +1,22 @@
-#edit_images
-  = form_tag destroy_attach_admin_gallery_url(@gallery), method: :delete, class: "section-card section-card--gallery" do
-    .section-card__actions
-      span.section-card__hint Select photos to delete from this gallery
+#edit_images.admin-gallery-manager
+  = form_tag destroy_attach_admin_gallery_url(@gallery), method: :delete do
+    .admin-gallery-manager__toolbar
+      p.admin-gallery-manager__hint Select photos to delete or drag them to change the public cover order for this gallery.
       = submit_tag "Delete selected", class: "btn btn-outline-danger btn-sm"
 
     - if @gallery.images.present?
-      .gallery-grid#lightgallery
+      .admin-gallery-grid.sortable#lightgallery
         - @gallery.ordered_images.each do |image|
-          .gallery-item data-id=image.id
-            .gallery-thumb.bg-light
-              = link_to url_for(image.variant(resize_to_limit: [1000, 670])), data: { turbo: false }, class: "gallery-thumb__link" do
-                = image_tag image.variant(resize_to_limit: [360, 360]), class: "gallery-thumb__image", alt: ""
-            = label_tag "delete_img_ids_#{image.id}", class: "gallery-select" do
-              = check_box_tag "delete_img_ids[]", image.id, false, id: "delete_img_ids_#{image.id}", class: "gallery-select__checkbox"
-              span.gallery-select__mark
-            .gallery-item__footer
-              span.text-muted.small Image ##{image.id}
-              = link_to delete_image_attachment_admin_gallery_path(@gallery, image_id: image.id), data: { turbo_method: :delete, turbo_confirm: "Remove this photo permanently?" }, class: 'gallery-item__delete' do
+          .admin-gallery-tile data-id=image.id
+            .admin-gallery-thumb.bg-light
+              = link_to url_for(image.variant(resize_to_limit: [1000, 670])), data: { turbo: false }, class: "admin-gallery-thumb__link" do
+                = image_tag image.variant(resize_to_limit: [360, 360]), class: "admin-gallery-thumb__image", alt: ""
+            = label_tag "delete_img_ids_#{image.id}", class: "admin-gallery-select" do
+              = check_box_tag "delete_img_ids[]", image.id, false, id: "delete_img_ids_#{image.id}", class: "admin-gallery-select__checkbox"
+              span.admin-gallery-select__mark
+            .admin-gallery-tile__footer
+              span.admin-gallery-tile__caption Image ##{image.id}
+              = link_to delete_image_attachment_admin_gallery_path(@gallery, image_id: image.id), data: { turbo_method: :delete, turbo_confirm: "Remove this photo permanently?" }, class: "admin-gallery-tile__delete" do
                 i class="fa-solid fa-trash" aria-hidden="true"
                 |  Remove
     - else

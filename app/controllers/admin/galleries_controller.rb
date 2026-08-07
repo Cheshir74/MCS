@@ -7,7 +7,7 @@ class Admin::GalleriesController < Admin::AdminController
   end
 
   def index
-    @galleries = Gallery.all
+    @galleries = Gallery.with_attached_images.order(updated_at: :desc)
   end
 
   def edit

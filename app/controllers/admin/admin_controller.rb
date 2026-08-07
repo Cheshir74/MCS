@@ -5,6 +5,7 @@ class Admin::AdminController < ApplicationController
   authorize_resource
   layout "admin"
 
+  before_action :load_admin_shell_context
   before_action :set_site_setting, only: [:show, :edit, :update]
   before_action :load_home_options, only: [:index, :show, :edit]
   # before_action :set_admin_setting, only: [:show, :edit, :update]
@@ -26,6 +27,32 @@ class Admin::AdminController < ApplicationController
 
   def index
     @site_setting = SiteSetting.first || SiteSetting.create!
+    @dashboard_stats = {
+      homes: {
+        value: @admin_counts[:homes],
+        note: "#{@admin_counts[:published_homes]} published",
+        tone: @admin_counts[:published_homes].positive? ? "success" : "warning"
+      },
+      galleries: {
+        value: @admin_counts[:galleries],
+        note: "#{@admin_counts[:visible_galleries]} visible",
+        tone: @admin_counts[:visible_galleries].positive? ? "accent" : "warning"
+      },
+      pages: {
+        value: @admin_counts[:pages],
+        note: "#{@admin_counts[:pages].positive? ? 'content pages ready' : 'empty library'}",
+        tone: @admin_counts[:pages].positive? ? "accent" : "muted"
+      },
+      team: {
+        value: @admin_counts[:users],
+        note: @admin_counts[:users].positive? ? "member account#{'s' unless @admin_counts[:users] == 1}" : "no admin accounts",
+        tone: @admin_counts[:users].positive? ? "muted" : "warning"
+      }
+    }
+    @dashboard_recent_homes = Home.order(updated_at: :desc).limit(3)
+    @dashboard_recent_galleries = Gallery.order(updated_at: :desc).limit(3)
+    @dashboard_recent_pages = Page.order(updated_at: :desc).limit(3)
+    @dashboard_recent_users = User.order(updated_at: :desc).limit(3)
   end
 
   def show
@@ -76,6 +103,19 @@ class Admin::AdminController < ApplicationController
   def load_home_options
     @homes = Home.order(created_at: :desc)
     @current_home = @homes.find(&:visible)
+  end
+
+  def load_admin_shell_context
+    @admin_featured_home = Home.find_by(visible: true)
+    @admin_counts = {
+      homes: Home.count,
+      published_homes: Home.where(visible: true).count,
+      editorial_homes: Home.where(design_variant: "editorial").count,
+      galleries: Gallery.count,
+      visible_galleries: Gallery.where(visible: true).count,
+      pages: Page.count,
+      users: User.count
+    }
   end
 
 end

@@ -172,8 +172,7 @@ class Home < ApplicationRecord
   end
 
   def editorial_content(key)
-    value = public_send(key)
-    value.present? ? value : EDITORIAL_DEFAULTS[key.to_sym]
+    public_send(key).presence
   end
 
   def editorial_fact_pairs
@@ -181,7 +180,7 @@ class Home < ApplicationRecord
       [editorial_content(:about_fact_1_label), editorial_content(:about_fact_1_value)],
       [editorial_content(:about_fact_2_label), editorial_content(:about_fact_2_value)],
       [editorial_content(:about_fact_3_label), editorial_content(:about_fact_3_value)]
-    ]
+    ].select { |label, value| label.present? || value.present? }
   end
 
   def editorial_metrics
@@ -190,7 +189,7 @@ class Home < ApplicationRecord
       [editorial_content(:about_metric_2_value), editorial_content(:about_metric_2_label)],
       [editorial_content(:about_metric_3_value), editorial_content(:about_metric_3_label)],
       [editorial_content(:about_metric_4_value), editorial_content(:about_metric_4_label)]
-    ]
+    ].select { |value, label| value.present? || label.present? }
   end
 
   private
@@ -206,5 +205,12 @@ class Home < ApplicationRecord
   def set_defaults
     self.design_variant = "legacy" if design_variant.blank?
     self.section_order = SECTION_KEYS.join(",") if section_order.blank?
+    apply_editorial_defaults
+  end
+
+  def apply_editorial_defaults
+    EDITORIAL_DEFAULTS.each do |key, value|
+      public_send("#{key}=", value) if public_send(key).blank?
+    end
   end
 end

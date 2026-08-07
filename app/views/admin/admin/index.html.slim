@@ -1,205 +1,337 @@
-div class="page-header"
-  h3 class="page-headline" Site Branding & Settings
-  div class="page-header__meta"
-    span.page-header__chip Control Panel
-    span.page-header__text Update brand assets, contact info, and email delivery
+- social_links = { "Telegram" => @site_setting.tg_url, "VK" => @site_setting.vk_url, "Instagram" => @site_setting.inst_url, "Facebook" => @site_setting.fb_url }
+- connected_socials = social_links.values.count(&:present?)
+- smtp_fields = %i[email_address email_port email_login email_domain]
+- smtp_ready = smtp_fields.count { |field| @site_setting.public_send(field).present? }
+- featured_home_title = @admin_featured_home && (@admin_featured_home.title.presence || (@admin_featured_home.editorial? ? @admin_featured_home.editorial_content(:hero_title) : nil))
+- quick_links = [{ title: "Homepage records", copy: "Switch between legacy and new home layouts.", action: "Manage home pages", path: admin_homes_path }, { title: "Gallery library", copy: "Control cover frames, homepage cards and gallery visibility.", action: "Open galleries", path: admin_galleries_path }, { title: "Static pages", copy: "Maintain about pages, standalone content and long-form copy.", action: "Edit pages", path: admin_pages_path }, { title: "Team access", copy: "Adjust admin roles and account permissions.", action: "Review members", path: admin_users_path }]
+- health_items = [{ label: "Brand assets", value: @site_setting.logo.attached? ? "Logo uploaded and ready for navigation." : "Primary logo is still missing.", tone: @site_setting.logo.attached? ? "success" : "warning", badge: @site_setting.logo.attached? ? "Ready" : "Review" }, { label: "Contact email", value: @site_setting.email_contact.presence || "Public contact email is not set yet.", tone: @site_setting.email_contact.present? ? "accent" : "warning", badge: @site_setting.email_contact.present? ? "Active" : "Missing" }, { label: "Social channels", value: "#{connected_socials}/4 channels connected for the public site.", tone: connected_socials.positive? ? "accent" : "muted", badge: connected_socials.positive? ? "Linked" : "Optional" }, { label: "Mail delivery", value: smtp_ready == smtp_fields.size ? "SMTP credentials are complete." : "#{smtp_ready}/#{smtp_fields.size} SMTP fields filled.", tone: smtp_ready == smtp_fields.size ? "success" : "warning", badge: smtp_ready == smtp_fields.size ? "Ready" : "Review" }]
 
-.section-card.settings-card.mb-4
-  .card-header
-    h4.card-title
-      span.card-chip Homepage
-      |  Featured layout
-    p.card-subtitle.text-muted.small Select which home page is published on the public site
-  .card-body
-    - if @homes.any?
-      .featured-home-wrapper
-        - unless @current_home
-          .alert.alert-warning.d-flex.align-items-center.gap-2 role="alert"
-            i.fa-solid.fa-triangle-exclamation aria-hidden="true"
-            span No featured home page selected. Choose one below to publish it.
-        .featured-home-grid
-          .featured-home-panel
-            h6.featured-home-panel__title Featured home page
-            p.text-muted.small.mb-3 Choose which home entry is visible on the public site.
-            = form_with url: set_primary_admin_homes_path, method: :patch, local: true, html: { data: { controller: "featured-home" }, class: "primary-home-form" } do
-              .featured-home-list.list-group.list-group-flush data-featured-home-target="list"
-                - @homes.each_with_index do |home, index|
-                  - checked = @current_home ? home == @current_home : index.zero?
-                  label.list-group-item.featured-home-list__item data-featured-home-target="item" data-key=home.id class=("is-active" if checked)
-                    .featured-home-list__selector
-                      = radio_button_tag :home_id, home.id, checked, class: "form-check-input me-3 visually-hidden", data: { action: "change->featured-home#markActive" }
-                      span.featured-home-list__indicator
-                        i.fa-solid.fa-circle
-                    .featured-home-list__body
-                      span.featured-home-list__title = home.title.presence || "Home ##{home.id}"
-                      span.featured-home-list__meta.badge= home.visible? ? "Active" : "Hidden"
-                      span.featured-home-list__meta.badge.ms-2 = home.design_variant.to_s.titleize
-                      - if home.updated_at
-                        span.featured-home-list__timestamp.text-muted.small Updated #{time_ago_in_words(home.updated_at)} ago
-              .featured-home-panel__actions
-                button.btn.btn-gradient.btn-sm type="submit"
-                  i.fa-solid.fa-check-double.me-2 aria-hidden="true"
-                  | Publish selected home
-                = link_to admin_homes_path, class: "btn btn-ghost btn-sm" do
-                  i.fa-solid.fa-table-list.me-2 aria-hidden="true"
-                  | Manage all home pages
-          - if @current_home
-            .featured-home-panel
-              h6.featured-home-panel__title Section order
-              - if @current_home.legacy?
-                p.text-muted.small.mb-3 Reorder the modules displayed beneath the hero block.
-                = form_with model: @current_home, url: admin_home_path(@current_home), method: :patch, local: true, html: { data: { controller: "section-order" } } do |f|
-                  = f.hidden_field :section_order, value: @current_home.section_order_list.join(","), data: { section_order_target: "input" }
-                  .section-order-list data-section-order-target="list"
-                    - @current_home.section_order_list.each do |key|
-                      - label = { "gallery" => "Gallery", "about" => "About", "contact" => "Contact" }[key] || key.titleize
-                      .section-order-item data-section-order-target="item" data-key=key
-                        span.section-order-item__drag-icon
-                          i.fa-solid.fa-grip-vertical aria-hidden="true"
-                        span.section-order-item__label = label
-                        .section-order-item__actions
-                          button.btn.btn-link.btn-sm type="button" data-action="section-order#moveUp" data-direction="up" aria-label="Move section up"
-                            i.fa-solid.fa-arrow-up aria-hidden="true"
-                          button.btn.btn-link.btn-sm type="button" data-action="section-order#moveDown" data-direction="down" aria-label="Move section down"
-                            i.fa-solid.fa-arrow-down aria-hidden="true"
-                  .featured-home-panel__actions
-                    button.btn.btn-gradient.btn-sm type="submit"
-                      i.fa-solid.fa-layer-group.me-2 aria-hidden="true"
-                      | Save section layout
-                    = link_to edit_admin_home_path(@current_home), class: "btn btn-ghost btn-sm" do
-                      i.fa-solid.fa-pen-to-square.me-2 aria-hidden="true"
-                      | Edit homepage content
-              - else
-                p.text-muted.small.mb-3 Editorial homepage uses a fixed section composition. Manage texts and gallery slots from the home record itself.
+section.admin-workspace
+  .admin-workspace__hero
+    .admin-workspace__hero-main
+      p.admin-kicker Control center
+      h1.admin-workspace__title Site operations, publishing and content flow
+      p.admin-workspace__lead One surface for the live homepage, homepage series, static pages, brand assets, delivery settings and team access. The interface keeps related operations close together instead of scattering them across oversized mixed screens.
+      .admin-workspace__actions
+        - if @admin_featured_home
+          = link_to "Edit live homepage", edit_admin_home_path(@admin_featured_home), class: "btn btn-primary"
+        - else
+          = link_to "Create homepage", new_admin_home_path, class: "btn btn-primary"
+        = link_to "Open galleries", admin_galleries_path, class: "btn btn-outline-secondary"
+        = link_to "Manage pages", admin_pages_path, class: "btn btn-outline-secondary"
+    .admin-workspace__hero-side
+      .admin-hero-kpi
+        span.admin-hero-kpi__label Live homepage
+        strong.admin-hero-kpi__value = featured_home_title || "Not set"
+        span.admin-hero-kpi__note = @admin_featured_home ? "#{admin_home_variant_label(@admin_featured_home)} layout is currently published." : "Choose a home record below to publish it."
+      .admin-hero-kpi
+        span.admin-hero-kpi__label Visible galleries
+        strong.admin-hero-kpi__value = @admin_counts[:visible_galleries]
+        span.admin-hero-kpi__note = "#{@admin_counts[:galleries]} galleries total in the library."
+      .admin-hero-kpi
+        span.admin-hero-kpi__label Public identity
+        strong.admin-hero-kpi__value = @site_setting.name_site.presence || "Site name"
+        span.admin-hero-kpi__note = "#{connected_socials} linked social channel#{'s' unless connected_socials == 1} and #{@admin_counts[:pages]} static page#{'s' unless @admin_counts[:pages] == 1}."
+
+  .admin-overview-grid
+    - @dashboard_stats.each do |label, stat|
+      article.card.section-card.admin-stat-card
+        span.admin-stat-card__label = label.to_s.titleize
+        strong.admin-stat-card__value = stat[:value]
+        span class="admin-pill admin-pill--#{stat[:tone]}" = stat[:note]
+
+  .admin-dashboard-grid
+    .admin-dashboard-stack
+      section.card.section-card.admin-panel
+        .admin-panel__header
+          div
+            p.admin-kicker Homepage
+            h2.admin-panel__title Publishing control
+            p.admin-panel__copy Choose the live homepage record and keep the legacy section order only when that layout is actually active.
+        - if @homes.any?
+          .admin-panel-grid.admin-panel-grid--split
+            .admin-panel-surface
+              h3.admin-panel-surface__heading Live selection
+              p.admin-panel-surface__copy Select which home page is visible on the public site.
+              = form_with url: set_primary_admin_homes_path, method: :patch, local: true, html: { data: { controller: "featured-home" }, class: "primary-home-form" } do
+                .featured-home-list.list-group.list-group-flush data-featured-home-target="list"
+                  - @homes.each_with_index do |home, index|
+                    - checked = @current_home ? home == @current_home : index.zero?
+                    label.list-group-item.featured-home-list__item data-featured-home-target="item" data-key=home.id class=("is-active" if checked)
+                      .featured-home-list__selector
+                        = radio_button_tag :home_id, home.id, checked, class: "form-check-input me-3 visually-hidden", data: { action: "change->featured-home#markActive" }
+                        span.featured-home-list__indicator
+                          i.fa-solid.fa-circle
+                      .featured-home-list__body
+                        span.featured-home-list__title = home.title.presence || "Home ##{home.id}"
+                        span.featured-home-list__meta.badge = home.visible? ? "Published" : "Draft"
+                        span.featured-home-list__meta.badge.ms-2 = admin_home_variant_label(home)
+                        - if home.updated_at
+                          span.featured-home-list__timestamp.text-muted.small Updated #{time_ago_in_words(home.updated_at)} ago
                 .featured-home-panel__actions
-                  = link_to edit_admin_home_path(@current_home), class: "btn btn-gradient btn-sm" do
-                    i.fa-solid.fa-pen-to-square.me-2 aria-hidden="true"
-                    | Edit editorial home
-    - else
-      .empty-state.text-center
-        p.mb-3.text-muted No home page has been created yet. Create one now to publish your landing page.
-        = link_to "Create home page", new_admin_home_path, class: "btn btn-primary"
+                  button.btn.btn-gradient.btn-sm type="submit"
+                    i.fa-solid.fa-check-double.me-2 aria-hidden="true"
+                    | Publish selected home
+                  = link_to admin_homes_path, class: "btn btn-ghost btn-sm" do
+                    i.fa-solid.fa-table-list.me-2 aria-hidden="true"
+                    | Open home library
+            .admin-panel-surface
+              - if @current_home
+                h3.admin-panel-surface__heading Current layout details
+                - if @current_home.legacy?
+                  p.admin-panel-surface__copy Reorder the legacy modules displayed beneath the hero slider. New-homepage records ignore this sequence.
+                  = form_with model: @current_home, url: admin_home_path(@current_home), method: :patch, local: true, html: { data: { controller: "section-order" } } do |f|
+                    = f.hidden_field :section_order, value: @current_home.section_order_list.join(","), data: { section_order_target: "input" }
+                    .section-order-list data-section-order-target="list"
+                      - @current_home.section_order_list.each do |key|
+                        - label = { "gallery" => "Gallery", "about" => "About", "contact" => "Contact" }[key] || key.titleize
+                        .section-order-item data-section-order-target="item" data-key=key
+                          span.section-order-item__drag-icon
+                            i.fa-solid.fa-grip-vertical aria-hidden="true"
+                          span.section-order-item__label = label
+                          .section-order-item__actions
+                            button.btn.btn-link.btn-sm type="button" data-action="section-order#moveUp" data-direction="up" aria-label="Move section up"
+                              i.fa-solid.fa-arrow-up aria-hidden="true"
+                            button.btn.btn-link.btn-sm type="button" data-action="section-order#moveDown" data-direction="down" aria-label="Move section down"
+                              i.fa-solid.fa-arrow-down aria-hidden="true"
+                    .featured-home-panel__actions
+                      button.btn.btn-gradient.btn-sm type="submit"
+                        i.fa-solid.fa-layer-group.me-2 aria-hidden="true"
+                        | Save legacy order
+                      = link_to edit_admin_home_path(@current_home), class: "btn btn-ghost btn-sm" do
+                        i.fa-solid.fa-pen-to-square.me-2 aria-hidden="true"
+                        | Edit homepage
+                - else
+                  - current_slots = Home::EDITORIAL_GALLERY_FIELDS.count { |field| @current_home.public_send(field).present? }
+                  p.admin-panel-surface__copy The new home uses a fixed composition. Manage copy and slot assignments inside the record itself.
+                  .admin-summary-list
+                    .admin-summary-list__item
+                      span.admin-summary-list__label Hero title
+                      span.admin-summary-list__value.admin-summary-list__value--accent = @current_home.editorial_content(:hero_title)
+                    .admin-summary-list__item
+                      span.admin-summary-list__label Gallery slots
+                      span.admin-summary-list__value.admin-summary-list__value--success = "#{current_slots}/7 linked"
+                    .admin-summary-list__item
+                      span.admin-summary-list__label Reports headline
+                      span.admin-summary-list__value.admin-summary-list__value--muted = truncate(@current_home.editorial_content(:reports_title), length: 56)
+                  .featured-home-panel__actions
+                    = link_to edit_admin_home_path(@current_home), class: "btn btn-gradient btn-sm" do
+                      i.fa-solid.fa-pen-to-square.me-2 aria-hidden="true"
+                      | Edit new home
+              - else
+                h3.admin-panel-surface__heading No live homepage yet
+                p.admin-panel-surface__copy Create or publish a record to unlock the rest of the live-site workflow.
+                .featured-home-panel__actions
+                  = link_to "Create home page", new_admin_home_path, class: "btn btn-primary btn-sm"
+        - else
+          .admin-empty-state
+            h3.admin-empty-state__title No homepage records yet
+            p.admin-empty-state__copy Create the first home record to publish either the legacy or new layout.
+            .admin-empty-state__actions
+              = link_to "Create homepage", new_admin_home_path, class: "btn btn-primary"
 
-.section-card.settings-card.mt-4
-  .card-header
-    h4.card-title
-      span.card-chip Site
-      |  Brand & communications
-    p.card-subtitle.text-muted.small Keep branding, messaging and email delivery in sync.
-  .card-body
-    = form_with(model: @site_setting, url: admin_site_setting_path(@site_setting), local: true, html: { class: "settings-form" }) do |f|
-      .settings-panels.featured-home-wrapper
-        .settings-panels__grid.featured-home-grid
-          .settings-panel.featured-home-panel
-            .settings-panel__header
-              h6.settings-panel__title Brand assets
-              p.text-muted.small Refresh the visuals shown across navigation and tabs.
-            .settings-panel__body
-              .brand-upload
-                .brand-upload__item data-controller="logo-preview"
-                  h5.brand-upload__title Primary logo
-                  p.brand-upload__hint Displayed in navigation and admin
-                  - if @site_setting.logo.attached?
-                    - logo_preview = @site_setting.logo.variable? ? @site_setting.logo.variant(resize_to_limit: [200, 200]) : @site_setting.logo
-                    .brand-upload__preview data-logo-preview-target="currentPreview"
-                      = image_tag logo_preview, class: "brand-upload__image", alt: "Current logo"
-                      label.brand-upload__remove
-                        = f.check_box :remove_logo, class: "form-check-input"
-                        span Remove logo
-                  = f.file_field :logo, accept: "image/png,image/jpeg, image/svg+xml", class: "form-control", direct_upload: true, data: { action: "change->logo-preview#preview", logo_preview_target: "input" }
-                  .brand-upload__preview.brand-upload__preview--live(data-logo-preview-target="preview" hidden)
-                    img.brand-upload__image data-logo-preview-target="image" alt="Selected logo preview"
-                    div.brand-upload__meta
-                      span.brand-upload__filename data-logo-preview-target="filename"
-                      button.brand-upload__reset type="button" data-action="logo-preview#reset" Reset selection
-                  span.brand-upload__note Recommended 320×320px PNG or SVG
+      section.card.section-card.admin-panel
+        .admin-panel__header
+          div
+            p.admin-kicker Content map
+            h2.admin-panel__title Content areas and recent changes
+            p.admin-panel__copy The admin now groups homepage, series, pages and access into dedicated workspaces with smaller, more stable cards instead of oversized mixed tables.
+        .admin-panel-grid
+          - quick_links.each do |item|
+            = link_to item[:path], class: "admin-quick-link" do
+              strong.admin-quick-link__title = item[:title]
+              span.admin-quick-link__copy = item[:copy]
+              span.admin-quick-link__action = item[:action]
+        .admin-activity-grid
+          .admin-panel-surface
+            h3.admin-panel-surface__heading Recent homes
+            .admin-activity-list
+              - @dashboard_recent_homes.each do |home|
+                = link_to edit_admin_home_path(home), class: "admin-activity-list__item" do
+                  strong.admin-activity-list__title = home.title.presence || home.editorial_content(:hero_title)
+                  span.admin-activity-list__meta = "#{admin_home_variant_label(home)} • updated #{time_ago_in_words(home.updated_at)} ago"
+          .admin-panel-surface
+            h3.admin-panel-surface__heading Recent galleries
+            .admin-activity-list
+              - @dashboard_recent_galleries.each do |gallery|
+                = link_to edit_admin_gallery_path(gallery), class: "admin-activity-list__item" do
+                  strong.admin-activity-list__title = gallery.name
+                  span.admin-activity-list__meta = "#{gallery.images.attachments.size} image#{'s' unless gallery.images.attachments.size == 1} • updated #{time_ago_in_words(gallery.updated_at)} ago"
+          .admin-panel-surface
+            h3.admin-panel-surface__heading Recent pages
+            .admin-activity-list
+              - @dashboard_recent_pages.each do |page|
+                = link_to edit_admin_page_path(page), class: "admin-activity-list__item" do
+                  strong.admin-activity-list__title = page.title
+                  span.admin-activity-list__meta = "#{page.body.to_s.split.size} words • updated #{time_ago_in_words(page.updated_at)} ago"
 
-                hr
+    .admin-dashboard-stack
+      section.card.section-card.admin-panel
+        .admin-panel__header
+          div
+            p.admin-kicker System health
+            h2.admin-panel__title Brand, channels and delivery
+            p.admin-panel__copy Key public-facing settings are surfaced as quick status rows so you can spot missing pieces without opening every form.
+        .admin-health-list
+          - health_items.each do |item|
+            .admin-health-list__item
+              div
+                h3.admin-health-list__title = item[:label]
+                p.admin-health-list__meta = item[:value]
+              span class="admin-pill admin-pill--#{item[:tone]}" = item[:badge]
 
-                .brand-upload__item
-                  h5.brand-upload__title Favicon
-                  p.brand-upload__hint Used in browser tabs and bookmarks
-                  - if @site_setting.favicon.attached?
-                    - favicon_preview = @site_setting.favicon.variable? ? @site_setting.favicon.variant(resize_to_limit: [64, 64]) : @site_setting.favicon
-                    .brand-upload__preview.brand-upload__preview--favicon
-                      = image_tag favicon_preview, class: "brand-upload__image", alt: "Favicon"
-                      label.brand-upload__remove
-                        = f.check_box :remove_favicon, class: "form-check-input"
-                        span Remove favicon
-                  = f.file_field :favicon, accept: "image/x-icon,image/png", class: "form-control", direct_upload: true
-                  span.brand-upload__note ICO or PNG 32×32px
+      section.card.section-card.admin-panel
+        .admin-panel__header
+          div
+            p.admin-kicker Footprint
+            h2.admin-panel__title Public profile snapshot
+            p.admin-panel__copy Contact channels and social links shown on the site live here, separate from homepage composition.
+        .admin-panel-grid
+          .admin-panel-surface
+            h3.admin-panel-surface__heading Brand
+            .admin-summary-list
+              .admin-summary-list__item
+                span.admin-summary-list__label Site name
+                span.admin-summary-list__value.admin-summary-list__value--accent = @site_setting.name_site.presence || "Not set"
+              .admin-summary-list__item
+                span.admin-summary-list__label Footer
+                span.admin-summary-list__value.admin-summary-list__value--muted = @site_setting.footer.presence || "Not set"
+          .admin-panel-surface
+            h3.admin-panel-surface__heading Contact
+            .admin-summary-list
+              .admin-summary-list__item
+                span.admin-summary-list__label Email
+                span.admin-summary-list__value.admin-summary-list__value--accent = @site_setting.email_contact.presence || "Missing"
+              .admin-summary-list__item
+                span.admin-summary-list__label Live home
+                span.admin-summary-list__value.admin-summary-list__value--success = featured_home_title || "Not published"
+          .admin-panel-surface
+            h3.admin-panel-surface__heading Social links
+            .admin-activity-list
+              - social_links.each do |label, url|
+                - social_value = url.presence || "Not connected"
+                .admin-activity-list__item.admin-activity-list__item--static
+                  strong.admin-activity-list__title = label
+                  span.admin-activity-list__meta = social_value
 
-          .settings-panel.featured-home-panel
-            .settings-panel__header
-              h6.settings-panel__title Public profile
-              p.text-muted.small Update copy and social links shown to visitors.
-            .settings-panel__body
-              .form-grid
-                .form-grid__item
-                  = f.label :name_site, class: 'form-label form-label--strong'
-                  = f.text_field :name_site, class: 'form-control', placeholder: 'Site display name'
-                .form-grid__item
-                  = f.label :footer, class: 'form-label form-label--strong'
-                  = f.text_field :footer, class: 'form-control', placeholder: 'Footer text'
-                .form-grid__item
-                  = f.label :yn_verification_pri, class: 'form-label form-label--strong'
-                  = f.text_field :yn_verification_pri, class: 'form-control', placeholder: 'Yandex verification primary'
-                .form-grid__item
-                  = f.label :yn_verification_sec, class: 'form-label form-label--strong'
-                  = f.text_field :yn_verification_sec, class: 'form-control', placeholder: 'Yandex verification secondary'
-                .form-grid__item
-                  = f.label :tg_url, 'Telegram URL', class: 'form-label form-label--strong'
-                  = f.text_field :tg_url, class: 'form-control', placeholder: 'https://t.me/...'
-                .form-grid__item
-                  = f.label :fb_url, 'Facebook URL', class: 'form-label form-label--strong'
-                  = f.text_field :fb_url, class: 'form-control', placeholder: 'https://facebook.com/...'
-                .form-grid__item
-                  = f.label :inst_url, 'Instagram URL', class: 'form-label form-label--strong'
-                  = f.text_field :inst_url, class: 'form-control', placeholder: 'https://instagram.com/...'
-                .form-grid__item
-                  = f.label :vk_url, 'VK URL', class: 'form-label form-label--strong'
-                  = f.text_field :vk_url, class: 'form-control', placeholder: 'https://vk.com/...'
+  section.card.section-card.admin-panel
+    .admin-panel__header
+      div
+        p.admin-kicker Site settings
+        h2.admin-panel__title Brand, public profile and email delivery
+        p.admin-panel__copy Use compact panels with predictable spacing instead of one long settings page. Desktop keeps a two-column rhythm, tablet collapses to one, mobile prioritizes the form order.
+    = form_with(model: @site_setting, url: admin_site_setting_path(@site_setting), local: true, html: { class: "settings-form admin-settings-form" }) do |f|
+      .admin-settings-grid
+        .admin-settings-card
+          .admin-settings-card__header
+            h3.admin-settings-card__title Brand assets
+            p.admin-settings-card__copy Refresh the visuals shown in the admin shell, navigation and browser tabs.
+          .admin-settings-card__body
+            .brand-upload
+              .brand-upload__item data-controller="logo-preview"
+                h5.brand-upload__title Primary logo
+                p.brand-upload__hint Displayed in navigation and admin
+                - if @site_setting.logo.attached?
+                  - logo_preview = @site_setting.logo.variable? ? @site_setting.logo.variant(resize_to_limit: [200, 200]) : @site_setting.logo
+                  .brand-upload__preview data-logo-preview-target="currentPreview"
+                    = image_tag logo_preview, class: "brand-upload__image", alt: "Current logo"
+                    label.brand-upload__remove
+                      = f.check_box :remove_logo, class: "form-check-input"
+                      span Remove logo
+                = f.file_field :logo, accept: "image/png,image/jpeg,image/svg+xml", class: "form-control", direct_upload: true, data: { action: "change->logo-preview#preview", logo_preview_target: "input" }
+                .brand-upload__preview.brand-upload__preview--live data-logo-preview-target="preview" hidden=true
+                  img.brand-upload__image data-logo-preview-target="image" alt="Selected logo preview"
+                  div.brand-upload__meta
+                    span.brand-upload__filename data-logo-preview-target="filename"
+                    button.brand-upload__reset type="button" data-action="logo-preview#reset" Reset selection
+                span.brand-upload__note Recommended 320×320px PNG or SVG
 
-        .settings-panel.settings-panel--full.featured-home-panel
-          .settings-panel__header
-            h6.settings-panel__title Email delivery
-            p.text-muted.small Configure SMTP credentials and security toggles.
-          .settings-panel__body
+              hr
+
+              .brand-upload__item
+                h5.brand-upload__title Favicon
+                p.brand-upload__hint Used in browser tabs and bookmarks
+                - if @site_setting.favicon.attached?
+                  - favicon_preview = @site_setting.favicon.variable? ? @site_setting.favicon.variant(resize_to_limit: [64, 64]) : @site_setting.favicon
+                  .brand-upload__preview.brand-upload__preview--favicon
+                    = image_tag favicon_preview, class: "brand-upload__image", alt: "Favicon"
+                    label.brand-upload__remove
+                      = f.check_box :remove_favicon, class: "form-check-input"
+                      span Remove favicon
+                = f.file_field :favicon, accept: "image/x-icon,image/png", class: "form-control", direct_upload: true
+                span.brand-upload__note ICO or PNG 32×32px
+
+        .admin-settings-card
+          .admin-settings-card__header
+            h3.admin-settings-card__title Public profile
+            p.admin-settings-card__copy Site name, verification codes and social links used across the public site.
+          .admin-settings-card__body
+            .form-grid
+              .form-grid__item
+                = f.label :name_site, class: "form-label form-label--strong"
+                = f.text_field :name_site, class: "form-control", placeholder: "Site display name"
+              .form-grid__item
+                = f.label :footer, class: "form-label form-label--strong"
+                = f.text_field :footer, class: "form-control", placeholder: "Footer text"
+              .form-grid__item
+                = f.label :yn_verification_pri, class: "form-label form-label--strong"
+                = f.text_field :yn_verification_pri, class: "form-control", placeholder: "Yandex verification primary"
+              .form-grid__item
+                = f.label :yn_verification_sec, class: "form-label form-label--strong"
+                = f.text_field :yn_verification_sec, class: "form-control", placeholder: "Yandex verification secondary"
+              .form-grid__item
+                = f.label :tg_url, "Telegram URL", class: "form-label form-label--strong"
+                = f.text_field :tg_url, class: "form-control", placeholder: "https://t.me/..."
+              .form-grid__item
+                = f.label :vk_url, "VK URL", class: "form-label form-label--strong"
+                = f.text_field :vk_url, class: "form-control", placeholder: "https://vk.com/..."
+              .form-grid__item
+                = f.label :inst_url, "Instagram URL", class: "form-label form-label--strong"
+                = f.text_field :inst_url, class: "form-control", placeholder: "https://instagram.com/..."
+              .form-grid__item
+                = f.label :fb_url, "Facebook URL", class: "form-label form-label--strong"
+                = f.text_field :fb_url, class: "form-control", placeholder: "https://facebook.com/..."
+
+        .admin-settings-card.admin-settings-card--full
+          .admin-settings-card__header
+            h3.admin-settings-card__title Email delivery
+            p.admin-settings-card__copy SMTP credentials and security toggles used by outgoing mailers.
+          .admin-settings-card__body
             .form-grid.form-grid--two-col
-                .form-grid__item
-                  = f.label :email_contact, 'Contact email', class: 'form-label form-label--strong'
-                  = f.email_field :email_contact, class: 'form-control', placeholder: 'info@example.com'
-                .form-grid__item
-                  = f.label :email_login, 'SMTP login', class: 'form-label form-label--strong'
-                  = f.text_field :email_login, class: 'form-control'
-                .form-grid__item
-                  = f.label :email_domain, 'SMTP domain', class: 'form-label form-label--strong'
-                  = f.text_field :email_domain, class: 'form-control'
-                .form-grid__item
-                  = f.label :email_password, 'SMTP password', class: 'form-label form-label--strong'
-                  = f.password_field :email_password, class: 'form-control'
-                .form-grid__item
-                  = f.label :email_address, 'SMTP address', class: 'form-label form-label--strong'
-                  = f.text_field :email_address, class: 'form-control', placeholder: 'smtp.example.com'
-                .form-grid__item
-                  = f.label :email_port, 'SMTP port', class: 'form-label form-label--strong'
-                  = f.number_field :email_port, class: 'form-control', placeholder: '587'
-                .form-grid__item.form-grid__item--full
-                  .input-card.input-card--switch
-                    h5.input-card__title TLS
-                    p.input-card__hint Enable TLS for outgoing mail
-                    .form-switch-row
-                      .form-check.form-switch
-                        = f.check_box :email_tls, class: 'form-check-input input-card__switch'
-                        = f.label :email_tls, 'TLS enabled', class: 'form-check-label'
-                .form-grid__item.form-grid__item--full
-                  .input-card.input-card--switch
-                    h5.input-card__title SSL
-                    p.input-card__hint Enable SSL when required by provider
-                    .form-switch-row
-                      .form-check.form-switch
-                        = f.check_box :email_ssl, class: 'form-check-input input-card__switch'
-                        = f.label :email_ssl, 'SSL enabled', class: 'form-check-label'
+              .form-grid__item
+                = f.label :email_contact, "Contact email", class: "form-label form-label--strong"
+                = f.email_field :email_contact, class: "form-control", placeholder: "info@example.com"
+              .form-grid__item
+                = f.label :email_login, "SMTP login", class: "form-label form-label--strong"
+                = f.text_field :email_login, class: "form-control"
+              .form-grid__item
+                = f.label :email_domain, "SMTP domain", class: "form-label form-label--strong"
+                = f.text_field :email_domain, class: "form-control"
+              .form-grid__item
+                = f.label :email_password, "SMTP password", class: "form-label form-label--strong"
+                = f.password_field :email_password, class: "form-control"
+              .form-grid__item
+                = f.label :email_address, "SMTP address", class: "form-label form-label--strong"
+                = f.text_field :email_address, class: "form-control", placeholder: "smtp.example.com"
+              .form-grid__item
+                = f.label :email_port, "SMTP port", class: "form-label form-label--strong"
+                = f.number_field :email_port, class: "form-control", placeholder: "587"
+              .form-grid__item.form-grid__item--full
+                .input-card.input-card--switch
+                  h5.input-card__title TLS
+                  p.input-card__hint Enable TLS for outgoing mail
+                  .form-switch-row
+                    .form-check.form-switch
+                      = f.check_box :email_tls, class: "form-check-input input-card__switch"
+                      = f.label :email_tls, "TLS enabled", class: "form-check-label"
+              .form-grid__item.form-grid__item--full
+                .input-card.input-card--switch
+                  h5.input-card__title SSL
+                  p.input-card__hint Enable SSL when required by provider
+                  .form-switch-row
+                    .form-check.form-switch
+                      = f.check_box :email_ssl, class: "form-check-input input-card__switch"
+                      = f.label :email_ssl, "SSL enabled", class: "form-check-label"
 
       .settings-form-actions
         button.btn.btn-gradient type="submit"

@@ -1,4 +1,6 @@
-nav class="sidebar sidebar-offcanvas admin-sidebar" id="sidebar"
+nav class="admin-sidebar" id="sidebar"
+  - featured_home_title = @admin_featured_home && (@admin_featured_home.title.presence || (@admin_featured_home.editorial? ? @admin_featured_home.editorial_content(:hero_title) : nil))
+  - featured_home_status = @admin_featured_home&.visible? ? "Published" : nil
   div class="admin-sidebar__brand"
     = link_to admin_dashboard_path, class: "sidebar-logo-card"
       div.sidebar-logo-card__avatar
@@ -9,13 +11,30 @@ nav class="sidebar sidebar-offcanvas admin-sidebar" id="sidebar"
             span.sidebar-logo-card__tile
               span.sidebar-logo-card__tile-lens
             span.sidebar-logo-card__tile-badge
-      span.sidebar-logo-card__tagline Control Panel
+      div.sidebar-logo-card__body
+        strong.sidebar-logo-card__name = @site_setting&.name_site.presence || "Admin"
+        span.sidebar-logo-card__tagline Content command
 
-  ul class="nav flex-column mt-4"
-    - menu_items = [{ title: 'Dashboard', icon: :dashboard, path: admin_dashboard_path }, { title: 'Home Pages', icon: :home, path: admin_homes_path }, { title: 'Users', icon: :users, path: admin_users_path }, { title: 'Galleries', icon: :galleries, path: admin_galleries_path }]
+  ul.admin-sidebar__nav
+    - menu_items = [{ section: 'Overview' }, { title: 'Dashboard', short: 'DB', icon: :dashboard, path: admin_dashboard_path }, { section: 'Content' }, { title: 'Home Pages', short: 'HM', icon: :home, path: admin_homes_path }, { title: 'Galleries', short: 'GL', icon: :galleries, path: admin_galleries_path }, { title: 'Pages', short: 'PG', icon: :pages, path: admin_pages_path }, { section: 'Access' }, { title: 'Users', short: 'US', icon: :users, path: admin_users_path }]
     - menu_items.each do |item|
-      - active = current_page?(item[:path])
-      li class="nav-item"
-        = link_to item[:path], class: "nav-link admin-sidebar__link #{'active' if active}"
-          span.menu-icon= admin_sidebar_icon(item[:icon])
-          span class="menu-title"= item[:title]
+      - if item[:section]
+        li.admin-sidebar__section = item[:section]
+      - else
+        - active = current_page?(item[:path])
+        li class="admin-sidebar__item #{'is-active' if active}"
+          = link_to item[:path], class: "admin-sidebar__link #{'is-active' if active}", title: item[:title], aria: { label: item[:title] }
+            span.admin-sidebar__icon= admin_sidebar_icon(item[:icon])
+            span.admin-sidebar__title = item[:title]
+            span.admin-sidebar__short aria-hidden="true" = item[:short]
+
+  .admin-sidebar__summary
+    .admin-sidebar__summary-head
+      span.admin-sidebar__summary-label Live homepage
+      - if featured_home_status
+        span.admin-sidebar__summary-badge = featured_home_status
+    strong.admin-sidebar__summary-title = featured_home_title || "Not published"
+    span.admin-sidebar__summary-meta = @admin_featured_home ? admin_home_variant_label(@admin_featured_home) : "Select a homepage to publish"
+    .admin-sidebar__summary-stats
+      span = "#{@admin_counts[:galleries]} galleries"
+      span = "#{@admin_counts[:pages]} pages"

@@ -1,28 +1,60 @@
-div class="page-header"
-  h3 class="page-headline" Gallery List
-  div class="page-header__meta"
-    span.page-header__chip Content Ops
-    span.page-header__text Manage gallery records and connected media
+- visible_count = @galleries.count(&:visible?)
+- cover_ready_count = @galleries.count { |gallery| gallery.primary_image.present? }
+- tags_ready_count = @galleries.count { |gallery| gallery.homepage_tags_list.any? }
+- stats = [{ label: "Records", value: @galleries.size, note: "Gallery records in the library", tone: "accent" }, { label: "Visible", value: visible_count, note: visible_count.positive? ? "Shown on the public gallery list" : "No gallery is public", tone: visible_count.positive? ? "success" : "warning" }, { label: "Covers ready", value: cover_ready_count, note: "Lead frame available for homepage cards", tone: cover_ready_count.positive? ? "accent" : "warning" }, { label: "Tagged", value: tags_ready_count, note: "Mini-card tags prepared", tone: tags_ready_count.positive? ? "muted" : "warning" }]
 
-div class="row"
-  div class="col-sm-12"
-    div class="card section-card"
-      .card-header.d-flex.justify-content-between.align-items-center
-        span Galleries list
-        = link_to 'New gallery', new_admin_gallery_path, class: 'btn btn-outline-primary btn-sm'
-      .card-body.px-0.overflow-auto
-        table class="table table-hover align-middle mb-0"
-          thead class="bg-light text-muted"
-            tr
-              th scope="col" class="text-nowrap px-4" #
-              th scope="col" class="text-nowrap" Name
-              th scope="col" class="text-nowrap text-end px-4" Actions
-          tbody
-            - @galleries.each_with_index do |gallery, index|
-              tr
-                td class="px-4 text-muted"= index + 1
-                td
-                  strong= gallery.name
-                td class="text-end px-4"
-                  = link_to 'Edit', edit_admin_gallery_path(gallery), class: 'btn btn-outline-primary btn-sm me-2'
-                  = link_to 'Delete', admin_gallery_path(gallery), data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: 'btn btn-outline-danger btn-sm'
+section.admin-workspace
+  .admin-workspace__header
+    .admin-workspace__header-copy
+      p.admin-kicker Galleries
+      h1.admin-workspace__title Gallery library and homepage card data
+      p.admin-workspace__lead Galleries now serve two roles at once: the public gallery archive and the structured card system on the new homepage. The list keeps those signals visible without forcing you into a wide table.
+    .admin-workspace__actions
+      = link_to "New gallery", new_admin_gallery_path, class: "btn btn-primary"
+
+  .admin-overview-grid.admin-overview-grid--tight
+    - stats.each do |stat|
+      article.card.section-card.admin-stat-card
+        span.admin-stat-card__label = stat[:label]
+        strong.admin-stat-card__value = stat[:value]
+        span class="admin-pill admin-pill--#{stat[:tone]}" = stat[:note]
+
+  - if @galleries.any?
+    .admin-record-grid.admin-record-grid--three
+      - @galleries.each do |gallery|
+        - filled_homepage_fields = Gallery::HOMEPAGE_FIELDS.count { |field| gallery.public_send(field).present? }
+        article.card.section-card.admin-record-card
+          .admin-record-card__head
+            .admin-record-card__title-group
+              p.admin-record-card__eyebrow = "Gallery ##{gallery.id}"
+              h2.admin-record-card__title = gallery.name
+              p.admin-record-card__summary = truncate(gallery.homepage_content(:homepage_description).to_s, length: 150)
+            .admin-badge-stack
+              span class="admin-pill #{gallery.visible? ? 'admin-pill--success' : 'admin-pill--muted'}" = gallery.visible? ? "Visible" : "Hidden"
+              - if gallery.primary_image.present?
+                span.admin-pill.admin-pill--accent Cover ready
+          .admin-record-card__metric-grid
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Images
+              strong.admin-record-card__metric-value = gallery.images.attachments.size
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Homepage fields
+              strong.admin-record-card__metric-value = "#{filled_homepage_fields}/#{Gallery::HOMEPAGE_FIELDS.size}"
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Overlay
+              strong.admin-record-card__metric-value = gallery.homepage_content(:homepage_overlay_title)
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Tags
+              strong.admin-record-card__metric-value = gallery.homepage_tags_list.first(3).presence&.join(" · ") || "Missing"
+          .admin-record-card__footer
+            .admin-record-card__meta
+              span Updated #{time_ago_in_words(gallery.updated_at)} ago
+            .table-actions
+              = link_to "Edit", edit_admin_gallery_path(gallery), class: "btn btn-outline-primary btn-sm"
+              = link_to "Delete", admin_gallery_path(gallery), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+  - else
+    .card.section-card.admin-empty-state
+      h2.admin-empty-state__title No galleries yet
+      p.admin-empty-state__copy Add a gallery to start filling both the archive and the new homepage slots.
+      .admin-empty-state__actions
+        = link_to "Create gallery", new_admin_gallery_path, class: "btn btn-primary"

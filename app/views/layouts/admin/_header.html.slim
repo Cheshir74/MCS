@@ -1,15 +1,20 @@
-nav class="navbar admin-topbar fixed-top d-flex align-items-center"
-  div class="admin-topbar__left d-flex align-items-center"
-    button class="admin-topbar__toggle btn btn-icon" type="button" data-toggle="minimize"
+header.admin-topbar
+  div.admin-topbar__left
+    button.admin-topbar__toggle type="button" data-toggle="minimize" aria-controls="sidebar" aria-expanded="true" aria-pressed="false" aria-label="Collapse sidebar" title="Collapse sidebar"
       i class="fa-solid fa-bars" aria-hidden="true"
     - site_name = @site_setting&.name_site.to_s.strip
     - site_name = site_name.present? ? site_name : "Admin"
-    = link_to admin_dashboard_path, class: "admin-topbar__brand"
-      span class="admin-topbar__brand-name" = site_name
+    .admin-topbar__brand-block
+      span.admin-topbar__eyebrow Control room
+      = link_to admin_dashboard_path, class: "admin-topbar__brand"
+        span class="admin-topbar__brand-name" = site_name
 
-  div class="admin-topbar__right ms-auto d-flex align-items-center gap-3"
+  div.admin-topbar__right
     - env_label = Rails.env.production? ? ['Production', 'bg-success-subtle text-success'] : [Rails.env, 'bg-warning-subtle text-warning']
     span class="badge #{env_label.last} fw-semibold small text-uppercase"= env_label.first.to_s.upcase
+    = link_to home_path, class: "admin-topbar__site-link", target: "_blank", rel: "noopener" do
+      i.fa-solid.fa-arrow-up-right-from-square aria-hidden="true"
+      span Open site
 
     details class="admin-topbar__profile"
       summary class="admin-topbar__profile-summary"

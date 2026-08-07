@@ -1,0 +1,5 @@
+- form_shell_class = ["container-contact100", local_assigns[:form_shell_class]].compact.join(" ")
+- form_wrap_class = ["wrap-contact100", local_assigns[:form_wrap_class]].compact.join(" ")
+
+div class=form_shell_class
+  div class=form_wrap_class data-controller="check_email" id=local_assigns[:form_id]

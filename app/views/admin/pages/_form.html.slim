@@ -1,48 +1,85 @@
-= form_for [:admin, page] do |f|
-  - if page.errors.any?
-    - page.errors.full_messages.each do |msg|
-      .alert.alert-danger.mb-3 = msg
+- nav_sections = [{ id: "page-content", title: "Content", hint: "title and body" }, { id: "page-guidance", title: "Guidance", hint: "writing and formatting notes" }]
+- body_text = strip_tags(page.body.to_s)
+- summary_rows = [["Status", page.persisted? ? "Saved record" : "New draft", page.persisted? ? "accent" : "muted"], ["Words", body_text.split.size, body_text.present? ? "success" : "warning"], ["Characters", body_text.length, body_text.present? ? "muted" : "warning"]]
 
-  .row.g-4
-    .col-12.col-lg-8
-      .card.section-card
+= form_for [:admin, page], html: { class: "admin-editor admin-editor--page" } do |f|
+  - if page.errors.any?
+    .admin-form-errors
+      - page.errors.full_messages.each do |msg|
+        .alert.alert-danger.mb-3 = msg
+
+  .admin-editor__layout
+    aside.admin-editor__rail
+      .card.section-card.admin-editor__rail-card
+        .admin-editor__rail-head
+          .admin-editor__rail-copy-group
+            p.admin-kicker Static page
+            h4.admin-editor__rail-title Quick actions
+        p.admin-editor__rail-copy Update standalone content without leaving the admin workspace pattern used by the homepage and gallery editors.
+        .admin-editor__rail-actions
+          = f.submit page.persisted? ? "Save page" : "Create page", class: "btn btn-primary"
+          = link_to "Back to list", admin_pages_path, class: "btn btn-outline-secondary"
+
+      .card.section-card.admin-editor__rail-card
+        .card-header
+          h4.card-title
+            span.card-chip Navigate
+            |  Sections
+          p.card-subtitle.text-muted.small Jump directly to the block you want to edit
+        nav.admin-editor__nav
+          - nav_sections.each do |item|
+            a.admin-editor__nav-link href="##{item[:id]}"
+              span.admin-editor__nav-title = item[:title]
+              span.admin-editor__nav-hint = item[:hint]
+
+      .card.section-card.admin-editor__rail-card
+        .card-header
+          h4.card-title
+            span.card-chip Summary
+            |  Content density
+          p.card-subtitle.text-muted.small Quick signal for how complete the page is
+        .admin-summary-list
+          - summary_rows.each do |label, value, tone|
+            .admin-summary-list__item
+              span.admin-summary-list__label = label
+              span class="admin-summary-list__value admin-summary-list__value--#{tone}" = value
+
+    .admin-editor__main
+      section.card.section-card.admin-editor__section id="page-content"
         .card-header
           h4.card-title
             span.card-chip Content
             |  Page details
-          p.card-subtitle.text-muted.small Edit the title and main copy visible to visitors
+          p.card-subtitle.text-muted.small Core title and body copy displayed to visitors
         .card-body
-          .row.g-4
-            .col-12
-              .input-card
-                h5.input-card__title Title
-                p.input-card__hint Displayed in navigation and breadcrumbs
-                = f.text_field :title, class: 'form-control input-card__control', placeholder: 'Page title'
-            .col-12
-              .input-card
-                h5.input-card__title Body
-                p.input-card__hint Main content shown on the page
-                = f.text_area :body, class: 'form-control input-card__control', rows: 8, placeholder: 'Write the page content here'
+          .admin-section-grid
+            .input-card
+              h5.input-card__title Title
+              p.input-card__hint Keep it concise enough for navigation and internal references
+              = f.text_field :title, class: "form-control input-card__control", placeholder: "Page title"
+            .input-card
+              h5.input-card__title Body
+              p.input-card__hint Plain text and HTML snippets are both supported when you need richer formatting
+              = f.text_area :body, class: "form-control input-card__control", rows: 12, placeholder: "Write the page content here"
 
-    .col-12.col-lg-4
-      .card.section-card
+      section.card.section-card.admin-editor__section id="page-guidance"
         .card-header
           h4.card-title
-            span.card-chip Assistance
-            |  Formatting tips
-          p.card-subtitle.text-muted.small Use plain text or add HTML snippets for richer layouts
+            span.card-chip Guidance
+            |  Writing notes
+          p.card-subtitle.text-muted.small Keep the page readable on the public site and easy to maintain in admin
         .card-body
-          ul.list-unstyled.form-hint.mb-0
-            li.d-flex.gap-2.mb-2
-              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
-              span.small Keep titles concise for navigation menus
-            li.d-flex.gap-2.mb-2
-              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
-              span.small Use paragraphs to break up longer body text
-            li.d-flex.gap-2
-              i.fa-solid.fa-circle-check.text-admin-primary.mt-1 aria-hidden="true"
-              span.small HTML tags are supported for advanced formatting
+          .admin-note-grid
+            .admin-note
+              strong Clear title
+              p Use a page name that still makes sense in menus and admin lists a few months later.
+            .admin-note
+              strong Body structure
+              p Break longer copy into paragraphs or sub-sections instead of one continuous wall of text.
+            .admin-note
+              strong HTML support
+              p When richer formatting is needed, prefer simple semantic tags over deeply nested markup.
 
-  .form-actions.mt-4
-    = f.submit page.persisted? ? "Save changes" : "Create page", class: 'btn btn-primary'
-    = link_to "Cancel", admin_pages_path, class: 'btn btn-outline-secondary'
+  .form-actions.mt-4.admin-editor__footer-actions
+    = f.submit page.persisted? ? "Save page" : "Create page", class: "btn btn-primary"
+    = link_to "Cancel", admin_pages_path, class: "btn btn-outline-secondary"

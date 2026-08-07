@@ -2,7 +2,7 @@ class Admin::UsersController < Admin::AdminController
   before_action :set_user, :only => [ :edit, :change_password, :update, :destroy ]
 
   def index
-    @users = User.all
+    @users = User.order(updated_at: :desc)
   end
 
   def update

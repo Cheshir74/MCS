@@ -1,4 +1,5 @@
 footer class="footer"
-  span
-    - footer_text = @site_setting&.footer.presence || "© #{Time.current.year} #{(@site_setting&.name_site || 'Photohub')}."
-    = footer_text
+  .footer__inner
+    span.footer__text
+      - footer_text = @site_setting&.footer.presence || "© #{Time.current.year} #{(@site_setting&.name_site || 'Photohub')}."
+      = footer_text

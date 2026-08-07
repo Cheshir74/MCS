@@ -1,30 +1,52 @@
-div.page-header
-  h3.page-headline Static Pages
-  div.page-header__meta
-    span.page-header__chip Content Ops
-    span.page-header__text Manage standalone pages and their body copy
+- total_words = @pages.sum { |page| page.body.to_s.split.size }
+- longest_page = @pages.max_by { |page| page.body.to_s.length }
+- stats = [{ label: "Pages", value: @pages.size, note: "Standalone content records", tone: "accent" }, { label: "Words", value: total_words, note: @pages.any? ? "Across all static pages" : "No content yet", tone: @pages.any? ? "muted" : "warning" }, { label: "Longest page", value: longest_page ? longest_page.body.to_s.split.size : 0, note: longest_page ? longest_page.title : "No pages yet", tone: longest_page ? "accent" : "muted" }]
 
-div.row
-  div.col-sm-12
-    div.card.section-card
-      .card-header.d-flex.justify-content-between.align-items-center
-        span Pages list
-        = link_to 'New page', new_admin_page_path, class: 'btn btn-outline-primary btn-sm'
-      .card-body.px-0.overflow-auto
-        table class="table table-hover align-middle mb-0"
-          thead class="bg-light text-muted"
-            tr
-              th scope="col" class="text-nowrap px-4" #
-              th scope="col" class="text-nowrap" Title
-              th scope="col" class="text-nowrap" Excerpt
-              th scope="col" class="text-nowrap text-end px-4" Actions
-          tbody
-            - @pages.each_with_index do |page, index|
-              tr
-                td class="px-4 text-muted"= index + 1
-                td
-                  strong= page.title
-                td= truncate(page.body, length: 90)
-                td class="text-end px-4"
-                  = link_to 'Edit', edit_admin_page_path(page), class: 'btn btn-outline-primary btn-sm me-2'
-                  = link_to 'Delete', admin_page_path(page), method: :delete, data: { turbo_confirm: 'Are you sure?' }, class: 'btn btn-outline-danger btn-sm'
+section.admin-workspace
+  .admin-workspace__header
+    .admin-workspace__header-copy
+      p.admin-kicker Pages
+      h1.admin-workspace__title Static pages and long-form copy
+      p.admin-workspace__lead Standalone pages are now presented as readable content cards with word-count signals, not as an oversized table that hides the actual copy quality.
+    .admin-workspace__actions
+      = link_to "New page", new_admin_page_path, class: "btn btn-primary"
+
+  .admin-overview-grid.admin-overview-grid--tight.admin-overview-grid--three
+    - stats.each do |stat|
+      article.card.section-card.admin-stat-card
+        span.admin-stat-card__label = stat[:label]
+        strong.admin-stat-card__value = stat[:value]
+        span class="admin-pill admin-pill--#{stat[:tone]}" = stat[:note]
+
+  - if @pages.any?
+    .admin-record-grid.admin-record-grid--two
+      - @pages.each do |page|
+        - clean_body = strip_tags(page.body.to_s)
+        article.card.section-card.admin-record-card
+          .admin-record-card__head
+            .admin-record-card__title-group
+              p.admin-record-card__eyebrow = "Page ##{page.id}"
+              h2.admin-record-card__title = page.title
+              p.admin-record-card__summary = truncate(clean_body, length: 180)
+          .admin-record-card__metric-grid
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Words
+              strong.admin-record-card__metric-value = clean_body.split.size
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Characters
+              strong.admin-record-card__metric-value = clean_body.length
+            .admin-record-card__metric
+              span.admin-record-card__metric-label Updated
+              strong.admin-record-card__metric-value = l(page.updated_at, format: :short)
+          .admin-record-card__footer
+            .admin-record-card__meta
+              span Static page
+            .table-actions
+              = link_to "Edit", edit_admin_page_path(page), class: "btn btn-outline-primary btn-sm"
+              = link_to "Delete", admin_page_path(page), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+  - else
+    .card.section-card.admin-empty-state
+      h2.admin-empty-state__title No static pages yet
+      p.admin-empty-state__copy Create a page to manage standalone site copy without touching homepage records.
+      .admin-empty-state__actions
+        = link_to "Create page", new_admin_page_path, class: "btn btn-primary"

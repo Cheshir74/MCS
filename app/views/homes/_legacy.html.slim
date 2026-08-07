@@ -61,5 +61,4 @@ section id="banner"
         .container
           div class="intro title-contacts"
             h2 class="text-center align-items-center" style="color: var(--bs-white);margin-bottom: 20px;" Contact Me
-        div class="container-contact100"
-          div data-controller="check_email" class="wrap-contact100" id="contact-form"
+        = render "contact_form", form_id: "contact-form"

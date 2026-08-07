@@ -1,31 +1,62 @@
-div class="page-header"
-  h3 class="page-headline" Home Pages
-  div class="page-header__meta"
-    span.page-header__chip Landing
-    span.page-header__text Configure homepage layouts and hero content
+section.admin-workspace
+  .admin-workspace__header
+    .admin-workspace__header-copy
+      h1.admin-workspace__title Homepage
+      p.admin-workspace__lead Legacy and new layouts in one list.
+    .admin-workspace__actions
+      = link_to "New home page", new_admin_home_path, class: "btn btn-primary"
+      - if @admin_featured_home
+        = link_to "Edit live home", edit_admin_home_path(@admin_featured_home), class: "btn btn-outline-secondary"
 
-div class="row"
-  div class="col-sm-12"
-    div class="card section-card"
-      .card-header.d-flex.justify-content-between.align-items-center
-        span Home pages list
-        = link_to 'New home page', new_admin_home_path, class: 'btn btn-outline-primary btn-sm'
-      .card-body.px-0.overflow-auto
-        table class="table table-hover align-middle mb-0"
-          thead class="bg-light text-muted"
+  - if @homes.any?
+    .card.section-card.admin-list-card
+      .admin-list-card__head
+        .admin-list-card__copy
+          h2.admin-list-card__title Home pages list
+          p.admin-list-card__meta Compact rows with the same list logic as before, plus the current layout, media and live status.
+      .admin-list-table-wrap
+        table.table.table-hover.align-middle.mb-0.admin-home-table
+          thead
             tr
-              th scope="col" class="text-nowrap px-4" #
-              th scope="col" class="text-nowrap" Title
-              th scope="col" class="text-nowrap" Intro
-              th scope="col" class="text-nowrap text-end px-4" Actions
+              th scope="col" class="admin-home-table__col-home" Home page
+              th scope="col" class="admin-home-table__col-status" Status
+              th scope="col" class="admin-home-table__col-updated" Updated
+              th scope="col" class="admin-home-table__col-actions text-end" Actions
           tbody
-            - @homes.each_with_index do |home, index|
+            - @homes.each do |home|
+              - summary_text = strip_tags(home.editorial? ? home.editorial_content(:hero_body) : home.body.to_s)
+              - record_title = home.title.presence || (home.editorial? ? home.editorial_content(:hero_title) : nil) || "Home ##{home.id}"
+              - preview_attachment = home.image.attached? ? home.image : home.ordered_images.first
               tr
-                td class="px-4 text-muted"= index + 1
-                td
-                  strong= home.title
-                td
-                  = truncate(home.body, length: 80)
-                td class="text-end px-4"
-                  = link_to 'Edit', edit_admin_home_path(home), class: 'btn btn-outline-primary btn-sm me-2'
-                  = link_to 'Delete', admin_home_path(home), data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: 'btn btn-outline-danger btn-sm'
+                td class="admin-home-table__col-home"
+                  .admin-home-table__identity
+                    .admin-home-table__thumb
+                      - if preview_attachment.present?
+                        = image_tag preview_attachment.variant(resize_to_fill: [144, 112]), class: "admin-home-table__thumb-image", alt: record_title
+                      - else
+                        span.admin-home-table__thumb-fallback HM
+                    .admin-table-stack
+                      strong.admin-table-stack__title = record_title
+                      span.admin-table-stack__meta = "Home ##{home.id}"
+                      - if summary_text.present?
+                        p.admin-home-table__summary = truncate(summary_text.to_s.squish, length: 136)
+                td class="admin-home-table__col-status"
+                  .admin-home-table__signals
+                    .admin-badge-stack.admin-badge-stack--start
+                      - if home.visible?
+                        span.admin-pill.admin-pill--success Published
+                      span.admin-pill.admin-pill--accent = admin_home_variant_label(home)
+                td class="admin-home-table__col-updated"
+                  .admin-table-stack
+                    strong.admin-table-stack__title = l(home.updated_at, format: :short)
+                    span.admin-table-stack__meta = "#{time_ago_in_words(home.updated_at)} ago"
+                td class="admin-home-table__col-actions text-end"
+                  .table-actions
+                    = link_to "Edit", edit_admin_home_path(home), class: "btn btn-outline-primary btn-sm"
+                    = link_to "Delete", admin_home_path(home), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+  - else
+    .card.section-card.admin-empty-state
+      h2.admin-empty-state__title No homepages yet
+      p.admin-empty-state__copy Create the first record to start managing the live landing page.
+      .admin-empty-state__actions
+        = link_to "Create homepage", new_admin_home_path, class: "btn btn-primary"

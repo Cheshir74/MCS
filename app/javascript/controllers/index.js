@@ -39,3 +39,12 @@ application.register("featured-home", FeaturedHomeController)
 
 import EditorialHomeController from "./editorial_home_controller"
 application.register("editorial-home", EditorialHomeController)
+
+import HomeEditorController from "./home_editor_controller"
+application.register("home-editor", HomeEditorController)
+
+import GalleryPreviewController from "./gallery_preview_controller"
+application.register("gallery-preview", GalleryPreviewController)
+
+import SelectMenuController from "./select_menu_controller"
+application.register("select-menu", SelectMenuController)

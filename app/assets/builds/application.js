@@ -91549,8 +91549,12 @@ function useForm(props = {}) {
 var import_client = __toESM(require_client());
 var check_email_controller_default = class extends Controller {
   connect() {
-    const UserForm = (props) => {
-      const [isSended, setIsSended] = (0, import_react2.useState)(false);
+    const rootElement = this.element;
+    if (!rootElement) return;
+    const UserForm = () => {
+      const [isSent, setIsSent] = (0, import_react2.useState)(false);
+      const [isSubmitting, setIsSubmitting] = (0, import_react2.useState)(false);
+      const [submitError, setSubmitError] = (0, import_react2.useState)("");
       const {
         register,
         formState: { errors }
@@ -91559,54 +91563,67 @@ var check_email_controller_default = class extends Controller {
       });
       const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
       const form = (0, import_react2.useRef)(null);
-      const submit = (e) => {
-        e.preventDefault();
-        const data = new FormData(form.current);
-        fetch("/message", { method: "POST", body: data }).then((res) => res.json()).then(
-          (result) => {
-            setIsSended(true);
+      const submit = async (event2) => {
+        event2.preventDefault();
+        setSubmitError("");
+        setIsSubmitting(true);
+        try {
+          const data = new FormData(form.current);
+          const response = await fetch("/message", { method: "POST", body: data });
+          if (!response.ok) {
+            throw new Error("Unable to send the message right now.");
           }
-        );
+          await response.json();
+          setIsSent(true);
+        } catch (error2) {
+          setSubmitError(error2.message || "Unable to send the message right now.");
+        } finally {
+          setIsSubmitting(false);
+        }
       };
-      if (isSended) {
-        return /* @__PURE__ */ import_react2.default.createElement("form", { className: "contact100-form", ref: form, onSubmit: submit }, "Message sent! Thank you!");
-      } else {
-        return /* @__PURE__ */ import_react2.default.createElement("form", { className: "contact100-form", ref: form, onSubmit: submit }, /* @__PURE__ */ import_react2.default.createElement("input", { type: "hidden", name: "authenticity_token", value: csrfToken }), /* @__PURE__ */ import_react2.default.createElement("div", { className: "wrap-input100" }, /* @__PURE__ */ import_react2.default.createElement(
-          "input",
-          {
-            ...register("name", { required: true, minLength: 2 }),
-            className: "input100 true-validate",
-            autoComplete: "off",
-            placeholder: "Full Name"
-          }
-        ), errors.name && errors.name.type === "required" && /* @__PURE__ */ import_react2.default.createElement("p", null, "This is required"), errors.name && errors.name.type === "minLength" && /* @__PURE__ */ import_react2.default.createElement("p", null, "At least 2 characters")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "wrap-input100 validate-input", "data-validate": "Please enter email: e@a.x" }, /* @__PURE__ */ import_react2.default.createElement(
-          "input",
-          {
-            ...register("email", {
-              required: true,
-              pattern: {
-                value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-                message: "Please enter a valid email"
-              }
-            }),
-            type: "email",
-            className: "input100",
-            autoComplete: "off",
-            name: "email",
-            placeholder: "Email"
-          }
-        ), errors.email && /* @__PURE__ */ import_react2.default.createElement("p", null, "Please enter a valid email")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "wrap-input100 validate-input", "data-validate": "Please enter your message" }, /* @__PURE__ */ import_react2.default.createElement(
-          "textarea",
-          {
-            ...register("body", { required: true, minLength: 10 }),
-            className: "input100",
-            name: "body",
-            placeholder: "Your Message"
-          }
-        ), errors.body && errors.body.type === "required" && /* @__PURE__ */ import_react2.default.createElement("p", null, "This is required"), errors.body && errors.body.type === "minLength" && /* @__PURE__ */ import_react2.default.createElement("p", null, "At least 10 characters")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "container-contact100-form-btn" }, /* @__PURE__ */ import_react2.default.createElement("button", { className: "contact100-form-btn", type: "submit" }, "Send Email")));
+      if (isSent) {
+        return /* @__PURE__ */ import_react2.default.createElement("div", { className: "contact100-success", role: "status", "aria-live": "polite" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "contact100-success__icon", "aria-hidden": "true" }, /* @__PURE__ */ import_react2.default.createElement("svg", { viewBox: "0 0 20 20" }, /* @__PURE__ */ import_react2.default.createElement("path", { d: "M5.4 10.1 8.4 13.1 14.7 6.8" }))), /* @__PURE__ */ import_react2.default.createElement("div", { className: "contact100-success__copy" }, /* @__PURE__ */ import_react2.default.createElement("h4", { className: "contact100-success__title" }, "Message sent"), /* @__PURE__ */ import_react2.default.createElement("p", { className: "contact100-success__body" }, "Thank you. I will reply by email.")));
       }
+      return /* @__PURE__ */ import_react2.default.createElement("form", { className: "contact100-form", ref: form, onSubmit: submit }, /* @__PURE__ */ import_react2.default.createElement("input", { type: "hidden", name: "authenticity_token", value: csrfToken }), /* @__PURE__ */ import_react2.default.createElement("div", { className: "wrap-input100" }, /* @__PURE__ */ import_react2.default.createElement(
+        "input",
+        {
+          ...register("name", { required: true, minLength: 2 }),
+          className: "input100 true-validate",
+          autoComplete: "off",
+          placeholder: "Full Name"
+        }
+      ), errors.name && errors.name.type === "required" && /* @__PURE__ */ import_react2.default.createElement("p", null, "This is required"), errors.name && errors.name.type === "minLength" && /* @__PURE__ */ import_react2.default.createElement("p", null, "At least 2 characters")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "wrap-input100 validate-input", "data-validate": "Please enter email: e@a.x" }, /* @__PURE__ */ import_react2.default.createElement(
+        "input",
+        {
+          ...register("email", {
+            required: true,
+            pattern: {
+              value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+              message: "Please enter a valid email"
+            }
+          }),
+          type: "email",
+          className: "input100",
+          autoComplete: "off",
+          name: "email",
+          placeholder: "Email"
+        }
+      ), errors.email && /* @__PURE__ */ import_react2.default.createElement("p", null, "Please enter a valid email")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "wrap-input100 validate-input", "data-validate": "Please enter your message" }, /* @__PURE__ */ import_react2.default.createElement(
+        "textarea",
+        {
+          ...register("body", { required: true, minLength: 10 }),
+          className: "input100",
+          name: "body",
+          placeholder: "Your Message"
+        }
+      ), errors.body && errors.body.type === "required" && /* @__PURE__ */ import_react2.default.createElement("p", null, "This is required"), errors.body && errors.body.type === "minLength" && /* @__PURE__ */ import_react2.default.createElement("p", null, "At least 10 characters")), submitError ? /* @__PURE__ */ import_react2.default.createElement("div", { className: "contact100-submit-error" }, submitError) : null, /* @__PURE__ */ import_react2.default.createElement("div", { className: "container-contact100-form-btn" }, /* @__PURE__ */ import_react2.default.createElement("button", { className: "contact100-form-btn", type: "submit", disabled: isSubmitting }, isSubmitting ? "Sending..." : "Send Email")));
     };
-    (0, import_client.createRoot)(document.getElementById("contact-form")).render(/* @__PURE__ */ import_react2.default.createElement(UserForm, null));
+    this.root = (0, import_client.createRoot)(rootElement);
+    this.root.render(/* @__PURE__ */ import_react2.default.createElement(UserForm, null));
+  }
+  disconnect() {
+    this.root?.unmount();
+    this.root = null;
   }
 };
 
@@ -92662,6 +92679,465 @@ var editorial_home_controller_default = class extends Controller {
   }
 };
 
+// app/javascript/controllers/home_editor_controller.js
+var home_editor_controller_default = class extends Controller {
+  static targets = ["variant", "section", "navItem", "modeBadge", "modeDescription", "filterButton", "variantPanel"];
+  connect() {
+    this.filterMode = "current";
+    this.boundScheduleCurrentNavRefresh = this.scheduleCurrentNavRefresh.bind(this);
+    this.boundRefreshCurrentNav = this.refreshCurrentNav.bind(this);
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", this.boundScheduleCurrentNavRefresh, { passive: true });
+      window.addEventListener("resize", this.boundRefreshCurrentNav);
+    }
+    this.syncDesign();
+  }
+  disconnect() {
+    if (typeof window !== "undefined") {
+      window.removeEventListener("scroll", this.boundScheduleCurrentNavRefresh);
+      window.removeEventListener("resize", this.boundRefreshCurrentNav);
+      window.cancelAnimationFrame(this.currentNavFrame);
+    }
+  }
+  syncDesign() {
+    this.updateModeText();
+    this.updateVariantPanels();
+    this.updateVisibility();
+    this.updateFilterButtons();
+  }
+  showCurrent() {
+    this.filterMode = "current";
+    this.updateVisibility();
+    this.updateFilterButtons();
+  }
+  showAll() {
+    this.filterMode = "all";
+    this.updateVisibility();
+    this.updateFilterButtons();
+  }
+  jumpToSection(event2) {
+    const link = event2.currentTarget;
+    const sectionId = link.getAttribute("href")?.replace(/^#/, "");
+    if (!sectionId) return;
+    const section = this.sectionTargets.find((target) => target.id === sectionId);
+    if (!section || section.hidden) return;
+    event2.preventDefault();
+    this.markCurrentNav(sectionId);
+    window.scrollTo({
+      top: Math.max(this.sectionScrollTop(section), 0),
+      behavior: this.prefersReducedMotion() ? "auto" : "smooth"
+    });
+    if (window.history?.replaceState) {
+      window.history.replaceState(null, "", `#${sectionId}`);
+    } else {
+      window.location.hash = sectionId;
+    }
+  }
+  updateModeText() {
+    const variant = this.currentVariant();
+    const badgeText = variant === "editorial" ? "New mode" : "Legacy mode";
+    const descriptionText = variant === "editorial" ? "You are editing the new homepage. Shared sections stay visible, legacy blocks can be hidden with the filter." : "You are editing the legacy homepage. Shared sections stay visible, new sections can be hidden with the filter.";
+    this.modeBadgeTargets.forEach((target) => {
+      target.textContent = badgeText;
+      target.dataset.mode = variant;
+    });
+    this.modeDescriptionTargets.forEach((target) => {
+      target.textContent = descriptionText;
+    });
+  }
+  updateVisibility() {
+    const variant = this.currentVariant();
+    this.sectionTargets.forEach((target) => {
+      const scope = target.dataset.scope || "shared";
+      const hidden = this.filterMode === "current" && scope !== "shared" && scope !== variant;
+      target.hidden = hidden;
+      target.classList.toggle("is-hidden", hidden);
+    });
+    this.navItemTargets.forEach((target) => {
+      const scope = target.dataset.scope || "shared";
+      const hidden = this.filterMode === "current" && scope !== "shared" && scope !== variant;
+      target.hidden = hidden;
+      target.classList.toggle("is-hidden", hidden);
+    });
+    this.refreshCurrentNav();
+  }
+  updateFilterButtons() {
+    this.filterButtonTargets.forEach((target) => {
+      const active = target.dataset.filterMode === this.filterMode;
+      target.classList.toggle("is-active", active);
+      target.setAttribute("aria-pressed", String(active));
+    });
+  }
+  updateVariantPanels() {
+    const variant = this.currentVariant();
+    this.variantPanelTargets.forEach((target) => {
+      const hidden = target.dataset.variantPanel !== variant;
+      target.hidden = hidden;
+      target.classList.toggle("is-hidden", hidden);
+    });
+  }
+  currentVariant() {
+    return this.hasVariantTarget ? this.variantTarget.value : "legacy";
+  }
+  scheduleCurrentNavRefresh() {
+    if (typeof window === "undefined" || this.currentNavFrame) return;
+    this.currentNavFrame = window.requestAnimationFrame(() => {
+      this.currentNavFrame = null;
+      this.refreshCurrentNav();
+    });
+  }
+  refreshCurrentNav() {
+    const currentSection = this.currentSection();
+    if (currentSection) {
+      this.markCurrentNav(currentSection.id);
+    }
+  }
+  currentSection() {
+    const visibleSections = this.visibleSections();
+    if (visibleSections.length === 0) return null;
+    if (typeof window === "undefined") return visibleSections[0];
+    const threshold = window.scrollY + this.scrollOffset() + 20;
+    let currentSection = visibleSections[0];
+    visibleSections.forEach((section) => {
+      if (this.sectionPageTop(section) <= threshold) {
+        currentSection = section;
+      }
+    });
+    return currentSection;
+  }
+  visibleSections() {
+    return this.sectionTargets.filter((target) => !target.hidden);
+  }
+  markCurrentNav(sectionId) {
+    this.navItemTargets.forEach((target) => {
+      const active = target.getAttribute("href") === `#${sectionId}`;
+      target.classList.toggle("is-current", active);
+      if (active) {
+        target.setAttribute("aria-current", "true");
+      } else {
+        target.removeAttribute("aria-current");
+      }
+    });
+  }
+  sectionScrollTop(section) {
+    return this.sectionPageTop(section) - this.scrollOffset();
+  }
+  sectionPageTop(section) {
+    return section.getBoundingClientRect().top + window.scrollY;
+  }
+  scrollOffset() {
+    const headerHeight = document.querySelector(".admin-topbar")?.getBoundingClientRect().height || 0;
+    const stickyRail = this.element.querySelector(".admin-editor__rail-sticky");
+    const stickyTop = stickyRail ? Number.parseFloat(window.getComputedStyle(stickyRail).top) : Number.NaN;
+    if (Number.isFinite(stickyTop) && stickyTop > headerHeight) {
+      return stickyTop;
+    }
+    return headerHeight + 16;
+  }
+  prefersReducedMotion() {
+    return typeof window !== "undefined" && "matchMedia" in window && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+};
+
+// app/javascript/controllers/gallery_preview_controller.js
+var gallery_preview_controller_default = class extends Controller {
+  static targets = ["modal", "image", "deleteLink"];
+  connect() {
+    this.modal = this.hasModalTarget ? this.modalTarget : null;
+    this.image = this.hasImageTarget ? this.imageTarget : null;
+    this.deleteLink = this.hasDeleteLinkTarget ? this.deleteLinkTarget : null;
+    this.boundKeydown = this.handleKeydown.bind(this);
+    this.boundBackdropClick = this.handleBackdropClick.bind(this);
+    this.boundCloseClick = this.close.bind(this);
+    if (this.modal) {
+      this.modalPlaceholder = document.createComment("gallery-preview-placeholder");
+      this.modal.parentNode.insertBefore(this.modalPlaceholder, this.modal);
+      document.body.appendChild(this.modal);
+      this.closeButton = this.modal.querySelector(".admin-gallery-preview__control--close");
+      this.modal.addEventListener("click", this.boundBackdropClick);
+      this.closeButton?.addEventListener("click", this.boundCloseClick);
+    }
+    window.addEventListener("keydown", this.boundKeydown);
+  }
+  disconnect() {
+    window.removeEventListener("keydown", this.boundKeydown);
+    this.modal?.removeEventListener("click", this.boundBackdropClick);
+    this.closeButton?.removeEventListener("click", this.boundCloseClick);
+    this.clearCloseTimer();
+    document.body.classList.remove("admin-gallery-preview-open");
+    if (this.modal && this.modalPlaceholder?.parentNode) {
+      this.modal.hidden = true;
+      this.modal.classList.remove("is-open");
+      this.modalPlaceholder.parentNode.insertBefore(this.modal, this.modalPlaceholder);
+      this.modalPlaceholder.remove();
+    }
+  }
+  open(event2) {
+    event2.preventDefault();
+    const trigger = event2.currentTarget;
+    const src = trigger.dataset.previewUrl || trigger.getAttribute("href");
+    const deleteUrl = trigger.dataset.previewDeleteUrl;
+    if (!src || !this.modal || !this.image) return;
+    this.clearCloseTimer();
+    this.image.src = src;
+    this.image.alt = trigger.dataset.previewAlt || "";
+    if (this.deleteLink) {
+      this.deleteLink.href = deleteUrl || "#";
+      this.deleteLink.hidden = !deleteUrl;
+    }
+    this.modal.hidden = false;
+    window.requestAnimationFrame(() => {
+      this.modal?.classList.add("is-open");
+    });
+    document.body.classList.add("admin-gallery-preview-open");
+  }
+  close() {
+    if (!this.modal) return;
+    this.modal.classList.remove("is-open");
+    document.body.classList.remove("admin-gallery-preview-open");
+    this.clearCloseTimer();
+    this.closeTimer = window.setTimeout(() => {
+      this.modal.hidden = true;
+      if (this.image) {
+        this.image.removeAttribute("src");
+        this.image.alt = "";
+      }
+      if (this.deleteLink) {
+        this.deleteLink.href = "#";
+        this.deleteLink.hidden = true;
+      }
+    }, 140);
+  }
+  handleBackdropClick(event2) {
+    if (event2.target === this.modal) {
+      this.close();
+    }
+  }
+  handleKeydown(event2) {
+    if (event2.key === "Escape" && this.modal && !this.modal.hidden) {
+      this.close();
+    }
+  }
+  clearCloseTimer() {
+    if (this.closeTimer) {
+      window.clearTimeout(this.closeTimer);
+      this.closeTimer = null;
+    }
+  }
+};
+
+// app/javascript/controllers/select_menu_controller.js
+var select_menu_controller_default = class extends Controller {
+  connect() {
+    if (this.element.tagName !== "SELECT" || this.wrapper) return;
+    this.boundDocumentClick = this.handleDocumentClick.bind(this);
+    this.boundDocumentKeydown = this.handleDocumentKeydown.bind(this);
+    this.boundNativeChange = this.syncFromSelect.bind(this);
+    this.build();
+  }
+  disconnect() {
+    this.close(false);
+    this.removeListeners();
+    this.wrapper?.remove();
+    this.element.classList.remove("admin-select-menu__native");
+    this.element.removeAttribute("tabindex");
+    this.element.hidden = false;
+    this.wrapper = null;
+    this.trigger = null;
+    this.triggerLabel = null;
+    this.chevron = null;
+    this.panel = null;
+    this.optionButtons = [];
+  }
+  build() {
+    this.wrapper = document.createElement("div");
+    this.wrapper.className = "admin-select-menu";
+    if (this.element.classList.contains("form-select-sm")) {
+      this.wrapper.classList.add("admin-select-menu--compact");
+    }
+    this.trigger = document.createElement("button");
+    this.trigger.type = "button";
+    this.trigger.className = "admin-select-menu__trigger";
+    this.trigger.setAttribute("aria-haspopup", "listbox");
+    this.trigger.setAttribute("aria-expanded", "false");
+    this.trigger.addEventListener("click", () => this.toggle());
+    this.trigger.addEventListener("keydown", (event2) => this.handleTriggerKeydown(event2));
+    if (this.element.getAttribute("aria-label")) {
+      this.trigger.setAttribute("aria-label", this.element.getAttribute("aria-label"));
+    }
+    this.triggerLabel = document.createElement("span");
+    this.triggerLabel.className = "admin-select-menu__label";
+    this.chevron = document.createElement("span");
+    this.chevron.className = "admin-select-menu__chevron";
+    this.chevron.setAttribute("aria-hidden", "true");
+    this.trigger.append(this.triggerLabel, this.chevron);
+    this.panel = document.createElement("div");
+    this.panel.className = "admin-select-menu__panel";
+    this.panel.hidden = true;
+    this.panel.setAttribute("role", "listbox");
+    this.panel.addEventListener("keydown", (event2) => this.handlePanelKeydown(event2));
+    const panelId = `${this.element.id || `admin-select-${Math.random().toString(36).slice(2, 8)}`}-panel`;
+    this.panel.id = panelId;
+    this.trigger.setAttribute("aria-controls", panelId);
+    this.element.insertAdjacentElement("afterend", this.wrapper);
+    this.wrapper.append(this.trigger, this.panel);
+    this.element.classList.add("admin-select-menu__native");
+    this.element.tabIndex = -1;
+    this.element.hidden = true;
+    this.element.addEventListener("change", this.boundNativeChange);
+    this.renderOptions();
+    this.syncFromSelect();
+    document.addEventListener("click", this.boundDocumentClick);
+    document.addEventListener("keydown", this.boundDocumentKeydown);
+  }
+  renderOptions() {
+    this.panel.innerHTML = "";
+    this.optionButtons = [];
+    Array.from(this.element.options).forEach((option, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "admin-select-menu__option";
+      button.dataset.index = String(index);
+      button.setAttribute("role", "option");
+      button.disabled = option.disabled;
+      const label = document.createElement("span");
+      label.className = "admin-select-menu__option-label";
+      label.textContent = option.textContent.trim();
+      const marker = document.createElement("span");
+      marker.className = "admin-select-menu__option-marker";
+      marker.setAttribute("aria-hidden", "true");
+      button.append(label, marker);
+      button.addEventListener("click", () => this.selectIndex(index));
+      this.optionButtons.push(button);
+      this.panel.append(button);
+    });
+  }
+  syncFromSelect() {
+    const selectedOption = this.element.selectedOptions[0] || this.element.options[0];
+    this.triggerLabel.textContent = selectedOption?.textContent?.trim() || "Select";
+    this.wrapper.classList.toggle("is-placeholder", !this.element.value);
+    this.wrapper.classList.toggle("is-disabled", this.element.disabled);
+    this.trigger.disabled = this.element.disabled;
+    this.optionButtons.forEach((button, index) => {
+      const active = index === this.element.selectedIndex;
+      button.classList.toggle("is-selected", active);
+      button.setAttribute("aria-selected", String(active));
+      button.tabIndex = active ? 0 : -1;
+    });
+  }
+  toggle() {
+    if (this.element.disabled) return;
+    this.isOpen ? this.close() : this.open();
+  }
+  open(focusIndex = this.element.selectedIndex) {
+    if (this.element.disabled || this.isOpen) return;
+    this.isOpen = true;
+    this.wrapper.classList.add("is-open");
+    this.panel.hidden = false;
+    this.trigger.setAttribute("aria-expanded", "true");
+    const targetIndex = this.findEnabledIndex(focusIndex, 1);
+    if (targetIndex >= 0) {
+      this.focusOption(targetIndex);
+    }
+  }
+  close(returnFocus = true) {
+    if (!this.isOpen) return;
+    this.isOpen = false;
+    this.wrapper.classList.remove("is-open");
+    this.panel.hidden = true;
+    this.trigger.setAttribute("aria-expanded", "false");
+    if (returnFocus) {
+      this.trigger.focus();
+    }
+  }
+  selectIndex(index) {
+    const option = this.element.options[index];
+    if (!option || option.disabled) return;
+    this.element.selectedIndex = index;
+    this.syncFromSelect();
+    this.element.dispatchEvent(new Event("change", { bubbles: true }));
+    this.close();
+  }
+  focusOption(index) {
+    const button = this.optionButtons[index];
+    if (!button || button.disabled) return;
+    this.optionButtons.forEach((optionButton) => {
+      optionButton.tabIndex = -1;
+    });
+    button.tabIndex = 0;
+    button.focus();
+    button.scrollIntoView({ block: "nearest" });
+  }
+  handleTriggerKeydown(event2) {
+    if (this.element.disabled) return;
+    if (event2.key === "ArrowDown") {
+      event2.preventDefault();
+      const nextIndex = this.findEnabledIndex(this.element.selectedIndex + 1, 1);
+      this.open(nextIndex >= 0 ? nextIndex : this.element.selectedIndex);
+    } else if (event2.key === "ArrowUp") {
+      event2.preventDefault();
+      const previousIndex = this.findEnabledIndex(this.element.selectedIndex - 1, -1);
+      this.open(previousIndex >= 0 ? previousIndex : this.element.selectedIndex);
+    } else if (event2.key === "Enter" || event2.key === " ") {
+      event2.preventDefault();
+      this.toggle();
+    }
+  }
+  handlePanelKeydown(event2) {
+    const currentIndex = Number(event2.target.dataset.index);
+    if (event2.key === "ArrowDown") {
+      event2.preventDefault();
+      const nextIndex = this.findEnabledIndex(currentIndex + 1, 1);
+      if (nextIndex >= 0) this.focusOption(nextIndex);
+    } else if (event2.key === "ArrowUp") {
+      event2.preventDefault();
+      const previousIndex = this.findEnabledIndex(currentIndex - 1, -1);
+      if (previousIndex >= 0) this.focusOption(previousIndex);
+    } else if (event2.key === "Home") {
+      event2.preventDefault();
+      const firstIndex = this.findEnabledIndex(0, 1);
+      if (firstIndex >= 0) this.focusOption(firstIndex);
+    } else if (event2.key === "End") {
+      event2.preventDefault();
+      const lastIndex = this.findEnabledIndex(this.optionButtons.length - 1, -1);
+      if (lastIndex >= 0) this.focusOption(lastIndex);
+    } else if (event2.key === "Enter" || event2.key === " ") {
+      event2.preventDefault();
+      this.selectIndex(currentIndex);
+    } else if (event2.key === "Tab") {
+      this.close(false);
+    } else if (event2.key === "Escape") {
+      event2.preventDefault();
+      this.close();
+    }
+  }
+  handleDocumentClick(event2) {
+    if (!this.wrapper.contains(event2.target)) {
+      this.close(false);
+    }
+  }
+  handleDocumentKeydown(event2) {
+    if (event2.key === "Escape") {
+      this.close();
+    }
+  }
+  findEnabledIndex(startIndex, direction) {
+    const options = Array.from(this.element.options);
+    if (options.length === 0) return -1;
+    let index = Math.min(Math.max(startIndex, 0), options.length - 1);
+    while (index >= 0 && index < options.length) {
+      if (!options[index].disabled) return index;
+      index += direction;
+    }
+    return -1;
+  }
+  removeListeners() {
+    this.element.removeEventListener("change", this.boundNativeChange);
+    document.removeEventListener("click", this.boundDocumentClick);
+    document.removeEventListener("keydown", this.boundDocumentKeydown);
+  }
+};
+
 // app/javascript/controllers/index.js
 application.register("dropzone", dropzone_controller_default);
 application.register("modal", modal_controller_default);
@@ -92674,6 +93150,9 @@ application.register("rich-text", rich_text_controller_default);
 application.register("section-order", section_order_controller_default);
 application.register("featured-home", featured_home_controller_default);
 application.register("editorial-home", editorial_home_controller_default);
+application.register("home-editor", home_editor_controller_default);
+application.register("gallery-preview", gallery_preview_controller_default);
+application.register("select-menu", select_menu_controller_default);
 
 // app/javascript/application.js
 var import_react7 = __toESM(require_react());

@@ -1167,6 +1167,146 @@ body.home-editorial-page::before {
     outline: none;
   }
 
+  .editorial-contact-form {
+    display: grid;
+    gap: 20px;
+    margin-top: 24px;
+    padding: 28px 32px;
+  }
+
+  .editorial-contact-form__intro {
+    display: grid;
+    gap: 10px;
+    max-width: 760px;
+  }
+
+  .editorial-contact-form__intro h4 {
+    margin: 0;
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+  }
+
+  .editorial-contact-form__intro p:last-child {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.72;
+    max-width: 760px;
+  }
+
+  .editorial-contact-form__shell {
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+
+  .editorial-contact-form__shell::before {
+    display: none;
+  }
+
+  .editorial-contact-form__wrap {
+    width: min(100%, 760px);
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .editorial-contact-form .contact100-form {
+    display: grid;
+    gap: 16px;
+  }
+
+  .editorial-contact-form .wrap-input100 {
+    margin-bottom: 0;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 14px 26px rgba(0, 0, 0, 0.16);
+  }
+
+  .editorial-contact-form .input100 {
+    color: #1f2937;
+    font-family: "Cabin", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+
+  .editorial-contact-form .input100::placeholder {
+    color: #7c8798;
+  }
+
+  .editorial-contact-form textarea.input100 {
+    min-height: 184px;
+  }
+
+  .editorial-contact-form .contact100-form p {
+    margin: 0 8px;
+    color: #f6b3c6;
+    font-size: 13px;
+  }
+
+  .editorial-contact-form .container-contact100-form-btn {
+    justify-content: flex-start;
+    padding-top: 6px;
+    padding-bottom: 0;
+  }
+
+  .editorial-contact-form .contact100-form-btn {
+    min-width: 188px;
+    height: 48px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #d97745, #c65c2b);
+    box-shadow: 0 14px 26px rgba(198, 92, 43, 0.28);
+    font-family: "Cabin", "Helvetica Neue", Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding-top: 0;
+  }
+
+  .editorial-contact-form .contact100-form-btn:hover {
+    background: linear-gradient(135deg, #c66a38, #b94f20);
+    box-shadow: 0 16px 30px rgba(198, 92, 43, 0.34);
+  }
+
+  .editorial-contact-form .contact100-success {
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-items: stretch;
+    justify-self: start;
+    max-width: min(100%, 430px);
+    padding: 16px 18px;
+    border-color: var(--line);
+    background: linear-gradient(180deg, rgba(19, 19, 22, 0.78), rgba(10, 10, 12, 0.94));
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.16);
+    text-align: left;
+  }
+
+  .editorial-contact-form .contact100-success__icon {
+    width: 42px;
+    height: 42px;
+    background: linear-gradient(145deg, rgba(215, 111, 66, 0.18), rgba(34, 197, 94, 0.1));
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.18);
+  }
+
+  .editorial-contact-form .contact100-success__title {
+    color: var(--text);
+    font-family: "Cabin", "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    letter-spacing: 0;
+  }
+
+  .editorial-contact-form .contact100-success__body {
+    color: var(--muted);
+    max-width: 30rem;
+  }
+
+  .editorial-contact-form .contact100-submit-error {
+    background: rgba(190, 24, 93, 0.08);
+    color: #ffe0ea;
+  }
+
   @keyframes lift-in {
     from {
       opacity: 0;
@@ -1234,6 +1374,14 @@ body.home-editorial-page::before {
     .story-card--feature .story-card__media,
     .story-card--compact .story-card__media {
       min-height: 220px;
+    }
+
+    .editorial-contact-form {
+      padding: 24px;
+    }
+
+    .editorial-contact-form__wrap {
+      width: 100%;
     }
   }
 
@@ -1371,7 +1519,8 @@ body.home-editorial-page::before {
 
     .about-aside,
     .about-panel,
-    .contact-panel {
+    .contact-panel,
+    .editorial-contact-form {
       padding: 22px;
     }
 
@@ -1421,6 +1570,10 @@ body.home-editorial-page::before {
 
     .contact-card {
       padding: 18px;
+    }
+
+    .editorial-contact-form .contact100-form-btn {
+      width: 100%;
     }
 
     .headline-strip__text {

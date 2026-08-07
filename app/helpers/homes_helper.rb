@@ -1,4 +1,6 @@
 module HomesHelper
+  RICH_TEXT_ALLOWED_TAGS = %w[a b blockquote br code em h3 h4 i li ol p pre s strike strong u ul].freeze
+  RICH_TEXT_ALLOWED_ATTRIBUTES = %w[href target rel].freeze
   SOCIAL_ICON_CLASSES = {
     telegram: "fa-brands fa-telegram",
     vk: "fa-brands fa-vk",
@@ -11,12 +13,12 @@ module HomesHelper
   end
 
   def editorial_brand_title(home)
-    home.editorial_content(:hero_title).to_s.delete_suffix(".")
+    home.editorial_content(:hero_title).to_s.delete_suffix(".").presence
   end
 
   def editorial_brand_subtitle(home)
     location = home.editorial_content(:contacts_location_value).to_s.split(",").first
-    ["Репортажный фотограф", location.presence].compact.join(" / ")
+    ["Репортажный фотограф", location.presence].compact.join(" / ").presence
   end
 
   def editorial_media_style(image, resize_to_limit: [2200, 1400], position: "center center")
@@ -30,8 +32,17 @@ module HomesHelper
     [["Не выбрано", ""]] + galleries.map { |gallery| [gallery.name, gallery.id] }
   end
 
+  def editorial_rich_text(text)
+    value = text.to_s
+    return if value.blank?
+
+    markup = value.match?(/<\s*[a-z][^>]*>/i) ? value : simple_format(h(value), {}, wrapper_tag: "p")
+
+    sanitize(markup, tags: RICH_TEXT_ALLOWED_TAGS, attributes: RICH_TEXT_ALLOWED_ATTRIBUTES)
+  end
+
   def editorial_text_block(text)
-    simple_format(h(text), {}, wrapper_tag: "p")
+    editorial_rich_text(text)
   end
 
   def editorial_social_links(site_setting)

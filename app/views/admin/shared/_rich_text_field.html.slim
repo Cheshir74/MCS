@@ -1,0 +1,50 @@
+- input_card_class = local_assigns[:input_card_class]
+- hint = local_assigns[:hint]
+- placeholder = local_assigns[:placeholder]
+- toolbar_label = local_assigns[:toolbar_label].presence || "#{title} formatting controls"
+- editor_label = local_assigns[:editor_label].presence || "#{title} editor"
+- editor_class = ["rich-text__editor", "form-control", "input-card__control", local_assigns[:editor_class]].compact.join(" ")
+
+.input-card class=input_card_class data-controller="rich-text"
+  h5.input-card__title = title
+  - if hint.present?
+    p.input-card__hint = hint
+  .rich-text
+    .rich-text__toolbar.btn-toolbar role="toolbar" aria-label=toolbar_label
+      .btn-group.me-1 role="group" aria-label="Text emphasis"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="bold" title="Bold"
+          i.fa-solid.fa-bold aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="italic" title="Italic"
+          i.fa-solid.fa-italic aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="underline" title="Underline"
+          i.fa-solid.fa-underline aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="strikeThrough" title="Strikethrough"
+          i.fa-solid.fa-strikethrough aria-hidden="true"
+      .btn-group.me-1 role="group" aria-label="Lists"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="insertUnorderedList" title="Bulleted list"
+          i.fa-solid.fa-list-ul aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="insertOrderedList" title="Numbered list"
+          i.fa-solid.fa-list-ol aria-hidden="true"
+      .btn-group.me-1 role="group" aria-label="Headings"
+        select.form-select.form-select-sm aria-label="Heading level" data-controller="select-menu" data-action="change->rich-text#applyBlock"
+          option value="p" Paragraph
+          option value="h3" Heading 3
+          option value="h4" Heading 4
+      .btn-group.me-1 role="group" aria-label="Extras"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#insertLink" title="Insert link"
+          i.fa-solid.fa-link aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="unlink" title="Remove link"
+          i.fa-solid.fa-link-slash aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="formatBlock" data-rich-text-value-param="blockquote" title="Block quote"
+          i.fa-solid.fa-quote-right aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="formatBlock" data-rich-text-value-param="pre" title="Code block"
+          i.fa-solid.fa-code aria-hidden="true"
+      .btn-group role="group" aria-label="History"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="undo" title="Undo"
+          i.fa-solid.fa-rotate-left aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="redo" title="Redo"
+          i.fa-solid.fa-rotate-right aria-hidden="true"
+        button.btn.btn-sm.btn-outline-secondary type="button" data-action="rich-text#format" data-rich-text-command-param="removeFormat" title="Clear formatting"
+          i.fa-solid.fa-eraser aria-hidden="true"
+    div class=editor_class role="textbox" aria-label=editor_label contenteditable="true" data-rich-text-target="editor" data-action="input->rich-text#onInput blur->rich-text#sync paste->rich-text#onPaste" data-placeholder=(placeholder.presence || "Write here")
+  = form.hidden_field field, data: { rich_text_target: "input" }
