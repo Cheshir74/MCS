@@ -1,6 +1,6 @@
 - superadmin_count = @users.count(&:superadmin_role?)
-- editor_count = @users.count(&:supervisor_role?)
-- viewer_count = @users.count { |user| admin_user_roles(user).include?("Viewer") }
+- editor_count = @users.count { |user| !user.superadmin_role? && user.supervisor_role? }
+- viewer_count = @users.count { |user| !user.superadmin_role? && !user.supervisor_role? && admin_user_roles(user).include?("Viewer") }
 
 section.admin-workspace
   .admin-workspace__header

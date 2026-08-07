@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react"
 
 export default function ChangePasswordModal({ url, show, onClose }) {
   const [currentPassword, setCurrentPassword] = useState("")
@@ -88,57 +88,61 @@ export default function ChangePasswordModal({ url, show, onClose }) {
   return (
     <div className="admin-modal-backdrop" role="dialog" aria-modal="true" onClick={onClose}>
       <div className="admin-modal__dialog" role="document" onClick={(event) => event.stopPropagation()}>
-        <div className="section-card admin-modal__card admin-modal__card--compact">
+        <div className="section-card admin-modal__card admin-modal__card--compact admin-password-modal">
           <div className="admin-modal__header">
             <div>
               <h4 className="admin-modal__title">Сменить пароль</h4>
-              <p className="admin-modal__subtitle">Введите текущий пароль и новый, чтобы обновить учетные данные</p>
+              <p className="admin-modal__subtitle">Текущий и новый пароль.</p>
             </div>
             <button type="button" className="admin-modal__close btn-close" aria-label="Закрыть" onClick={onClose}></button>
           </div>
-          <div className="admin-modal__body">
-            {error && <div className="alert alert-danger mb-3">{error}</div>}
-            {success && <div className="alert alert-success mb-3">{success}</div>}
+          <div className="admin-modal__body admin-password-modal__body">
+            {error && <div className="alert alert-danger mb-0">{error}</div>}
+            {success && <div className="alert alert-success mb-0">{success}</div>}
 
-            <form onSubmit={handleSubmit} className="admin-modal__form">
-              <div className="input-card input-card--mini">
-                <h5 className="input-card__title">Текущий пароль</h5>
-                <p className="input-card__hint">Укажите пароль, который используется сейчас</p>
-                <input
-                  type="password"
-                  className="form-control input-card__control"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                />
-              </div>
-              <div className="input-card input-card--mini">
-                <h5 className="input-card__title">Новый пароль</h5>
-                <p className="input-card__hint">Минимум 8 символов, используйте буквы и цифры</p>
-                <input
-                  type="password"
-                  className="form-control input-card__control"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                />
-              </div>
-              <div className="input-card input-card--mini">
-                <h5 className="input-card__title">Подтверждение</h5>
-                <p className="input-card__hint">Повторно введите новый пароль для подтверждения</p>
-                <input
-                  type="password"
-                  className="form-control input-card__control"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                />
+            <form onSubmit={handleSubmit} className="admin-modal__form admin-password-modal__form">
+              <div className="admin-password-modal__grid">
+                <label className="admin-password-modal__field admin-password-modal__field--full">
+                  <span className="admin-password-modal__label">Текущий</span>
+                  <input
+                    type="password"
+                    className="form-control admin-password-modal__input"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                    autoComplete="current-password"
+                    placeholder="Текущий пароль"
+                  />
+                </label>
+
+                <label className="admin-password-modal__field">
+                  <span className="admin-password-modal__label">Новый</span>
+                  <input
+                    type="password"
+                    className="form-control admin-password-modal__input"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    autoComplete="new-password"
+                    placeholder="Новый пароль"
+                  />
+                </label>
+
+                <label className="admin-password-modal__field">
+                  <span className="admin-password-modal__label">Повтор</span>
+                  <input
+                    type="password"
+                    className="form-control admin-password-modal__input"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    autoComplete="new-password"
+                    placeholder="Повторите пароль"
+                  />
+                </label>
               </div>
 
-              <div className="admin-modal__actions">
+              <div className="admin-modal__actions admin-password-modal__actions">
                 <button type="button" className="btn btn-outline-secondary" onClick={onClose}>Отмена</button>
                 <button type="submit" className="btn btn-primary">Сохранить</button>
               </div>

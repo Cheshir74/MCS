@@ -25,6 +25,9 @@ application.register("gallery", GalleryController)
 import ChangePasswordController from "./change_password_controller"
 application.register("change-password", ChangePasswordController)
 
+import EmailChangeController from "./email_change_controller"
+application.register("email-change", EmailChangeController)
+
 import LogoPreviewController from "./logo_preview_controller"
 application.register("logo-preview", LogoPreviewController)
 

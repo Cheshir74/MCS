@@ -1,0 +1,10 @@
+Hello<% if @user.email.present? %>, <%= @user.email %><% end %>.
+
+A request was made to change the sign-in email for this account.
+New email: <%= @next_email %>
+
+Verification code: <%= @code %>
+
+This code expires in <%= @expires_in_minutes %> minutes.
+
+If you did not expect this change, ignore this email.

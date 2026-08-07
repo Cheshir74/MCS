@@ -1274,6 +1274,22 @@ body.modal-open {
   .admin-confirm__confirm {
     width: 100%;
   }
+
+  .admin-password-modal__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-password-modal__field--full {
+    grid-column: auto;
+  }
+
+  .admin-email-modal__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-email-modal__field--full {
+    grid-column: auto;
+  }
 }
 
 .input-card--mini {
@@ -3344,6 +3360,319 @@ body.admin-layout .admin-editor .admin-slot-card:has(.admin-select-menu.is-open)
 
 .admin-summary-list__value--muted {
   color: #475569;
+}
+
+.admin-summary-list--compact {
+  gap: 0.55rem;
+}
+
+.admin-summary-list--compact .admin-summary-list__item {
+  padding: 0.68rem 0.82rem;
+  border-radius: 0.9rem;
+}
+
+.admin-user-editor {
+  align-items: start;
+}
+
+.admin-user-editor__main,
+.admin-user-editor__aside {
+  min-width: 0;
+}
+
+.admin-user-editor__warning {
+  margin: 0 0 0.9rem;
+  border-radius: 1rem;
+}
+
+.admin-role-list {
+  display: grid;
+  gap: 0.72rem;
+}
+
+.admin-role-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.9rem 0.95rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(145deg, rgba(248, 250, 252, 0.92), rgba(255, 255, 255, 0.98));
+}
+
+.admin-role-row__copy {
+  display: grid;
+  gap: 0.16rem;
+  min-width: 0;
+}
+
+.admin-role-row__heading {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.admin-role-row__title {
+  color: var(--admin-text);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.admin-role-row__state {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.35rem;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-role-row__meta {
+  color: var(--admin-muted);
+  font-size: 0.78rem;
+  line-height: 1.42;
+}
+
+.admin-role-row__switch {
+  justify-self: end;
+}
+
+.admin-role-row__switch .form-check {
+  margin: 0;
+  min-height: 0;
+}
+
+.admin-role-row__switch .form-check-input {
+  width: 46px;
+  height: 26px;
+}
+
+.admin-role-row__switch .form-check-input::before {
+  top: 3px;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+}
+
+.admin-role-row__switch .form-check-input:checked::before {
+  transform: translateX(20px);
+}
+
+.admin-role-row.is-inherited {
+  border-color: rgba(37, 99, 235, 0.16);
+  background: linear-gradient(145deg, rgba(239, 244, 255, 0.96), rgba(255, 255, 255, 0.98));
+}
+
+.admin-user-editor__badges {
+  margin-bottom: 0.9rem;
+}
+
+.admin-user-editor__field {
+  display: grid;
+  gap: 0.42rem;
+  margin-bottom: 0.95rem;
+}
+
+.admin-user-editor__label {
+  color: var(--admin-text);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-user-editor__field-value {
+  margin: 0;
+  padding: 0.82rem 0.95rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(248, 250, 252, 0.82);
+  color: var(--admin-text);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.admin-user-editor__field-note {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.admin-user-editor__aside-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.9rem;
+}
+
+.admin-email-modal {
+  max-width: 560px;
+}
+
+.admin-email-modal .admin-modal__header {
+  margin-bottom: 0.7rem;
+}
+
+.admin-email-modal .admin-modal__subtitle {
+  font-size: 0.76rem;
+}
+
+.admin-email-modal__body {
+  gap: 0.6rem;
+}
+
+.admin-email-modal__form {
+  gap: 0.7rem;
+}
+
+.admin-email-modal__grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-email-modal__field {
+  display: grid;
+  gap: 0.34rem;
+  min-width: 0;
+  padding: 0.72rem 0.8rem;
+  border-radius: 0.98rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(145deg, rgba(248, 250, 252, 0.92), rgba(255, 255, 255, 0.98));
+}
+
+.admin-email-modal__field--full {
+  grid-column: 1 / -1;
+}
+
+.admin-email-modal__label {
+  color: var(--admin-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-email-modal__current {
+  padding: 0.7rem 0.8rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  background: rgba(248, 250, 252, 0.82);
+  color: var(--admin-text);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.admin-email-modal__input {
+  min-height: 2.7rem;
+  padding: 0.5rem 0.72rem;
+  font-size: 0.86rem;
+  border-radius: 0.85rem;
+}
+
+.admin-email-modal__code {
+  letter-spacing: 0.24em;
+  font-weight: 700;
+  text-align: center;
+}
+
+.admin-email-modal__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-email-modal__actions {
+  margin-top: 0;
+}
+
+.admin-email-modal__link {
+  padding: 0;
+  border: 0;
+  color: var(--admin-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-email-modal__link:hover,
+.admin-email-modal__link:focus-visible {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.admin-password-modal {
+  max-width: 460px;
+}
+
+.admin-password-modal .admin-modal__header {
+  margin-bottom: 0.7rem;
+}
+
+.admin-password-modal .admin-modal__subtitle {
+  font-size: 0.76rem;
+}
+
+.admin-password-modal__body {
+  gap: 0.6rem;
+}
+
+.admin-password-modal__form {
+  gap: 0.7rem;
+}
+
+.admin-password-modal__grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-password-modal__field {
+  display: grid;
+  gap: 0.34rem;
+  min-width: 0;
+  padding: 0.72rem 0.8rem;
+  border-radius: 0.98rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  background: linear-gradient(145deg, rgba(248, 250, 252, 0.92), rgba(255, 255, 255, 0.98));
+}
+
+.admin-password-modal__field--full {
+  grid-column: 1 / -1;
+}
+
+.admin-password-modal__label {
+  color: var(--admin-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-password-modal__input {
+  min-height: 2.7rem;
+  padding: 0.5rem 0.72rem;
+  font-size: 0.86rem;
+  border-radius: 0.85rem;
+}
+
+.admin-password-modal__actions {
+  margin-top: 0;
 }
 
 .admin-editor__main {
@@ -5903,6 +6232,14 @@ body.sidebar-icon-only .admin-sidebar__summary {
   .admin-health-list__item {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .admin-role-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-role-row__switch {
+    justify-self: start;
   }
 
   .admin-workspace__actions,

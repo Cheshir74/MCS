@@ -1,0 +1,15 @@
+<p>Hello<% if @user.email.present? %>, <%= @user.email %><% end %>.</p>
+
+<p>A request was made on <%= l(Time.current, format: :long) %> to change the sign-in email for this account.</p>
+
+<p>New email: <strong><%= @next_email %></strong></p>
+
+<p>Your verification code:</p>
+
+<p style="font-size: 28px; font-weight: 700; letter-spacing: 0.18em; margin: 16px 0;">
+  <%= @code %>
+</p>
+
+<p>This code expires in <%= @expires_in_minutes %> minutes.</p>
+
+<p>If you did not expect this change, ignore this email.</p>

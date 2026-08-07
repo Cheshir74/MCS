@@ -1893,7 +1893,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React8 = require_react(), Internals = {
+      var React10 = require_react(), Internals = {
         d: {
           f: noop2,
           r: function() {
@@ -1911,7 +1911,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = Symbol.for("react.portal"), ReactSharedInternals = React10.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -3453,7 +3453,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React8.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React10.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -17035,14 +17035,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React8 = require_react(), ReactDOM4 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React10 = require_react(), ReactDOM5 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = Symbol.for("react.element"), REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_PROVIDER_TYPE = Symbol.for("react.provider"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy");
       Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = Symbol.for("react.activity");
       Symbol.for("react.legacy_hidden");
       Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = Symbol.for("react.memo_cache_sentinel");
       Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM4.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React10.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM5.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -19764,7 +19764,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React8.version;
+        var isomorphicReactPackageVersion = React10.version;
         if ("19.1.1" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.1.1\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -35827,7 +35827,7 @@ var require_react_development2 = __commonJS({
           }
           return dispatcher.useContext(Context2);
         }
-        function useState4(initialState) {
+        function useState5(initialState) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useState(initialState);
         }
@@ -35835,11 +35835,11 @@ var require_react_development2 = __commonJS({
           var dispatcher = resolveDispatcher();
           return dispatcher.useReducer(reducer, initialArg, init);
         }
-        function useRef4(initialValue) {
+        function useRef5(initialValue) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useRef(initialValue);
         }
-        function useEffect3(create, deps) {
+        function useEffect4(create, deps) {
           var dispatcher = resolveDispatcher();
           return dispatcher.useEffect(create, deps);
         }
@@ -36622,15 +36622,15 @@ var require_react_development2 = __commonJS({
         exports2.useContext = useContext;
         exports2.useDebugValue = useDebugValue;
         exports2.useDeferredValue = useDeferredValue;
-        exports2.useEffect = useEffect3;
+        exports2.useEffect = useEffect4;
         exports2.useId = useId;
         exports2.useImperativeHandle = useImperativeHandle;
         exports2.useInsertionEffect = useInsertionEffect;
         exports2.useLayoutEffect = useLayoutEffect;
         exports2.useMemo = useMemo2;
         exports2.useReducer = useReducer;
-        exports2.useRef = useRef4;
-        exports2.useState = useState4;
+        exports2.useRef = useRef5;
+        exports2.useState = useState5;
         exports2.useSyncExternalStore = useSyncExternalStore;
         exports2.useTransition = useTransition;
         exports2.version = ReactVersion;
@@ -37126,9 +37126,9 @@ var require_react_dom_development2 = __commonJS({
         if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
           __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
         }
-        var React8 = require_react2();
+        var React10 = require_react2();
         var Scheduler = require_scheduler2();
-        var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React10.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         var suppressWarning = false;
         function setSuppressWarning(newSuppressWarning) {
           {
@@ -38733,7 +38733,7 @@ var require_react_dom_development2 = __commonJS({
           {
             if (props.value == null) {
               if (typeof props.children === "object" && props.children !== null) {
-                React8.Children.forEach(props.children, function(child) {
+                React10.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -58242,9 +58242,9 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React8 = require_react2();
+        var React10 = require_react2();
         var ReactVersion = "18.3.1";
-        var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React10.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function warn(format) {
           {
             {
@@ -60139,7 +60139,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
         }
         function flattenOptionChildren(children) {
           var content = "";
-          React8.Children.forEach(children, function(child) {
+          React10.Children.forEach(children, function(child) {
             if (child == null) {
               return;
             }
@@ -62132,7 +62132,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
         function basicStateReducer(state, action) {
           return typeof action === "function" ? action(state) : action;
         }
-        function useState4(initialState) {
+        function useState5(initialState) {
           {
             currentHookNameInDev = "useState";
           }
@@ -62222,7 +62222,7 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
           workInProgressHook.memoizedState = [nextValue, nextDeps];
           return nextValue;
         }
-        function useRef4(initialValue) {
+        function useRef5(initialValue) {
           currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
           workInProgressHook = createWorkInProgressHook();
           var previousRef = workInProgressHook.memoizedState;
@@ -62313,8 +62313,8 @@ var require_react_dom_server_legacy_browser_development = __commonJS({
           useContext,
           useMemo: useMemo2,
           useReducer,
-          useRef: useRef4,
-          useState: useState4,
+          useRef: useRef5,
+          useState: useState5,
           useInsertionEffect: noop2,
           useLayoutEffect,
           useCallback: useCallback2,
@@ -63600,9 +63600,9 @@ var require_react_dom_server_browser_development = __commonJS({
     if (true) {
       (function() {
         "use strict";
-        var React8 = require_react2();
+        var React10 = require_react2();
         var ReactVersion = "18.3.1";
-        var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+        var ReactSharedInternals = React10.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
         function warn(format) {
           {
             {
@@ -65543,7 +65543,7 @@ var require_react_dom_server_browser_development = __commonJS({
         }
         function flattenOptionChildren(children) {
           var content = "";
-          React8.Children.forEach(children, function(child) {
+          React10.Children.forEach(children, function(child) {
             if (child == null) {
               return;
             }
@@ -67472,7 +67472,7 @@ var require_react_dom_server_browser_development = __commonJS({
         function basicStateReducer(state, action) {
           return typeof action === "function" ? action(state) : action;
         }
-        function useState4(initialState) {
+        function useState5(initialState) {
           {
             currentHookNameInDev = "useState";
           }
@@ -67562,7 +67562,7 @@ var require_react_dom_server_browser_development = __commonJS({
           workInProgressHook.memoizedState = [nextValue, nextDeps];
           return nextValue;
         }
-        function useRef4(initialValue) {
+        function useRef5(initialValue) {
           currentlyRenderingComponent = resolveCurrentlyRenderingComponent();
           workInProgressHook = createWorkInProgressHook();
           var previousRef = workInProgressHook.memoizedState;
@@ -67653,8 +67653,8 @@ var require_react_dom_server_browser_development = __commonJS({
           useContext,
           useMemo: useMemo2,
           useReducer,
-          useRef: useRef4,
-          useState: useState4,
+          useRef: useRef5,
+          useState: useState5,
           useInsertionEffect: noop2,
           useLayoutEffect,
           useCallback: useCallback2,
@@ -69200,11 +69200,11 @@ var require_fromRequireContextsWithGlobalFallback = __commonJS({
 // node_modules/react_ujs/react_ujs/src/supportsRootApi.js
 var require_supportsRootApi = __commonJS({
   "node_modules/react_ujs/react_ujs/src/supportsRootApi.js"(exports2, module2) {
-    var ReactDOM4 = require_react_dom2();
+    var ReactDOM5 = require_react_dom2();
     var reactMajorVersion;
     var supportsRootApi3;
-    if (typeof ReactDOM4 != "undefined") {
-      reactMajorVersion = ReactDOM4.version.split(".")[0] || 16;
+    if (typeof ReactDOM5 != "undefined") {
+      reactMajorVersion = ReactDOM5.version.split(".")[0] || 16;
       supportsRootApi3 = reactMajorVersion >= 18;
     } else {
       supportsRootApi3 = false;
@@ -69304,8 +69304,8 @@ var init_renderHelpers = __esm({
 // node_modules/react_ujs/react_ujs/index.js
 var require_react_ujs = __commonJS({
   "node_modules/react_ujs/react_ujs/index.js"(exports2, module2) {
-    var React8 = require_react2();
-    var ReactDOM4 = require_react_dom2();
+    var React10 = require_react2();
+    var ReactDOM5 = require_react_dom2();
     var ReactDOMServer = require_server_browser();
     var detectEvents = require_detect();
     var constructorFromGlobal = require_fromGlobal();
@@ -69381,7 +69381,7 @@ var require_react_ujs = __commonJS({
       // using the specified `renderFunction` from `react-dom/server`.
       serverRender: function(renderFunction, componentName, props) {
         var componentClass = this.getConstructor(componentName);
-        var element = React8.createElement(componentClass, props);
+        var element = React10.createElement(componentClass, props);
         return ReactDOMServer[renderFunction](element);
       },
       // Within `searchSelector`, find nodes which should have React components
@@ -69407,7 +69407,7 @@ var require_react_ujs = __commonJS({
           } else {
             var component = this.components[cacheId];
             if (component === void 0) {
-              component = React8.createElement(constructor2, props);
+              component = React10.createElement(constructor2, props);
               if (turbolinksPermanent) {
                 this.components[cacheId] = component;
               }
@@ -69430,7 +69430,7 @@ var require_react_ujs = __commonJS({
           if (supportsRootApi3) {
             this.unmountRoot(node);
           } else {
-            ReactDOM4.unmountComponentAtNode(node);
+            ReactDOM5.unmountComponentAtNode(node);
           }
         }
       },
@@ -92051,37 +92051,40 @@ function ChangePasswordModal({ url, show, onClose }) {
       setError("\u041E\u0448\u0438\u0431\u043A\u0430 \u0441\u043E\u0435\u0434\u0438\u043D\u0435\u043D\u0438\u044F");
     }
   };
-  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal-backdrop", role: "dialog", "aria-modal": "true", onClick: onClose }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__dialog", role: "document", onClick: (event2) => event2.stopPropagation() }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "section-card admin-modal__card admin-modal__card--compact" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__header" }, /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("h4", { className: "admin-modal__title" }, "\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "admin-modal__subtitle" }, "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u0430\u0440\u043E\u043B\u044C \u0438 \u043D\u043E\u0432\u044B\u0439, \u0447\u0442\u043E\u0431\u044B \u043E\u0431\u043D\u043E\u0432\u0438\u0442\u044C \u0443\u0447\u0435\u0442\u043D\u044B\u0435 \u0434\u0430\u043D\u043D\u044B\u0435")), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "admin-modal__close btn-close", "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__body" }, error2 && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-danger mb-3" }, error2), success && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-success mb-3" }, success), /* @__PURE__ */ import_react5.default.createElement("form", { onSubmit: handleSubmit, className: "admin-modal__form" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "input-card input-card--mini" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "input-card__title" }, "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "input-card__hint" }, "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u043F\u0430\u0440\u043E\u043B\u044C, \u043A\u043E\u0442\u043E\u0440\u044B\u0439 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0435\u0442\u0441\u044F \u0441\u0435\u0439\u0447\u0430\u0441"), /* @__PURE__ */ import_react5.default.createElement(
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal-backdrop", role: "dialog", "aria-modal": "true", onClick: onClose }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__dialog", role: "document", onClick: (event2) => event2.stopPropagation() }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "section-card admin-modal__card admin-modal__card--compact admin-password-modal" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__header" }, /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("h4", { className: "admin-modal__title" }, "\u0421\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "admin-modal__subtitle" }, "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u0438 \u043D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C.")), /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "admin-modal__close btn-close", "aria-label": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C", onClick: onClose })), /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__body admin-password-modal__body" }, error2 && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-danger mb-0" }, error2), success && /* @__PURE__ */ import_react5.default.createElement("div", { className: "alert alert-success mb-0" }, success), /* @__PURE__ */ import_react5.default.createElement("form", { onSubmit: handleSubmit, className: "admin-modal__form admin-password-modal__form" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-password-modal__grid" }, /* @__PURE__ */ import_react5.default.createElement("label", { className: "admin-password-modal__field admin-password-modal__field--full" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "admin-password-modal__label" }, "\u0422\u0435\u043A\u0443\u0449\u0438\u0439"), /* @__PURE__ */ import_react5.default.createElement(
     "input",
     {
       type: "password",
-      className: "form-control input-card__control",
+      className: "form-control admin-password-modal__input",
       value: currentPassword,
       onChange: (e) => setCurrentPassword(e.target.value),
       required: true,
-      autoComplete: "current-password"
+      autoComplete: "current-password",
+      placeholder: "\u0422\u0435\u043A\u0443\u0449\u0438\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"
     }
-  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "input-card input-card--mini" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "input-card__title" }, "\u041D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "input-card__hint" }, "\u041C\u0438\u043D\u0438\u043C\u0443\u043C 8 \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432, \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 \u0431\u0443\u043A\u0432\u044B \u0438 \u0446\u0438\u0444\u0440\u044B"), /* @__PURE__ */ import_react5.default.createElement(
+  )), /* @__PURE__ */ import_react5.default.createElement("label", { className: "admin-password-modal__field" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "admin-password-modal__label" }, "\u041D\u043E\u0432\u044B\u0439"), /* @__PURE__ */ import_react5.default.createElement(
     "input",
     {
       type: "password",
-      className: "form-control input-card__control",
+      className: "form-control admin-password-modal__input",
       value: newPassword,
       onChange: (e) => setNewPassword(e.target.value),
       required: true,
-      autoComplete: "new-password"
+      autoComplete: "new-password",
+      placeholder: "\u041D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C"
     }
-  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "input-card input-card--mini" }, /* @__PURE__ */ import_react5.default.createElement("h5", { className: "input-card__title" }, "\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435"), /* @__PURE__ */ import_react5.default.createElement("p", { className: "input-card__hint" }, "\u041F\u043E\u0432\u0442\u043E\u0440\u043D\u043E \u0432\u0432\u0435\u0434\u0438\u0442\u0435 \u043D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C \u0434\u043B\u044F \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F"), /* @__PURE__ */ import_react5.default.createElement(
+  )), /* @__PURE__ */ import_react5.default.createElement("label", { className: "admin-password-modal__field" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "admin-password-modal__label" }, "\u041F\u043E\u0432\u0442\u043E\u0440"), /* @__PURE__ */ import_react5.default.createElement(
     "input",
     {
       type: "password",
-      className: "form-control input-card__control",
+      className: "form-control admin-password-modal__input",
       value: confirmPassword,
       onChange: (e) => setConfirmPassword(e.target.value),
       required: true,
-      autoComplete: "new-password"
+      autoComplete: "new-password",
+      placeholder: "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u043F\u0430\u0440\u043E\u043B\u044C"
     }
-  )), /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__actions" }, /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn btn-outline-secondary", onClick: onClose }, "\u041E\u0442\u043C\u0435\u043D\u0430"), /* @__PURE__ */ import_react5.default.createElement("button", { type: "submit", className: "btn btn-primary" }, "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C")))))));
+  ))), /* @__PURE__ */ import_react5.default.createElement("div", { className: "admin-modal__actions admin-password-modal__actions" }, /* @__PURE__ */ import_react5.default.createElement("button", { type: "button", className: "btn btn-outline-secondary", onClick: onClose }, "\u041E\u0442\u043C\u0435\u043D\u0430"), /* @__PURE__ */ import_react5.default.createElement("button", { type: "submit", className: "btn btn-primary" }, "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C")))))));
 }
 
 // app/javascript/controllers/change_password_controller.js
@@ -92100,6 +92103,189 @@ var change_password_controller_default = class extends Controller {
   render(show) {
     this.root.render(
       /* @__PURE__ */ import_react6.default.createElement(ChangePasswordModal, { url: this.url, show, onClose: () => this.close() })
+    );
+  }
+};
+
+// app/javascript/controllers/email_change_controller.js
+var import_react8 = __toESM(require_react());
+var import_client4 = __toESM(require_client());
+
+// app/javascript/components/EmailChangeModal.jsx
+var import_react7 = __toESM(require_react());
+var STEP_REQUEST = "request";
+var STEP_VERIFY = "verify";
+function EmailChangeModal({ sendUrl, confirmUrl, currentEmail, pendingEmail, show, onClose }) {
+  const [step, setStep] = (0, import_react7.useState)(pendingEmail ? STEP_VERIFY : STEP_REQUEST);
+  const [nextEmail, setNextEmail] = (0, import_react7.useState)(pendingEmail || "");
+  const [code, setCode] = (0, import_react7.useState)("");
+  const [error2, setError] = (0, import_react7.useState)(null);
+  const [success, setSuccess] = (0, import_react7.useState)(null);
+  const [loading, setLoading] = (0, import_react7.useState)(false);
+  const timeoutRef = (0, import_react7.useRef)(null);
+  (0, import_react7.useEffect)(() => {
+    if (show) {
+      setStep(pendingEmail ? STEP_VERIFY : STEP_REQUEST);
+      setNextEmail(pendingEmail || "");
+      setCode("");
+      setError(null);
+      setSuccess(null);
+      setLoading(false);
+      document.body.classList.add("modal-open");
+    } else {
+      document.body.classList.remove("modal-open");
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    }
+    const handleKeyDown = (event2) => {
+      if (event2.key === "Escape" && !loading) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.classList.remove("modal-open");
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, [show, pendingEmail, loading, onClose]);
+  if (!show) return null;
+  const csrfToken = document.querySelector("meta[name=csrf-token]")?.content;
+  const requestCode = async (email) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const response = await fetch(sendUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error || "Could not send the verification code.");
+        return false;
+      }
+      setNextEmail(data.pending_email || email);
+      setStep(STEP_VERIFY);
+      setSuccess(data.message || "Verification code sent.");
+      return true;
+    } catch {
+      setError("Connection error.");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleRequestSubmit = async (event2) => {
+    event2.preventDefault();
+    await requestCode(nextEmail);
+  };
+  const handleConfirmSubmit = async (event2) => {
+    event2.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const response = await fetch(confirmUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ code })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setError(data.error || "Could not confirm the new email.");
+        return;
+      }
+      setSuccess(data.message || "Email updated.");
+      setCode("");
+      timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = null;
+        window.location.reload();
+      }, 1400);
+    } catch {
+      setError("Connection error.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleUseAnotherEmail = () => {
+    if (loading) return;
+    setStep(STEP_REQUEST);
+    setCode("");
+    setError(null);
+    setSuccess(null);
+  };
+  const handleResend = async () => {
+    if (loading) return;
+    await requestCode(nextEmail);
+  };
+  return /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-modal-backdrop", role: "dialog", "aria-modal": "true", onClick: () => !loading && onClose() }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-modal__dialog", role: "document", onClick: (event2) => event2.stopPropagation() }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "section-card admin-modal__card admin-modal__card--compact admin-email-modal" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-modal__header" }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h4", { className: "admin-modal__title" }, "Change email"), /* @__PURE__ */ import_react7.default.createElement("p", { className: "admin-modal__subtitle" }, step === STEP_REQUEST ? "New address and code." : "Code from email.")), /* @__PURE__ */ import_react7.default.createElement("button", { type: "button", className: "admin-modal__close btn-close", "aria-label": "Close", onClick: () => !loading && onClose() })), /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-modal__body admin-email-modal__body" }, error2 && /* @__PURE__ */ import_react7.default.createElement("div", { className: "alert alert-danger mb-0" }, error2), success && /* @__PURE__ */ import_react7.default.createElement("div", { className: "alert alert-success mb-0" }, success), step === STEP_REQUEST ? /* @__PURE__ */ import_react7.default.createElement("form", { onSubmit: handleRequestSubmit, className: "admin-modal__form admin-email-modal__form" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-email-modal__grid" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-email-modal__field admin-email-modal__field--full" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "admin-email-modal__label" }, "Current"), /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-email-modal__current" }, currentEmail)), /* @__PURE__ */ import_react7.default.createElement("label", { className: "admin-email-modal__field admin-email-modal__field--full" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "admin-email-modal__label" }, "New"), /* @__PURE__ */ import_react7.default.createElement(
+    "input",
+    {
+      type: "email",
+      className: "form-control admin-email-modal__input",
+      value: nextEmail,
+      onChange: (event2) => setNextEmail(event2.target.value),
+      required: true,
+      autoComplete: "off",
+      placeholder: "name@example.com"
+    }
+  ))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-modal__actions admin-email-modal__actions" }, /* @__PURE__ */ import_react7.default.createElement("button", { type: "button", className: "btn btn-outline-secondary", onClick: onClose, disabled: loading }, "Cancel"), /* @__PURE__ */ import_react7.default.createElement("button", { type: "submit", className: "btn btn-primary", disabled: loading }, loading ? "Sending..." : "Send code"))) : /* @__PURE__ */ import_react7.default.createElement("form", { onSubmit: handleConfirmSubmit, className: "admin-modal__form admin-email-modal__form" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-email-modal__grid" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-email-modal__field admin-email-modal__field--full" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "admin-email-modal__label" }, "New email"), /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-email-modal__current" }, nextEmail)), /* @__PURE__ */ import_react7.default.createElement("label", { className: "admin-email-modal__field admin-email-modal__field--full" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "admin-email-modal__label" }, "Code"), /* @__PURE__ */ import_react7.default.createElement(
+    "input",
+    {
+      type: "text",
+      className: "form-control admin-email-modal__input admin-email-modal__code",
+      value: code,
+      onChange: (event2) => setCode(event2.target.value.replace(/\D/g, "").slice(0, 6)),
+      required: true,
+      inputMode: "numeric",
+      autoComplete: "one-time-code",
+      placeholder: "123456"
+    }
+  ))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-email-modal__footer" }, /* @__PURE__ */ import_react7.default.createElement("button", { type: "button", className: "btn btn-link admin-email-modal__link", onClick: handleUseAnotherEmail, disabled: loading }, "Use another email"), /* @__PURE__ */ import_react7.default.createElement("button", { type: "button", className: "btn btn-link admin-email-modal__link", onClick: handleResend, disabled: loading }, "Resend code")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "admin-modal__actions admin-email-modal__actions" }, /* @__PURE__ */ import_react7.default.createElement("button", { type: "button", className: "btn btn-outline-secondary", onClick: onClose, disabled: loading }, "Cancel"), /* @__PURE__ */ import_react7.default.createElement("button", { type: "submit", className: "btn btn-primary", disabled: loading }, loading ? "Confirming..." : "Confirm email")))))));
+}
+
+// app/javascript/controllers/email_change_controller.js
+var email_change_controller_default = class extends Controller {
+  connect() {
+    this.root = import_client4.default.createRoot(this.element);
+    this.sendUrl = this.element.dataset.sendUrl;
+    this.confirmUrl = this.element.dataset.confirmUrl;
+    this.currentEmail = this.element.dataset.currentEmail;
+    this.pendingEmail = this.element.dataset.pendingEmail;
+    this.render(false);
+  }
+  open() {
+    this.render(true);
+  }
+  close() {
+    this.render(false);
+  }
+  render(show) {
+    this.root.render(
+      /* @__PURE__ */ import_react8.default.createElement(
+        EmailChangeModal,
+        {
+          sendUrl: this.sendUrl,
+          confirmUrl: this.confirmUrl,
+          currentEmail: this.currentEmail,
+          pendingEmail: this.pendingEmail,
+          show,
+          onClose: () => this.close()
+        }
+      )
     );
   }
 };
@@ -93253,17 +93439,31 @@ var user_access_guard_controller_default = class extends Controller {
     self: Boolean,
     lastSuperadmin: Boolean
   };
-  static targets = ["superadmin", "supervisor", "warning"];
+  static targets = [
+    "superadmin",
+    "supervisor",
+    "viewer",
+    "warning",
+    "superadminState",
+    "supervisorState",
+    "viewerState",
+    "supervisorRow",
+    "viewerRow"
+  ];
   connect() {
     this.sync();
   }
   enforce(event2) {
-    if (!this.selfValue) return;
-    if (this.lastSuperadminValue && this.hasSuperadminTarget) {
+    if (this.lastSuperadminLocked()) {
       this.superadminTarget.checked = true;
-      this.superadminTarget.disabled = true;
     }
-    if (!this.superadminChecked() && !this.supervisorChecked()) {
+    if (this.superadminChecked() && this.hasSupervisorTarget) {
+      this.supervisorTarget.checked = true;
+    }
+    if ((this.superadminChecked() || this.supervisorChecked()) && this.hasViewerTarget) {
+      this.viewerTarget.checked = true;
+    }
+    if (this.selfValue && !this.superadminChecked() && !this.supervisorChecked()) {
       if (event2?.currentTarget) {
         event2.currentTarget.checked = true;
       }
@@ -93271,18 +93471,48 @@ var user_access_guard_controller_default = class extends Controller {
     this.sync();
   }
   sync() {
-    if (!this.selfValue || !this.hasWarningTarget) return;
-    if (this.lastSuperadminValue && this.hasSuperadminTarget) {
+    if (this.lastSuperadminLocked()) {
       this.superadminTarget.checked = true;
-      this.superadminTarget.disabled = true;
     }
-    this.warningTarget.hidden = false;
+    if (this.superadminChecked() && this.hasSupervisorTarget) {
+      this.supervisorTarget.checked = true;
+    }
+    if ((this.superadminChecked() || this.supervisorChecked()) && this.hasViewerTarget) {
+      this.viewerTarget.checked = true;
+    }
+    if (this.hasWarningTarget) {
+      this.warningTarget.hidden = !this.selfValue;
+    }
+    this.syncInheritedState();
   }
   superadminChecked() {
     return this.hasSuperadminTarget && this.superadminTarget.checked;
   }
   supervisorChecked() {
     return this.hasSupervisorTarget && this.supervisorTarget.checked;
+  }
+  lastSuperadminLocked() {
+    return this.selfValue && this.lastSuperadminValue && this.hasSuperadminTarget;
+  }
+  syncInheritedState() {
+    const superadminInherited = this.lastSuperadminLocked();
+    const supervisorInherited = this.superadminChecked();
+    const viewerInherited = this.superadminChecked() || this.supervisorChecked();
+    if (this.hasSuperadminStateTarget) {
+      this.superadminStateTarget.hidden = !superadminInherited;
+    }
+    if (this.hasSupervisorStateTarget) {
+      this.supervisorStateTarget.hidden = !supervisorInherited;
+    }
+    if (this.hasViewerStateTarget) {
+      this.viewerStateTarget.hidden = !viewerInherited;
+    }
+    if (this.hasSupervisorRowTarget) {
+      this.supervisorRowTarget.classList.toggle("is-inherited", supervisorInherited);
+    }
+    if (this.hasViewerRowTarget) {
+      this.viewerRowTarget.classList.toggle("is-inherited", viewerInherited);
+    }
   }
 };
 
@@ -93293,6 +93523,7 @@ application.register("swiper", swiper_controller_default);
 application.register("check_email", check_email_controller_default);
 application.register("gallery", gallery_controller_default);
 application.register("change-password", change_password_controller_default);
+application.register("email-change", email_change_controller_default);
 application.register("logo-preview", logo_preview_controller_default);
 application.register("rich-text", rich_text_controller_default);
 application.register("section-order", section_order_controller_default);
@@ -93305,7 +93536,7 @@ application.register("bulk-selection", bulk_selection_controller_default);
 application.register("user-access-guard", user_access_guard_controller_default);
 
 // app/javascript/application.js
-var import_react7 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 var import_react_dom2 = __toESM(require_react_dom());
 
 // app/javascript/add_jquery.js
@@ -98624,7 +98855,7 @@ window.$ = import_jquery.default;
 
 // app/javascript/application.js
 var import_toastr = __toESM(require_toastr());
-window.React = import_react7.default;
+window.React = import_react9.default;
 window.ReactDOM = import_react_dom2.default;
 var ReactRailsUJS = require_react_ujs();
 var skipFirstCall = false;

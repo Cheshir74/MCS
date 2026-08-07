@@ -21,6 +21,8 @@ Rails.application.routes.draw do
     resources :users do
       member do
         patch :change_password
+        post :send_email_change_code
+        patch :confirm_email_change
       end
       collection do
         patch :bulk_update
