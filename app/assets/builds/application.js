@@ -91762,6 +91762,10 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     const rows = [];
     let currentRow = [];
     let rowHasPortrait = false;
+    const buildRow = (rowPhotos) => ({
+      photos: rowPhotos,
+      hasPortrait: rowPhotos.some((item) => item.orientation === "portrait")
+    });
     photosToGroup.forEach((photo) => {
       currentRow.push(photo);
       if (photo.orientation === "portrait") rowHasPortrait = true;
@@ -91778,7 +91782,19 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
       }
     });
     if (currentRow.length) rows.push({ photos: currentRow, hasPortrait: rowHasPortrait });
-    return rows;
+    const lastRow = rows[rows.length - 1];
+    const previousRow = rows[rows.length - 2];
+    if (!lastRow || !previousRow || lastRow.photos.length !== 1) return rows;
+    const combinedTail = [...previousRow.photos, ...lastRow.photos];
+    if (combinedTail.length <= 3) {
+      return [...rows.slice(0, -2), buildRow(combinedTail)];
+    }
+    const splitIndex = Math.ceil(combinedTail.length / 2);
+    return [
+      ...rows.slice(0, -2),
+      buildRow(combinedTail.slice(0, splitIndex)),
+      buildRow(combinedTail.slice(splitIndex))
+    ];
   }, [direction, getLayoutParams]);
   (0, import_react3.useEffect)(() => {
     if (visiblePhotos.length && direction === "row") setRowGroups(groupPhotosSmart(visiblePhotos));
@@ -91830,7 +91846,9 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
     const totalWidthOriginal = (row.photos || []).reduce((sum, p) => sum + (p.ratio || 1) * currentRowHeight, 0) || 1;
     const availableWidth = Math.max(1, containerWidth - ((row.photos?.length || 0) - 1) * ROW_GAP);
-    const scaleFactor = isFinite(availableWidth / totalWidthOriginal) ? availableWidth / totalWidthOriginal : 1;
+    const rawScaleFactor = isFinite(availableWidth / totalWidthOriginal) ? availableWidth / totalWidthOriginal : 1;
+    const isSinglePhotoRow = (row.photos?.length || 0) === 1;
+    const scaleFactor = isSinglePhotoRow ? Math.min(rawScaleFactor, 1.28) : rawScaleFactor;
     return /* @__PURE__ */ import_react3.default.createElement(
       "div",
       {

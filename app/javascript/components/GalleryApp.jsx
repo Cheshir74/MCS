@@ -149,6 +149,10 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
     const rows = [];
     let currentRow = [];
     let rowHasPortrait = false;
+    const buildRow = rowPhotos => ({
+      photos: rowPhotos,
+      hasPortrait: rowPhotos.some(item => item.orientation === "portrait")
+    });
 
     photosToGroup.forEach(photo => {
       currentRow.push(photo);
@@ -168,8 +172,24 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
 
     if (currentRow.length) rows.push({ photos: currentRow, hasPortrait: rowHasPortrait });
 
-    // ВАЖНО: без «перераспределения одиночных» во имя стабильности глобальных индексов
-    return rows; // индексы остаются монотонными и соответствуют исходному порядку photos [web:41]
+    const lastRow = rows[rows.length - 1];
+    const previousRow = rows[rows.length - 2];
+
+    if (!lastRow || !previousRow || lastRow.photos.length !== 1) return rows;
+
+    // Rebalance the trailing widow so the legacy homepage does not end with
+    // one oversized photo stretched across the full row.
+    const combinedTail = [...previousRow.photos, ...lastRow.photos];
+    if (combinedTail.length <= 3) {
+      return [...rows.slice(0, -2), buildRow(combinedTail)];
+    }
+
+    const splitIndex = Math.ceil(combinedTail.length / 2);
+    return [
+      ...rows.slice(0, -2),
+      buildRow(combinedTail.slice(0, splitIndex)),
+      buildRow(combinedTail.slice(splitIndex))
+    ];
   }, [direction, getLayoutParams]); // [web:41]
 
   useEffect(() => {
@@ -245,7 +265,9 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
               const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
               const totalWidthOriginal = (row.photos || []).reduce((sum, p) => sum + (p.ratio || 1) * currentRowHeight, 0) || 1;
               const availableWidth = Math.max(1, containerWidth - ((row.photos?.length || 0) - 1) * ROW_GAP);
-              const scaleFactor = isFinite(availableWidth / totalWidthOriginal) ? availableWidth / totalWidthOriginal : 1;
+              const rawScaleFactor = isFinite(availableWidth / totalWidthOriginal) ? availableWidth / totalWidthOriginal : 1;
+              const isSinglePhotoRow = (row.photos?.length || 0) === 1;
+              const scaleFactor = isSinglePhotoRow ? Math.min(rawScaleFactor, 1.28) : rawScaleFactor;
 
               return (
                 <div
