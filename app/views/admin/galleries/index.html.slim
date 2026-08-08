@@ -1,60 +1,115 @@
 - visible_count = @galleries.count(&:visible?)
 - cover_ready_count = @galleries.count { |gallery| gallery.primary_image.present? }
-- tags_ready_count = @galleries.count { |gallery| gallery.homepage_tags_list.any? }
-- stats = [{ label: "Records", value: @galleries.size, note: "Gallery records in the library", tone: "accent" }, { label: "Visible", value: visible_count, note: visible_count.positive? ? "Shown on the public gallery list" : "No gallery is public", tone: visible_count.positive? ? "success" : "warning" }, { label: "Covers ready", value: cover_ready_count, note: "Lead frame available for homepage cards", tone: cover_ready_count.positive? ? "accent" : "warning" }, { label: "Tagged", value: tags_ready_count, note: "Mini-card tags prepared", tone: tags_ready_count.positive? ? "muted" : "warning" }]
+- tagged_count = @galleries.count { |gallery| gallery.homepage_tags_list.any? }
 
 section.admin-workspace
   .admin-workspace__header
     .admin-workspace__header-copy
       p.admin-kicker Galleries
-      h1.admin-workspace__title Gallery library and homepage card data
-      p.admin-workspace__lead Galleries now serve two roles at once: the public gallery archive and the structured card system on the new homepage. The list keeps those signals visible without forcing you into a wide table.
+      h1.admin-workspace__title Gallery library
+      p.admin-workspace__lead Compact list for archive and homepage card data.
     .admin-workspace__actions
       = link_to "New gallery", new_admin_gallery_path, class: "btn btn-primary"
 
-  .admin-overview-grid.admin-overview-grid--tight
-    - stats.each do |stat|
-      article.card.section-card.admin-stat-card
-        span.admin-stat-card__label = stat[:label]
-        strong.admin-stat-card__value = stat[:value]
-        span class="admin-pill admin-pill--#{stat[:tone]}" = stat[:note]
-
   - if @galleries.any?
-    .admin-record-grid.admin-record-grid--three
-      - @galleries.each do |gallery|
-        - filled_homepage_fields = Gallery::HOMEPAGE_FIELDS.count { |field| gallery.public_send(field).present? }
-        article.card.section-card.admin-record-card
-          .admin-record-card__head
-            .admin-record-card__title-group
-              p.admin-record-card__eyebrow = "Gallery ##{gallery.id}"
-              h2.admin-record-card__title = gallery.name
-              p.admin-record-card__summary = truncate(gallery.homepage_content(:homepage_description).to_s, length: 150)
-            .admin-badge-stack
-              span class="admin-pill #{gallery.visible? ? 'admin-pill--success' : 'admin-pill--muted'}" = gallery.visible? ? "Visible" : "Hidden"
-              - if gallery.primary_image.present?
-                span.admin-pill.admin-pill--accent Cover ready
-          .admin-record-card__metric-grid
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Images
-              strong.admin-record-card__metric-value = gallery.images.attachments.size
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Homepage fields
-              strong.admin-record-card__metric-value = "#{filled_homepage_fields}/#{Gallery::HOMEPAGE_FIELDS.size}"
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Overlay
-              strong.admin-record-card__metric-value = gallery.homepage_content(:homepage_overlay_title)
-            .admin-record-card__metric
-              span.admin-record-card__metric-label Tags
-              strong.admin-record-card__metric-value = gallery.homepage_tags_list.first(3).presence&.join(" · ") || "Missing"
-          .admin-record-card__footer
-            .admin-record-card__meta
-              span Updated #{time_ago_in_words(gallery.updated_at)} ago
-            .table-actions
-              = link_to "Edit", edit_admin_gallery_path(gallery), class: "btn btn-outline-primary btn-sm"
-              = link_to "Delete", admin_gallery_path(gallery), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+    .admin-galleries-bulk data-controller="bulk-selection"
+      .card.section-card.admin-list-card
+        .admin-list-card__head
+          .admin-list-card__copy
+            h2.admin-list-card__title Gallery records
+            p.admin-list-card__meta Compact rows with cover, visibility, homepage signals and quick actions.
+          .admin-badge-stack.admin-badge-stack--start
+            span.admin-pill.admin-pill--accent = "#{@galleries.size} galleries"
+            span class="admin-pill admin-pill--#{visible_count.positive? ? 'success' : 'muted'}" = "#{visible_count} visible"
+            span class="admin-pill admin-pill--#{cover_ready_count.positive? ? 'accent' : 'warning'}" = "#{cover_ready_count} covers"
+            span class="admin-pill admin-pill--#{tagged_count.positive? ? 'muted' : 'warning'}" = "#{tagged_count} tagged"
+        = form_with url: bulk_update_admin_galleries_path, method: :patch, class: "admin-bulk-form", id: "admin_galleries_bulk_form" do
+          = hidden_field_tag :visibility_state, "", data: { bulk_selection_target: "rolePreset" }
+          .admin-bulk-toolbar
+            .admin-bulk-toolbar__group
+              span.admin-bulk-toolbar__count data-bulk-selection-target="count" 0 selected
+            .admin-bulk-toolbar__group
+              = button_tag "Change visible", type: "button", class: "btn btn-outline-primary btn-sm", data: { bulk_selection_target: "action", action: "bulk-selection#openRoleModal" }, disabled: true
+              = button_tag "Delete selected", type: "submit", class: "btn btn-outline-danger btn-sm", name: "bulk_operation", value: "delete", data: { bulk_selection_target: "action", turbo_confirm: "Delete selected galleries?" }, disabled: true
+          .admin-list-table-wrap
+            table.table.table-hover.align-middle.mb-0.admin-home-table.admin-home-table--galleries
+              thead
+                tr
+                  th scope="col" class="admin-home-table__col-select"
+                    label.admin-row-select.admin-row-select--master
+                      = check_box_tag "select_all_galleries", "1", false, class: "admin-row-select__input", data: { bulk_selection_target: "master", action: "bulk-selection#toggleAll" }
+                      span.admin-row-select__mark
+                        svg viewBox="0 0 16 16" fill="none" aria-hidden="true"
+                          path d="M3.5 8.1 6.3 10.9 12.6 4.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"
+                  th scope="col" class="admin-home-table__col-home" Gallery
+                  th scope="col" class="admin-home-table__col-status" Homepage
+                  th scope="col" class="admin-home-table__col-updated" Updated
+                  th scope="col" class="admin-home-table__col-actions text-end" Actions
+              tbody
+                - @galleries.each do |gallery|
+                  - cover_attachment = gallery.primary_image
+                  - gallery_title = gallery.name.presence || "Gallery ##{gallery.id}"
+                  - thumb_label = gallery_title.to_s.strip.first(2).to_s.upcase.presence || "GL"
+                  - clean_description = gallery.homepage_content(:homepage_description).to_s.squish
+                  - filled_homepage_fields = Gallery::HOMEPAGE_FIELDS.count { |field| gallery.public_send(field).present? }
+                  - tag_preview = gallery.homepage_tags_list.first(3).join(" · ")
+                  tr data-bulk-selection-target="row"
+                    td class="admin-home-table__col-select"
+                      label.admin-row-select
+                        = check_box_tag "gallery_ids[]", gallery.id, false, id: "gallery_ids_#{gallery.id}", class: "admin-row-select__input", data: { bulk_selection_target: "checkbox", action: "bulk-selection#toggleOne" }
+                        span.admin-row-select__mark
+                          svg viewBox="0 0 16 16" fill="none" aria-hidden="true"
+                            path d="M3.5 8.1 6.3 10.9 12.6 4.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"
+                    td class="admin-home-table__col-home"
+                      .admin-home-table__identity
+                        .admin-home-table__thumb.admin-home-table__thumb--gallery
+                          - if cover_attachment.present?
+                            = image_tag cover_attachment.variant(resize_to_fill: [144, 112]), class: "admin-home-table__thumb-image", alt: gallery_title
+                          - else
+                            span.admin-home-table__thumb-fallback = thumb_label
+                        .admin-table-stack
+                          strong.admin-table-stack__title = gallery_title
+                          span.admin-table-stack__meta = "Gallery ##{gallery.id} • #{gallery.images.attachments.size} image#{'s' unless gallery.images.attachments.size == 1}"
+                          - if clean_description.present?
+                            p.admin-home-table__summary = clean_description
+                    td class="admin-home-table__col-status"
+                      .admin-home-table__signals
+                        .admin-badge-stack.admin-badge-stack--start
+                          span class="admin-pill admin-pill--#{gallery.visible? ? 'success' : 'muted'}" = gallery.visible? ? "Visible" : "Hidden"
+                          - if cover_attachment.present?
+                            span.admin-pill.admin-pill--accent Cover
+                        span.admin-home-table__signal = "#{filled_homepage_fields}/#{Gallery::HOMEPAGE_FIELDS.size} homepage fields"
+                        - if tag_preview.present?
+                          span.admin-home-table__signal = tag_preview
+                    td class="admin-home-table__col-updated"
+                      .admin-table-stack
+                        strong.admin-table-stack__title = l(gallery.updated_at, format: :short)
+                        span.admin-table-stack__meta = "#{time_ago_in_words(gallery.updated_at)} ago"
+                    td class="admin-home-table__col-actions text-end"
+                      .table-actions
+                        = link_to "Edit", edit_admin_gallery_path(gallery), class: "btn btn-outline-primary btn-sm"
+                        = link_to "Delete", admin_gallery_path(gallery), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-outline-danger btn-sm"
+      .admin-modal-backdrop.admin-bulk-modal data-bulk-selection-target="roleModal" data-action="click->bulk-selection#closeRoleModalOnBackdrop" hidden=true role="dialog" aria-modal="true" aria-labelledby="bulk-gallery-visibility-title"
+        .admin-modal__dialog.admin-bulk-modal__dialog role="document"
+          .section-card.admin-modal__card.admin-bulk-modal__card
+            .admin-modal__header
+              div
+                h4.admin-modal__title id="bulk-gallery-visibility-title" Change visible
+                p.admin-modal__subtitle Set one visibility state for all selected galleries.
+              button.admin-modal__close.btn-close type="button" aria-label="Close" data-action="click->bulk-selection#closeRoleModal"
+            .admin-modal__body
+              .admin-bulk-role-grid
+                button.admin-bulk-role-option type="submit" form="admin_galleries_bulk_form" name="bulk_operation" value="set_visibility" data-action="click->bulk-selection#setRolePreset" data-role-preset="visible" data-bulk-selection-target="roleOption"
+                  strong.admin-bulk-role-option__title Visible
+                  span.admin-bulk-role-option__copy Show selected galleries on the public list.
+                button.admin-bulk-role-option type="submit" form="admin_galleries_bulk_form" name="bulk_operation" value="set_visibility" data-action="click->bulk-selection#setRolePreset" data-role-preset="hidden" data-bulk-selection-target="roleOption"
+                  strong.admin-bulk-role-option__title Hidden
+                  span.admin-bulk-role-option__copy Keep selected galleries in admin only.
+              .admin-modal__actions
+                = button_tag "Cancel", type: "button", class: "btn btn-outline-secondary", data: { action: "bulk-selection#closeRoleModal" }
   - else
     .card.section-card.admin-empty-state
       h2.admin-empty-state__title No galleries yet
-      p.admin-empty-state__copy Add a gallery to start filling both the archive and the new homepage slots.
+      p.admin-empty-state__copy Add a gallery to start filling both the archive and the homepage slots.
       .admin-empty-state__actions
         = link_to "Create gallery", new_admin_gallery_path, class: "btn btn-primary"

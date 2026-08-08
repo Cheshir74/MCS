@@ -34,6 +34,9 @@ Rails.application.routes.draw do
         delete :destroy_attach
         patch :sort
       end
+      collection do
+        patch :bulk_update
+      end
     end
 
     resources :pages, except: [:show] 

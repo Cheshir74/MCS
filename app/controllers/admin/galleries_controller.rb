@@ -1,5 +1,5 @@
 class Admin::GalleriesController < Admin::AdminController
-  before_action :set_gallery, :only => [ :edit, :update, :destroy, :sort, :delete_image_attachment ]
+  before_action :set_gallery, :only => [ :edit, :update, :destroy, :sort, :delete_image_attachment, :destroy_attach ]
 
   def new
     @gallery = Gallery.new
@@ -15,6 +15,25 @@ class Admin::GalleriesController < Admin::AdminController
   end
 
   def update
+    if params[:delete_selected].present?
+      selected_image_ids = Array(params[:delete_img_ids]).reject(&:blank?)
+
+      if selected_image_ids.blank?
+        return redirect_back(fallback_location: edit_admin_gallery_path(@gallery), alert: "No photos selected")
+      end
+
+      attachments = @gallery.images.attachments.where(id: selected_image_ids)
+
+      if attachments.exists?
+        attachments.find_each(&:purge)
+        flash[:notice] = "Selected photos deleted"
+      else
+        flash[:alert] = "Selected photos were not found"
+      end
+
+      return redirect_back(fallback_location: edit_admin_gallery_path(@gallery))
+    end
+
     if @gallery.update(gallery_params)
       if params[:gallery][:images].present?
         params[:gallery][:images].each do |image|
@@ -46,6 +65,59 @@ class Admin::GalleriesController < Admin::AdminController
     redirect_to admin_galleries_path
   end
 
+  def bulk_update
+    gallery_ids = selected_gallery_ids
+    return redirect_to(admin_galleries_path, alert: "Select at least one gallery.") if gallery_ids.empty?
+
+    galleries = Gallery.where(id: gallery_ids)
+
+    case params[:bulk_operation]
+    when "set_visibility"
+      visible_state = params[:visibility_state].to_s
+      return redirect_to(admin_galleries_path, alert: "Choose a visibility state first.") if visible_state.blank?
+
+      visible_value =
+        case visible_state
+        when "visible"
+          true
+        when "hidden"
+          false
+        else
+          nil
+        end
+
+      return redirect_to(admin_galleries_path, alert: "Choose a valid visibility state.") if visible_value.nil?
+
+      updated_count = update_gallery_visibility(galleries, visible_value)
+      notice_message =
+        if visible_value
+          "Made #{updated_count} galler#{updated_count == 1 ? 'y' : 'ies'} visible."
+        else
+          "Hidden #{updated_count} galler#{updated_count == 1 ? 'y' : 'ies'}."
+        end
+
+      redirect_to admin_galleries_path, notice: notice_message
+    when "delete"
+      deleted_count = 0
+      failures = []
+
+      galleries.find_each do |gallery|
+        if gallery.destroy
+          deleted_count += 1
+        else
+          failures.concat(gallery.errors.full_messages)
+        end
+      end
+
+      flash_options = {}
+      flash_options[:notice] = "Deleted #{deleted_count} galler#{deleted_count == 1 ? 'y' : 'ies'}." if deleted_count.positive?
+      flash_options[:alert] = failures.uniq.to_sentence if failures.any?
+      redirect_to admin_galleries_path, flash_options.presence || { alert: "No galleries were deleted." }
+    else
+      redirect_to admin_galleries_path, alert: "Choose a bulk action first."
+    end
+  end
+
   def delete_image_attachment
     attachment_id = params[:image_id] || params[:format]
     if attachment_id.present?
@@ -59,19 +131,34 @@ class Admin::GalleriesController < Admin::AdminController
   end
 
   def destroy_attach
-    attachments = ActiveStorage::Attachment.where(id: params[:delete_img_ids])
-    attachments.map(&:purge)
-    redirect_back(fallback_location: edit_admin_gallery_path)
+    selected_image_ids = Array(params[:delete_img_ids]).reject(&:blank?)
+
+    if selected_image_ids.blank?
+      return redirect_back(fallback_location: edit_admin_gallery_path(@gallery), alert: "No photos selected")
+    end
+
+    attachments = @gallery.images.attachments.where(id: selected_image_ids)
+
+    if attachments.exists?
+      attachments.find_each(&:purge)
+      flash[:notice] = "Selected photos deleted"
+    else
+      flash[:alert] = "Selected photos were not found"
+    end
+
+    redirect_back(fallback_location: edit_admin_gallery_path(@gallery))
   end
   
   def sort 
-    params[:images].each_with_index do |id, position|
-      ActiveStorage::Attachment.where(id: id).update_all(position: position + 1)
-      
-   end
-   respond_to do |format|
-       format.js
-   end
+    return head :bad_request unless params[:images]
+
+    @gallery.images.attachments.where(id: params[:images]).index_by(&:id).then do |attachments|
+      params[:images].each_with_index do |id, position|
+        attachments[id.to_i]&.update_column(:position, position + 1)
+      end
+    end
+
+    head :ok
   end
 
 
@@ -83,5 +170,19 @@ class Admin::GalleriesController < Admin::AdminController
 
   def gallery_params
     params.require(:gallery).permit(:name, :visible, *Gallery::HOMEPAGE_FIELDS)
+  end
+
+  def selected_gallery_ids
+    Array(params[:gallery_ids]).reject(&:blank?).map(&:to_i).uniq
+  end
+
+  def update_gallery_visibility(galleries, visible)
+    updated_count = 0
+
+    galleries.find_each do |gallery|
+      updated_count += 1 if gallery.update(visible: visible)
+    end
+
+    updated_count
   end
 end

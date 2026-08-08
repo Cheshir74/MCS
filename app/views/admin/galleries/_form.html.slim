@@ -1,4 +1,4 @@
-- nav_sections = [{ id: "gallery-basics", title: "Basics", hint: "name and visibility" }, { id: "gallery-copy", title: "Homepage copy", hint: "title and description" }, { id: "gallery-meta", title: "Meta & tags", hint: "overlay and labels" }, { id: "gallery-media", title: "Media", hint: "cover and ordering" }]
+- nav_sections = [{ id: "gallery-basics", title: "Basics", hint: "name and visibility" }, { id: "gallery-copy", title: "Homepage copy", hint: "titles and text" }, { id: "gallery-meta", title: "Details & tags", hint: "shared labels" }, { id: "gallery-media", title: "Media", hint: "photos and order" }]
 - attached_images_count = gallery.images.attachments.size
 - filled_homepage_fields = Gallery::HOMEPAGE_FIELDS.count { |field| gallery.public_send(field).present? }
 - summary_rows = [["Status", gallery.visible? ? "Visible" : "Hidden", gallery.visible? ? "success" : "muted"], ["Images", "#{attached_images_count} file#{'s' unless attached_images_count == 1}", attached_images_count.positive? ? "accent" : "warning"], ["Cover", gallery.primary_image.present? ? "Ready" : "Missing", gallery.primary_image.present? ? "success" : "warning"], ["Homepage fields", "#{filled_homepage_fields}/#{Gallery::HOMEPAGE_FIELDS.size}", filled_homepage_fields.positive? ? "accent" : "muted"]]
@@ -76,58 +76,57 @@
         .card-body
           .admin-section-grid.admin-section-grid--two
             .input-card
-              h5.input-card__title Homepage title
-              p.input-card__hint Used on the larger homepage cards
+              h5.input-card__title Large card title
+              p.input-card__hint Lead, feature and compact cards
               = f.text_field :homepage_title, class: "form-control input-card__control"
             .input-card
-              h5.input-card__title Overlay title
-              p.input-card__hint Short title shown on the mini-card overlay
+              h5.input-card__title Mini-card title
+              p.input-card__hint Text on the photo overlay for mini cards
               = f.text_field :homepage_overlay_title, class: "form-control input-card__control"
             .input-card.admin-editor__full
-              h5.input-card__title Homepage description
-              p.input-card__hint Main caption text for lead, feature and compact cards
+              h5.input-card__title Card description
+              p.input-card__hint Caption text for larger homepage cards
               = f.text_area :homepage_description, class: "form-control input-card__control", rows: 4
             .input-card
-              h5.input-card__title Footer label 1
+              h5.input-card__title Footer note 1
+              p.input-card__hint Bottom label on larger cards
               = f.text_field :homepage_footer_primary, class: "form-control input-card__control"
             .input-card
-              h5.input-card__title Footer label 2
+              h5.input-card__title Footer note 2
+              p.input-card__hint Second bottom label on larger cards
               = f.text_field :homepage_footer_secondary, class: "form-control input-card__control"
 
       section.card.section-card.admin-editor__section id="gallery-meta"
         .card-header
           h4.card-title
             span.card-chip Homepage
-            |  Meta, overlay & tags
-          p.card-subtitle.text-muted.small Small labels that shape the card hierarchy on the new homepage
+            |  Details & tags
+          p.card-subtitle.text-muted.small Shared labels for large cards and mini-card overlays
         .card-body
           .admin-section-grid.admin-section-grid--three
             .input-card
-              h5.input-card__title Meta 1
+              h5.input-card__title Location
+              p.input-card__hint Shown on large cards and mini overlays
               = f.text_field :homepage_meta_primary, class: "form-control input-card__control", placeholder: "Moscow"
             .input-card
-              h5.input-card__title Meta 2
+              h5.input-card__title Date / period
+              p.input-card__hint Shown on larger homepage cards
               = f.text_field :homepage_meta_secondary, class: "form-control input-card__control", placeholder: "July 2026"
             .input-card
-              h5.input-card__title Meta 3
-              = f.text_field :homepage_meta_tertiary, class: "form-control input-card__control", placeholder: "Exhibition opening"
-            .input-card
-              h5.input-card__title Overlay meta 1
-              = f.text_field :homepage_overlay_meta_primary, class: "form-control input-card__control"
-            .input-card
-              h5.input-card__title Overlay meta 2
-              = f.text_field :homepage_overlay_meta_secondary, class: "form-control input-card__control"
+              h5.input-card__title Story type
+              p.input-card__hint Shown on large cards and mini overlays
+              = f.text_field :homepage_meta_tertiary, class: "form-control input-card__control", placeholder: "Reportage"
             .input-card.admin-editor__full
-              h5.input-card__title Tags
-              p.input-card__hint Comma-separated tags displayed under the three mini-cards
+              h5.input-card__title Mini-card tags
+              p.input-card__hint Comma-separated labels displayed under mini cards
               = f.text_field :homepage_tags, class: "form-control input-card__control", placeholder: "backstage, details, chronicle"
 
       section.card.section-card.admin-editor__section id="gallery-media"
         .card-header
           h4.card-title
             span.card-chip Media
-            |  Cover & ordering
-          p.card-subtitle.text-muted.small The first image in the ordered list becomes the homepage cover
+            |  Images
+          p.card-subtitle.text-muted.small Upload gallery photos and arrange their order.
         .card-body
           .home-media-grid
             .home-media-grid__dropzone
@@ -137,25 +136,13 @@
                 .dropzone-msg.dz-message.needsclick
                   i.fa-solid.fa-cloud-arrow-up.dropzone-icon aria-hidden="true"
                   span.dropzone-title Drag files here or click to browse
-                  span.dropzone-subtitle.text-muted.small Reorder below to control the homepage cover frame
-            .home-media-grid__info
-              .admin-note-stack
-                .admin-note
-                  strong Homepage cover
-                  p.mb-0 The first ordered image is used as the lead visual when this gallery is placed on the homepage.
-                .admin-note
-                  strong Mini cards
-                  p.mb-0 Overlay title, overlay meta and tags come from the fields above, not from the file names.
-                .admin-note
-                  strong Public gallery
-                  p.mb-0 All uploaded files remain available inside the gallery page itself.
 
       - if gallery.persisted?
         section.card.section-card.admin-editor__section
           .section-header
             div
               h4.section-header__title Media library
-              p.section-header__meta Manage, reorder or delete uploaded photos
+              p.section-header__meta Drag to reorder. The green bar marks the cover.
           = render "admin/galleries/images"
 
   .form-actions.mt-4.admin-editor__footer-actions

@@ -10,10 +10,14 @@ class Gallery < ApplicationRecord
     homepage_footer_primary
     homepage_footer_secondary
     homepage_overlay_title
-    homepage_overlay_meta_primary
-    homepage_overlay_meta_secondary
     homepage_tags
   ].freeze
+
+  LEGACY_HOMEPAGE_FIELDS = %i[
+    homepage_overlay_meta_primary
+    homepage_overlay_meta_secondary
+  ].freeze
+
   HOMEPAGE_DEFAULTS = {
     homepage_description: "Серия для публикации и визуального архива события.",
     homepage_meta_primary: "Москва",
@@ -21,12 +25,10 @@ class Gallery < ApplicationRecord
     homepage_meta_tertiary: "Репортаж",
     homepage_footer_primary: "Редакционный отбор",
     homepage_footer_secondary: "Съёмка в день события",
-    homepage_overlay_meta_primary: "Ключевой момент",
-    homepage_overlay_meta_secondary: "Связующий кадр",
     homepage_tags: "backstage, детали, хроника"
   }.freeze
 
-  store_accessor :homepage_settings, *HOMEPAGE_FIELDS
+  store_accessor :homepage_settings, *(HOMEPAGE_FIELDS + LEGACY_HOMEPAGE_FIELDS)
 
   def ordered_images
     images.attachments.includes(:blob).sort_by { |attachment| [attachment.position || 0, attachment.created_at] }

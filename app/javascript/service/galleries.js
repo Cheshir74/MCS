@@ -1,4 +1,3 @@
-import sortable  from  "html5sortable/dist/html5sortable.cjs"
 import lightGallery from "lightgallery"
 import Rails from '@rails/ujs'
 
@@ -22,20 +21,84 @@ $(document).on('turbolinks:load', function () {
         download: false,
         pager: true
     });
-    sortable('.sortable');
-    if (typeof sortable('.sortable')[0] != 'undefined'){
-        sortable('.sortable')[0].addEventListener('sortupdate', function(e) {
-          var dataIDList = $(this).children().map(function(position){
-             $(this).find( ".position" ).text(position + 1)
-             return "images[]=" + $(this).data("id");
-          }).get().join("&");
-          Rails.ajax({
-              url: "sort",
-              type: "PATCH",
-              data: dataIDList,
-            });
-        });
-      }
+
+    document.querySelectorAll('.sortable').forEach(enableNativeSort);
 
     
 });
+
+function enableNativeSort(container) {
+  if (container.dataset.nativeSortableReady === "true") return;
+
+  var draggedItem = null;
+  container.dataset.nativeSortableReady = "true";
+
+  sortableItems(container).forEach(function(item) {
+    item.setAttribute("draggable", "true");
+  });
+
+  container.addEventListener("dragstart", function(event) {
+    if (event.target.closest("a, button, label, input")) {
+      event.preventDefault();
+      return;
+    }
+
+    draggedItem = event.target.closest("[data-id]");
+    if (!draggedItem || draggedItem.parentElement !== container) return;
+
+    draggedItem.classList.add("is-dragging");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", draggedItem.dataset.id || "");
+  });
+
+  container.addEventListener("dragover", function(event) {
+    if (!draggedItem) return;
+
+    var target = event.target.closest("[data-id]");
+    if (!target || target === draggedItem || target.parentElement !== container) return;
+
+    event.preventDefault();
+
+    var rect = target.getBoundingClientRect();
+    var centerY = rect.top + rect.height / 2;
+    var centerX = rect.left + rect.width / 2;
+    var insertAfter = event.clientY > centerY || (Math.abs(event.clientY - centerY) < rect.height / 4 && event.clientX > centerX);
+
+    container.insertBefore(draggedItem, insertAfter ? target.nextSibling : target);
+  });
+
+  container.addEventListener("drop", function(event) {
+    if (!draggedItem) return;
+
+    event.preventDefault();
+    persistNativeOrder(container);
+  });
+
+  container.addEventListener("dragend", function() {
+    if (draggedItem) {
+      draggedItem.classList.remove("is-dragging");
+    }
+    draggedItem = null;
+  });
+}
+
+function sortableItems(container) {
+  return Array.from(container.children).filter(function(item) {
+    return item.dataset.id;
+  });
+}
+
+function persistNativeOrder(container) {
+  var dataIDList = sortableItems(container).map(function(item, position) {
+    $(item).find(".position").text(position + 1);
+    return "images[]=" + encodeURIComponent(item.dataset.id);
+  }).join("&");
+
+  if (!dataIDList) return;
+
+  Rails.ajax({
+    url: "sort",
+    type: "PATCH",
+    data: dataIDList,
+  });
+}

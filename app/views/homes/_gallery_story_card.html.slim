@@ -1,6 +1,6 @@
 - image = gallery&.primary_image
 - meta_items = [gallery&.homepage_content(:homepage_meta_primary), gallery&.homepage_content(:homepage_meta_secondary), gallery&.homepage_content(:homepage_meta_tertiary)].reject(&:blank?)
-- overlay_meta_items = [gallery&.homepage_content(:homepage_overlay_meta_primary), gallery&.homepage_content(:homepage_overlay_meta_secondary)].reject(&:blank?)
+- mini_meta_items = [gallery&.homepage_content(:homepage_meta_primary), gallery&.homepage_content(:homepage_meta_tertiary)].reject(&:blank?)
 - footer_items = [gallery&.homepage_content(:homepage_footer_primary), gallery&.homepage_content(:homepage_footer_secondary)].reject(&:blank?)
 - title = gallery&.homepage_content(mini ? :homepage_overlay_title : :homepage_title).presence || "Серия"
 - description = gallery&.homepage_content(:homepage_description)
@@ -13,9 +13,9 @@ article class="story-card #{card_class}"
       .story-card__placeholder
     - if mini
       .story-card__overlay
-        - if overlay_meta_items.present?
+        - if mini_meta_items.present?
           .story-card__meta
-            - overlay_meta_items.each do |item|
+            - mini_meta_items.each do |item|
               span = item
         p.story-card__overlay-title = title
     - if gallery.present?

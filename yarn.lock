@@ -997,7 +997,6 @@ __metadata:
     esbuild: "npm:^0.23.0"
     framer-motion: "npm:^12.23.12"
     fslightbox-react: "npm:^1.8.0"
-    html5sortable: "npm:^0.14.0"
     jquery: "npm:^3.7.1"
     lg-fullscreen: "npm:^1.2.1"
     lg-hash: "npm:^1.0.4"
@@ -1016,7 +1015,6 @@ __metadata:
     react-photo-gallery: "npm:^8.0.0"
     react_ujs: "npm:^3.2.1"
     sass: "npm:^1.77.5"
-    sortablejs: "npm:^1.15.2"
     stimulus: "npm:^3.2.2"
     swiper: "npm:^11.1.12"
     toastr: "npm:^2.1.4"
@@ -2367,13 +2365,6 @@ __metadata:
   peerDependencies:
     react: 0.14 || 15 || 16 || 17
   checksum: 10c0/9e2242f83000e15613df4e3b062a0c613500315e3d731a37efd1d12bf607c80100ec7766ed7e37d13b26346b34e47208e944f2baeb8f204c6841c5549f358495
-  languageName: node
-  linkType: hard
-
-"html5sortable@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "html5sortable@npm:0.14.0"
-  checksum: 10c0/b6f3bcb10763087af7d6a992ad3bdd371590be2d39e59b4f68013c63583c2d4491917f4ef7de59cfd6c72d0d58e4e687b59bbf739b1e58bc4c0a4c770c907656
   languageName: node
   linkType: hard
 
@@ -4301,13 +4292,6 @@ __metadata:
     ip-address: "npm:^9.0.5"
     smart-buffer: "npm:^4.2.0"
   checksum: 10c0/d54a52bf9325165770b674a67241143a3d8b4e4c8884560c4e0e078aace2a728dffc7f70150660f51b85797c4e1a3b82f9b7aa25e0a0ceae1a243365da5c51a7
-  languageName: node
-  linkType: hard
-
-"sortablejs@npm:^1.15.2":
-  version: 1.15.2
-  resolution: "sortablejs@npm:1.15.2"
-  checksum: 10c0/9b9101f47a46976070f1e7ab45d1850a8754f6e71252506868731292af46a7f1a3add03914fe074cd2a6bdfe8cd6cad149cfa260fe8a53475f5306ae679bf38c
   languageName: node
   linkType: hard
 

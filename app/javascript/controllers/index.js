@@ -49,6 +49,9 @@ application.register("home-editor", HomeEditorController)
 import GalleryPreviewController from "./gallery_preview_controller"
 application.register("gallery-preview", GalleryPreviewController)
 
+import GallerySortController from "./gallery_sort_controller"
+application.register("gallery-sort", GallerySortController)
+
 import SelectMenuController from "./select_menu_controller"
 application.register("select-menu", SelectMenuController)
 
