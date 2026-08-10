@@ -4327,6 +4327,7 @@ body.admin-layout .admin-editor--home .admin-media-card--portrait .dropzone-mode
   position: relative;
   display: block;
   width: min(100%, 660px);
+  margin-inline: auto;
   column-count: 3;
   column-gap: 10px;
   line-height: 0;
