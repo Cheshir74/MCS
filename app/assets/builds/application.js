@@ -91662,9 +91662,11 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
   const [visiblePhotos, setVisiblePhotos] = (0, import_react3.useState)([]);
   const [rowGroups, setRowGroups] = (0, import_react3.useState)([]);
   const [windowWidth, setWindowWidth] = (0, import_react3.useState)(typeof window !== "undefined" ? window.innerWidth : 1200);
+  const [galleryWidth, setGalleryWidth] = (0, import_react3.useState)(typeof window !== "undefined" ? window.innerWidth : 1200);
   const [visibleSet, setVisibleSet] = (0, import_react3.useState)(/* @__PURE__ */ new Set());
   const isSafari = typeof navigator !== "undefined" && /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
   const sessionSeedRef = (0, import_react3.useRef)(Math.floor(Date.now() / 3e4));
+  const galleryRef = (0, import_react3.useRef)(null);
   const MAX_CONTAINER_WIDTH = 1320;
   const ROW_GAP = 10;
   const handleClose = (0, import_react3.useCallback)(() => {
@@ -91811,6 +91813,24 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   (0, import_react3.useEffect)(() => {
+    const node = galleryRef.current;
+    if (!node) return;
+    const updateGalleryWidth = () => {
+      const nextWidth = node.getBoundingClientRect().width;
+      if (nextWidth > 0) {
+        setGalleryWidth((currentWidth) => Math.abs(currentWidth - nextWidth) < 1 ? currentWidth : nextWidth);
+      }
+    };
+    updateGalleryWidth();
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateGalleryWidth);
+      return () => window.removeEventListener("resize", updateGalleryWidth);
+    }
+    const observer = new ResizeObserver(updateGalleryWidth);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [direction]);
+  (0, import_react3.useEffect)(() => {
     visiblePhotos.forEach((photo, i) => {
       const photoIndex = typeof photo?.originalIndex === "number" ? photo.originalIndex : i;
       setTimeout(() => {
@@ -91841,8 +91861,14 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
     setToggler((t) => !t);
   }, [fullSources.length]);
   const { rowHeight, portraitRowHeight, containerWidth } = getLayoutParams();
+  const columnContainerWidth = galleryWidth || windowWidth;
+  const columnWidth = columnCount > 0 ? Math.max(1, (columnContainerWidth - (columnCount - 1) * ROW_GAP) / columnCount) : 0;
+  const landscapeHeights = visiblePhotos.filter((photo) => photo?.orientation === "landscape" && Number.isFinite(photo.ratio) && photo.ratio > 0).map((photo) => columnWidth / photo.ratio).sort((first, second) => first - second);
+  const middleLandscapeIndex = Math.floor(landscapeHeights.length / 2);
+  const medianLandscapeHeight = landscapeHeights.length ? landscapeHeights.length % 2 === 0 ? (landscapeHeights[middleLandscapeIndex - 1] + landscapeHeights[middleLandscapeIndex]) / 2 : landscapeHeights[middleLandscapeIndex] : columnWidth / 1.5;
+  const portraitColumnMaxHeight = columnCount > 1 && medianLandscapeHeight > 0 ? Math.round(medianLandscapeHeight * 2 + ROW_GAP) : null;
   const galleryStyle = direction === "row" ? { display: "flex", flexDirection: "column", gap: `${ROW_GAP}px`, width: "100%", maxWidth: `${MAX_CONTAINER_WIDTH}px`, margin: "0 auto" } : { columnCount, columnGap: `${ROW_GAP}px`, width: "100%" };
-  return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("div", { className: "gallery", style: galleryStyle }, direction === "row" ? rowGroups.map((row, rowIndex) => {
+  return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement("div", { className: "gallery", ref: galleryRef, style: galleryStyle }, direction === "row" ? rowGroups.map((row, rowIndex) => {
     const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
     const totalWidthOriginal = (row.photos || []).reduce((sum, p) => sum + (p.ratio || 1) * currentRowHeight, 0) || 1;
     const availableWidth = Math.max(1, containerWidth - ((row.photos?.length || 0) - 1) * ROW_GAP);
@@ -91898,39 +91924,48 @@ function GalleryApp({ photos, direction = "row", batchSize = 20 }) {
         );
       })
     );
-  }) : visiblePhotos.map((photo, i) => /* @__PURE__ */ import_react3.default.createElement(
-    "div",
-    {
-      key: i,
-      style: {
-        breakInside: "avoid",
-        marginBottom: `${ROW_GAP}px`,
-        borderRadius: "8px",
-        overflow: "hidden",
-        cursor: "pointer",
-        opacity: visibleSet.has(typeof photo?.originalIndex === "number" ? photo.originalIndex : i) ? 1 : 0,
-        transition: "opacity 0.5s ease"
-      },
-      onClick: () => {
-        void openWithSlide(i + 1);
-      }
-    },
-    /* @__PURE__ */ import_react3.default.createElement(
-      "img",
+  }) : visiblePhotos.map((photo, i) => {
+    const photoIndex = typeof photo?.originalIndex === "number" ? photo.originalIndex : i;
+    const isPortrait = photo?.orientation === "portrait";
+    const shouldCropPortrait = Boolean(isPortrait && portraitColumnMaxHeight);
+    return /* @__PURE__ */ import_react3.default.createElement(
+      "div",
       {
-        src: photo.thumbnail_webp || photo.thumbnail || photo.src_webp || photo.src,
-        alt: photo.alt || "",
+        key: i,
         style: {
-          width: "100%",
-          height: "auto",
-          objectFit: "contain",
-          opacity: visibleSet.has(typeof photo?.originalIndex === "number" ? photo.originalIndex : i) ? 1 : 0,
+          breakInside: "avoid",
+          marginBottom: `${ROW_GAP}px`,
+          borderRadius: "8px",
+          overflow: "hidden",
+          cursor: "pointer",
+          height: shouldCropPortrait ? `${portraitColumnMaxHeight}px` : void 0,
+          backgroundColor: shouldCropPortrait ? "#000" : void 0,
+          opacity: visibleSet.has(photoIndex) ? 1 : 0,
           transition: "opacity 0.5s ease"
         },
-        loading: "lazy"
-      }
-    )
-  ))), Array.isArray(photos) && photos.length > 0 && /* @__PURE__ */ import_react3.default.createElement(
+        onClick: () => {
+          void openWithSlide(i + 1);
+        }
+      },
+      /* @__PURE__ */ import_react3.default.createElement(
+        "img",
+        {
+          src: photo.thumbnail_webp || photo.thumbnail || photo.src_webp || photo.src,
+          alt: photo.alt || "",
+          style: {
+            display: "block",
+            width: "100%",
+            height: shouldCropPortrait ? "100%" : "auto",
+            objectFit: shouldCropPortrait ? "cover" : "contain",
+            objectPosition: "center",
+            opacity: visibleSet.has(photoIndex) ? 1 : 0,
+            transition: "opacity 0.5s ease"
+          },
+          loading: "lazy"
+        }
+      )
+    );
+  })), Array.isArray(photos) && photos.length > 0 && /* @__PURE__ */ import_react3.default.createElement(
     import_fslightbox_react.default,
     {
       sources: fullSources,
@@ -93133,46 +93168,120 @@ var gallery_preview_controller_default = class extends Controller {
 // app/javascript/controllers/gallery_sort_controller.js
 var gallery_sort_controller_default = class extends Controller {
   static values = {
-    url: String
+    url: String,
+    cover: Boolean
   };
   connect() {
     this.draggedItem = null;
+    this.orderChanged = false;
     this.handleDragStart = this.onDragStart.bind(this);
     this.handleDragOver = this.onDragOver.bind(this);
     this.handleDrop = this.onDrop.bind(this);
     this.handleDragEnd = this.onDragEnd.bind(this);
+    this.element.addEventListener("dragover", this.handleDragOver);
+    this.element.addEventListener("drop", this.handleDrop);
     this.items.forEach((item) => this.enableItem(item));
+    this.updateCoverClass();
   }
   disconnect() {
+    this.element.removeEventListener("dragover", this.handleDragOver);
+    this.element.removeEventListener("drop", this.handleDrop);
     this.items.forEach((item) => this.disableItem(item));
+    this.placeholder?.remove();
+    this.indicator?.remove();
+    this.element.classList.remove("is-sorting");
   }
   onDragStart(event2) {
-    if (event2.target.closest("button, a, label, input")) {
+    if (this.blockedDragTarget(event2.target)) {
       event2.preventDefault();
       return;
     }
     this.draggedItem = event2.currentTarget;
+    this.orderChanged = false;
+    this.initialOrder = this.serializedOrder();
+    this.pendingReferenceItem = this.draggedItem.nextElementSibling;
+    if (this.staticIndicatorMode) {
+      this.indicator = this.createIndicator();
+      this.element.appendChild(this.indicator);
+      this.positionIndicator(this.pendingReferenceItem);
+    } else {
+      this.placeholder = this.createPlaceholder(this.draggedItem);
+      this.element.insertBefore(this.placeholder, this.draggedItem.nextSibling);
+    }
+    this.element.classList.add("is-sorting");
     this.draggedItem.classList.add("is-dragging");
-    event2.dataTransfer.effectAllowed = "move";
-    event2.dataTransfer.setData("text/plain", this.draggedItem.dataset.id || "");
+    this.updateCoverClass();
+    if (event2.dataTransfer) {
+      event2.dataTransfer.effectAllowed = "move";
+      event2.dataTransfer.setData("text/plain", this.draggedItem.dataset.id || "");
+    }
+    if (!this.staticIndicatorMode) {
+      requestAnimationFrame(() => this.draggedItem?.classList.add("is-dragging-hidden"));
+    }
   }
   onDragOver(event2) {
+    if (!this.draggedItem) return;
     event2.preventDefault();
-    const target = event2.target.closest("[data-id]");
-    if (!target || target === this.draggedItem || target.parentElement !== this.element) return;
-    const targetRect = target.getBoundingClientRect();
-    const targetCenterY = targetRect.top + targetRect.height / 2;
-    const targetCenterX = targetRect.left + targetRect.width / 2;
-    const shouldInsertAfter = event2.clientY > targetCenterY || Math.abs(event2.clientY - targetCenterY) < targetRect.height / 4 && event2.clientX > targetCenterX;
-    this.element.insertBefore(this.draggedItem, shouldInsertAfter ? target.nextSibling : target);
+    if (event2.dataTransfer) event2.dataTransfer.dropEffect = "move";
+    if (this.staticIndicatorMode) {
+      const referenceItem2 = this.columnReferenceItemFor(event2.clientX, event2.clientY);
+      if (referenceItem2 === this.pendingReferenceItem) return;
+      this.pendingReferenceItem = referenceItem2;
+      this.positionIndicator(referenceItem2);
+      this.orderChanged = true;
+      this.updateCoverClass();
+      return;
+    }
+    if (!this.placeholder) return;
+    const referenceItem = this.referenceItemFor(event2.clientX, event2.clientY);
+    if (referenceItem === this.placeholder?.nextElementSibling) return;
+    this.element.insertBefore(this.placeholder, referenceItem);
+    this.orderChanged = true;
+    this.updateCoverClass();
   }
   onDrop(event2) {
+    if (!this.draggedItem) return;
     event2.preventDefault();
-    this.persistOrder();
+    this.commitDragPosition();
+    this.updateCoverClass();
+    if (this.shouldPersistOrder()) {
+      this.persistOrder();
+      this.orderChanged = false;
+    }
+    this.cleanupDrag();
   }
   onDragEnd() {
-    this.draggedItem?.classList.remove("is-dragging");
+    if (!this.draggedItem) return;
+    if (this.staticIndicatorMode) {
+      this.cleanupDrag();
+      return;
+    }
+    this.commitDragPosition();
+    this.updateCoverClass();
+    if (this.shouldPersistOrder()) {
+      this.persistOrder();
+    }
+    this.cleanupDrag();
+  }
+  commitDragPosition() {
+    this.draggedItem?.classList.remove("is-dragging-hidden");
+    if (this.staticIndicatorMode) {
+      this.element.insertBefore(this.draggedItem, this.pendingReferenceItem);
+    } else if (this.placeholder?.parentElement) {
+      this.element.insertBefore(this.draggedItem, this.placeholder);
+    }
+  }
+  cleanupDrag() {
+    this.draggedItem?.classList.remove("is-dragging", "is-dragging-hidden");
+    this.placeholder?.remove();
+    this.indicator?.remove();
+    this.element.classList.remove("is-sorting");
     this.draggedItem = null;
+    this.placeholder = null;
+    this.indicator = null;
+    this.pendingReferenceItem = null;
+    this.orderChanged = false;
+    this.initialOrder = null;
   }
   persistOrder() {
     if (!this.hasUrlValue) return;
@@ -93194,19 +93303,147 @@ var gallery_sort_controller_default = class extends Controller {
   csrfToken() {
     return document.querySelector("meta[name='csrf-token']")?.content || "";
   }
+  blockedDragTarget(target) {
+    return !target.closest("[data-gallery-sort-handle]");
+  }
+  referenceItemFor(pointerX, pointerY) {
+    const candidates = this.items.filter((item) => item !== this.draggedItem);
+    if (candidates.length === 0) return null;
+    const rows = candidates.reduce((collection, item) => {
+      const rect = item.getBoundingClientRect();
+      const centerY = rect.top + rect.height / 2;
+      const row2 = collection.find((entry) => Math.abs(entry.centerY - centerY) <= Math.min(entry.height, rect.height) / 2);
+      if (row2) {
+        row2.items.push({ item, rect });
+        row2.top = Math.min(row2.top, rect.top);
+        row2.bottom = Math.max(row2.bottom, rect.bottom);
+        row2.height = Math.max(row2.height, rect.height);
+        row2.centerY = row2.top + (row2.bottom - row2.top) / 2;
+      } else {
+        collection.push({
+          top: rect.top,
+          bottom: rect.bottom,
+          height: rect.height,
+          centerY,
+          items: [{ item, rect }]
+        });
+      }
+      return collection;
+    }, []).sort((first, second) => first.top - second.top);
+    const firstRow = rows[0];
+    const lastRow = rows[rows.length - 1];
+    let row = rows.find((entry) => pointerY >= entry.top && pointerY <= entry.bottom);
+    if (!row) {
+      if (pointerY < firstRow.top) row = firstRow;
+      else if (pointerY > lastRow.bottom) return null;
+      else row = rows.find((entry) => pointerY < entry.top) || lastRow;
+    }
+    const rowItems = row.items.sort((first, second) => first.rect.left - second.rect.left);
+    const target = rowItems.find(({ rect }) => pointerX < rect.left + rect.width / 2);
+    if (target) return target.item;
+    const rowIndex = rows.indexOf(row);
+    const nextRow = rows[rowIndex + 1];
+    if (!nextRow) return null;
+    return nextRow.items.sort((first, second) => first.rect.left - second.rect.left)[0]?.item || null;
+  }
+  columnReferenceItemFor(pointerX, pointerY) {
+    const candidates = this.items.filter((item) => item !== this.draggedItem);
+    if (candidates.length === 0) return null;
+    const containingItem = candidates.find((item) => {
+      const rect = item.getBoundingClientRect();
+      return pointerX >= rect.left && pointerX <= rect.right && pointerY >= rect.top && pointerY <= rect.bottom;
+    });
+    if (containingItem) {
+      const rect = containingItem.getBoundingClientRect();
+      return pointerY < rect.top + rect.height / 2 ? containingItem : this.nextCandidateAfter(candidates, containingItem);
+    }
+    const closest = candidates.reduce((best, item) => {
+      const rect = item.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const distance = (pointerX - centerX) ** 2 + (pointerY - centerY) ** 2;
+      if (!best || distance < best.distance) return { item, rect, centerY, distance };
+      return best;
+    }, null);
+    return pointerY < closest.centerY ? closest.item : this.nextCandidateAfter(candidates, closest.item);
+  }
+  nextCandidateAfter(candidates, item) {
+    return candidates[candidates.indexOf(item) + 1] || null;
+  }
+  serializedOrder() {
+    return this.items.map((item) => item.dataset.id).join(",");
+  }
+  shouldPersistOrder() {
+    return this.orderChanged && this.serializedOrder() !== this.initialOrder;
+  }
+  updateCoverClass() {
+    if (!this.coverValue) return;
+    const firstItem = this.currentOrderedItems()[0];
+    this.items.forEach((item) => item.classList.remove("admin-gallery-tile--cover"));
+    firstItem?.classList.add("admin-gallery-tile--cover");
+  }
+  currentOrderedItems() {
+    if (this.staticIndicatorMode && this.draggedItem) {
+      const orderedItems = this.items.filter((item) => item !== this.draggedItem);
+      const index = this.pendingReferenceItem ? orderedItems.indexOf(this.pendingReferenceItem) : orderedItems.length;
+      orderedItems.splice(index >= 0 ? index : orderedItems.length, 0, this.draggedItem);
+      return orderedItems;
+    }
+    return Array.from(this.element.children).reduce((orderedItems, child) => {
+      if (child === this.placeholder) {
+        if (this.draggedItem) orderedItems.push(this.draggedItem);
+        return orderedItems;
+      }
+      if (child === this.draggedItem && this.placeholder?.parentElement) return orderedItems;
+      if (child.dataset.id) orderedItems.push(child);
+      return orderedItems;
+    }, []);
+  }
+  createPlaceholder(item) {
+    const placeholder = document.createElement("div");
+    placeholder.className = "admin-gallery-tile admin-gallery-sort-placeholder";
+    placeholder.style.minHeight = `${item.getBoundingClientRect().height}px`;
+    placeholder.setAttribute("aria-hidden", "true");
+    return placeholder;
+  }
+  createIndicator() {
+    const indicator = document.createElement("div");
+    indicator.className = "admin-gallery-sort-indicator";
+    indicator.setAttribute("aria-hidden", "true");
+    return indicator;
+  }
+  positionIndicator(referenceItem) {
+    if (!this.indicator) return;
+    const candidates = this.items.filter((item) => item !== this.draggedItem);
+    const target = referenceItem || candidates[candidates.length - 1];
+    if (!target) {
+      Object.assign(this.indicator.style, { opacity: "0" });
+      return;
+    }
+    const containerRect = this.element.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+    const placeAfter = !referenceItem;
+    const top2 = (placeAfter ? targetRect.bottom : targetRect.top) - containerRect.top + this.element.scrollTop;
+    const left2 = targetRect.left - containerRect.left + this.element.scrollLeft;
+    Object.assign(this.indicator.style, {
+      opacity: "1",
+      top: `${top2}px`,
+      left: `${left2}px`,
+      width: `${targetRect.width}px`
+    });
+  }
+  get staticIndicatorMode() {
+    return this.element.classList.contains("admin-gallery-grid--site-preview");
+  }
   enableItem(item) {
     item.setAttribute("draggable", "true");
     item.addEventListener("dragstart", this.handleDragStart);
-    item.addEventListener("dragover", this.handleDragOver);
-    item.addEventListener("drop", this.handleDrop);
     item.addEventListener("dragend", this.handleDragEnd);
   }
   disableItem(item) {
     item.removeAttribute("draggable");
-    item.classList.remove("is-dragging");
+    item.classList.remove("is-dragging", "is-dragging-hidden");
     item.removeEventListener("dragstart", this.handleDragStart);
-    item.removeEventListener("dragover", this.handleDragOver);
-    item.removeEventListener("drop", this.handleDrop);
     item.removeEventListener("dragend", this.handleDragEnd);
   }
   get items() {

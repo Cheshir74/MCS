@@ -1,5 +1,5 @@
 if @gallery.present?
-  json.array!(@gallery.images) do |image|
+  json.array!(@gallery.ordered_images) do |image|
     json.id image.id
 
     json.src_webp gallery_full_webp_url(image)

@@ -134,12 +134,13 @@ class Admin::HomesController < Admin::AdminController
   def sort
     return head :bad_request unless params[:images]
 
-    params[:images].each_with_index do |id, position|
-      ActiveStorage::Attachment.where(id: id).update_all(position: position + 1)
+    @home.images.attachments.where(id: params[:images]).index_by(&:id).then do |attachments|
+      params[:images].each_with_index do |id, position|
+        attachments[id.to_i]&.update_column(:position, position + 1)
+      end
     end
-    respond_to do |format|
-      format.js
-    end
+
+    head :ok
   end
 
   private

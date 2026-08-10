@@ -36,11 +36,13 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
   const [visiblePhotos, setVisiblePhotos] = useState([]); // порции для бесконечной прокрутки [web:41]
   const [rowGroups, setRowGroups] = useState([]);       // сгруппированные ряды для row режима [web:41]
   const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200); // [web:41]
+  const [galleryWidth, setGalleryWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200); // фактическая ширина DOM-контейнера
   const [visibleSet, setVisibleSet] = useState(new Set()); // fade-in [web:41]
 
   // Окружение/refs
   const isSafari = typeof navigator !== "undefined" && /^((?!chrome|android).)*safari/i.test(navigator.userAgent); // [web:41]
   const sessionSeedRef = useRef(Math.floor(Date.now() / 30000)); // единый bust ~30с для полноразмерных [web:41]
+  const galleryRef = useRef(null);
 
   const MAX_CONTAINER_WIDTH = 1320; // [web:41]
   const ROW_GAP = 10;               // [web:41]
@@ -210,6 +212,29 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
     return () => window.removeEventListener("resize", handleResize);
   }, []); // [web:41]
 
+  useEffect(() => {
+    const node = galleryRef.current;
+    if (!node) return;
+
+    const updateGalleryWidth = () => {
+      const nextWidth = node.getBoundingClientRect().width;
+      if (nextWidth > 0) {
+        setGalleryWidth(currentWidth => Math.abs(currentWidth - nextWidth) < 1 ? currentWidth : nextWidth);
+      }
+    };
+
+    updateGalleryWidth();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateGalleryWidth);
+      return () => window.removeEventListener("resize", updateGalleryWidth);
+    }
+
+    const observer = new ResizeObserver(updateGalleryWidth);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [direction]); // [web:41]
+
   // ---------- Fade-in ----------
   useEffect(() => {
     visiblePhotos.forEach((photo, i) => {
@@ -253,13 +278,30 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
 
   // ---------- Рендер ----------
   const { rowHeight, portraitRowHeight, containerWidth } = getLayoutParams();
+  const columnContainerWidth = galleryWidth || windowWidth;
+  const columnWidth = columnCount > 0
+    ? Math.max(1, (columnContainerWidth - (columnCount - 1) * ROW_GAP) / columnCount)
+    : 0;
+  const landscapeHeights = visiblePhotos
+    .filter(photo => photo?.orientation === "landscape" && Number.isFinite(photo.ratio) && photo.ratio > 0)
+    .map(photo => columnWidth / photo.ratio)
+    .sort((first, second) => first - second);
+  const middleLandscapeIndex = Math.floor(landscapeHeights.length / 2);
+  const medianLandscapeHeight = landscapeHeights.length
+    ? (landscapeHeights.length % 2 === 0
+        ? (landscapeHeights[middleLandscapeIndex - 1] + landscapeHeights[middleLandscapeIndex]) / 2
+        : landscapeHeights[middleLandscapeIndex])
+    : columnWidth / 1.5;
+  const portraitColumnMaxHeight = columnCount > 1 && medianLandscapeHeight > 0
+    ? Math.round(medianLandscapeHeight * 2 + ROW_GAP)
+    : null;
   const galleryStyle = direction === "row"
     ? { display: "flex", flexDirection: "column", gap: `${ROW_GAP}px`, width: "100%", maxWidth: `${MAX_CONTAINER_WIDTH}px`, margin: "0 auto" }
     : { columnCount, columnGap: `${ROW_GAP}px`, width: "100%" }; // [web:41]
 
   return (
     <>
-      <div className="gallery" style={galleryStyle}>
+      <div className="gallery" ref={galleryRef} style={galleryStyle}>
         {direction === "row"
           ? rowGroups.map((row, rowIndex) => {
               const currentRowHeight = row.hasPortrait ? portraitRowHeight : rowHeight;
@@ -316,34 +358,44 @@ export default function GalleryApp({ photos, direction = "row", batchSize = 20 }
                 </div>
               );
             })
-          : visiblePhotos.map((photo, i) => (
-              <div
-                key={i}
-                style={{
-                  breakInside: "avoid",
-                  marginBottom: `${ROW_GAP}px`,
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  opacity: visibleSet.has(typeof photo?.originalIndex === "number" ? photo.originalIndex : i) ? 1 : 0,
-                  transition: "opacity 0.5s ease"
-                }}
-                onClick={() => { void openWithSlide(i + 1); }}
-              >
-                <img
-                  src={photo.thumbnail_webp || photo.thumbnail || photo.src_webp || photo.src}
-                  alt={photo.alt || ""}
+          : visiblePhotos.map((photo, i) => {
+              const photoIndex = typeof photo?.originalIndex === "number" ? photo.originalIndex : i;
+              const isPortrait = photo?.orientation === "portrait";
+              const shouldCropPortrait = Boolean(isPortrait && portraitColumnMaxHeight);
+
+              return (
+                <div
+                  key={i}
                   style={{
-                    width: "100%",
-                    height: "auto",
-                    objectFit: "contain",
-                    opacity: visibleSet.has(typeof photo?.originalIndex === "number" ? photo.originalIndex : i) ? 1 : 0,
+                    breakInside: "avoid",
+                    marginBottom: `${ROW_GAP}px`,
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                    cursor: "pointer",
+                    height: shouldCropPortrait ? `${portraitColumnMaxHeight}px` : undefined,
+                    backgroundColor: shouldCropPortrait ? "#000" : undefined,
+                    opacity: visibleSet.has(photoIndex) ? 1 : 0,
                     transition: "opacity 0.5s ease"
                   }}
-                  loading="lazy"
-                />
-              </div>
-            ))}
+                  onClick={() => { void openWithSlide(i + 1); }}
+                >
+                  <img
+                    src={photo.thumbnail_webp || photo.thumbnail || photo.src_webp || photo.src}
+                    alt={photo.alt || ""}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      height: shouldCropPortrait ? "100%" : "auto",
+                      objectFit: shouldCropPortrait ? "cover" : "contain",
+                      objectPosition: "center",
+                      opacity: visibleSet.has(photoIndex) ? 1 : 0,
+                      transition: "opacity 0.5s ease"
+                    }}
+                    loading="lazy"
+                  />
+                </div>
+              );
+            })}
       </div>
 
       {Array.isArray(photos) && photos.length > 0 && (

@@ -5,12 +5,23 @@
       | Delete selected
 
   - if home.images.present?
-    .admin-gallery-grid.admin-gallery-grid--compact.sortable#lightgallery
+    .admin-gallery-grid.admin-gallery-grid--compact.sortable#lightgallery data-controller="gallery-sort" data-gallery-sort-url-value=sort_admin_home_path(home)
       - home.ordered_images.each_with_index do |image, index|
         .admin-gallery-tile.admin-gallery-tile--hero data-id=image.id
           .admin-gallery-thumb.bg-light
             button.admin-gallery-thumb__button.admin-gallery-thumb__button--preview type="button" data-action="click->gallery-preview#open" data-preview-url=url_for(image.variant(resize_to_limit: [1600, 1100])) data-preview-alt="Hero frame #{index + 1}" data-preview-delete-url=delete_image_attachment_admin_home_path(home, image_id: image.id) aria-label="Open hero frame #{index + 1} preview"
               = image_tag image.variant(resize_to_fill: [240, 168]), class: "admin-gallery-thumb__image", alt: ""
+            button.admin-gallery-thumb__control.admin-gallery-thumb__control--drag type="button" draggable="true" data-gallery-sort-handle=true aria-label="Drag to reorder"
+              svg.admin-gallery-thumb__icon viewBox="0 0 16 16" aria-hidden="true"
+                circle cx="5" cy="4.5" r="0.75"
+                circle cx="8" cy="4.5" r="0.75"
+                circle cx="11" cy="4.5" r="0.75"
+                circle cx="5" cy="8" r="0.75"
+                circle cx="8" cy="8" r="0.75"
+                circle cx="11" cy="8" r="0.75"
+                circle cx="5" cy="11.5" r="0.75"
+                circle cx="8" cy="11.5" r="0.75"
+                circle cx="11" cy="11.5" r="0.75"
             = label_tag "delete_img_ids_#{image.id}", class: "admin-gallery-thumb__control admin-gallery-thumb__control--select" do
               = check_box_tag "delete_img_ids[]", image.id, false, id: "delete_img_ids_#{image.id}", class: "admin-gallery-select__checkbox"
               svg.admin-gallery-thumb__icon.admin-gallery-thumb__icon--select viewBox="0 0 16 16" aria-hidden="true"

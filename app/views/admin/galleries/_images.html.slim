@@ -4,12 +4,26 @@
       button.btn.btn-outline-danger.btn-sm type="submit" name="delete_selected" value="1" data-turbo-confirm="Delete selected photos?"
         | Delete selected
 
-    .admin-gallery-grid.sortable#lightgallery data-controller="gallery-sort" data-gallery-sort-url-value=sort_admin_gallery_path(@gallery)
+    .admin-gallery-grid.admin-gallery-grid--site-preview.sortable#lightgallery data-controller="gallery-sort" data-gallery-sort-url-value=sort_admin_gallery_path(@gallery) data-gallery-sort-cover-value=true
       - @gallery.ordered_images.each_with_index do |image, index|
-        .admin-gallery-tile class=("admin-gallery-tile--cover" if index.zero?) data-id=image.id
+        - image_width = image.metadata[:width].to_f
+        - image_height = image.metadata[:height].to_f
+        - orientation_class = image_height.positive? && image_width.positive? && image_height > image_width ? "admin-gallery-tile--portrait" : "admin-gallery-tile--landscape"
+        .admin-gallery-tile class=[("admin-gallery-tile--cover" if index.zero?), orientation_class] data-id=image.id
           .admin-gallery-thumb.bg-light
             button.admin-gallery-thumb__button.admin-gallery-thumb__button--preview type="button" data-action="click->gallery-preview#open" data-preview-url=url_for(image.variant(resize_to_limit: [1600, 1100])) data-preview-alt="Gallery photo #{index + 1}" data-preview-delete-url=delete_image_attachment_admin_gallery_path(@gallery, image_id: image.id) aria-label="Open gallery photo #{index + 1} preview"
-              = image_tag image.variant(resize_to_limit: [360, 360]), class: "admin-gallery-thumb__image", alt: ""
+              = image_tag image.variant(resize_to_limit: [320, 320]), class: "admin-gallery-thumb__image", alt: "", loading: "lazy"
+            button.admin-gallery-thumb__control.admin-gallery-thumb__control--drag type="button" draggable="true" data-gallery-sort-handle=true aria-label="Drag to reorder"
+              svg.admin-gallery-thumb__icon viewBox="0 0 16 16" aria-hidden="true"
+                circle cx="5" cy="4.5" r="0.75"
+                circle cx="8" cy="4.5" r="0.75"
+                circle cx="11" cy="4.5" r="0.75"
+                circle cx="5" cy="8" r="0.75"
+                circle cx="8" cy="8" r="0.75"
+                circle cx="11" cy="8" r="0.75"
+                circle cx="5" cy="11.5" r="0.75"
+                circle cx="8" cy="11.5" r="0.75"
+                circle cx="11" cy="11.5" r="0.75"
             = label_tag "delete_img_ids_#{image.id}", class: "admin-gallery-thumb__control admin-gallery-thumb__control--select" do
               = check_box_tag "delete_img_ids[]", image.id, false, id: "delete_img_ids_#{image.id}", class: "admin-gallery-select__checkbox"
               svg.admin-gallery-thumb__icon.admin-gallery-thumb__icon--select viewBox="0 0 16 16" aria-hidden="true"
