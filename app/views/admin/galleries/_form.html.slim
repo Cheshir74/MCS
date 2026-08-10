@@ -3,7 +3,7 @@
 - filled_homepage_fields = Gallery::HOMEPAGE_FIELDS.count { |field| gallery.public_send(field).present? }
 - summary_rows = [["Status", gallery.visible? ? "Visible" : "Hidden", gallery.visible? ? "success" : "muted"], ["Images", "#{attached_images_count} file#{'s' unless attached_images_count == 1}", attached_images_count.positive? ? "accent" : "warning"], ["Cover", gallery.primary_image.present? ? "Ready" : "Missing", gallery.primary_image.present? ? "success" : "warning"], ["Homepage fields", "#{filled_homepage_fields}/#{Gallery::HOMEPAGE_FIELDS.size}", filled_homepage_fields.positive? ? "accent" : "muted"]]
 
-= form_for [:admin, gallery], html: { class: "admin-editor admin-editor--gallery" } do |f|
+= form_for [:admin, gallery], html: { class: "admin-editor admin-editor--gallery", data: { controller: "home-editor" } } do |f|
   - if gallery.errors.any?
     .admin-form-errors
       - gallery.errors.full_messages.each do |msg|
@@ -22,32 +22,31 @@
           = f.submit gallery.persisted? ? "Save gallery" : "Create gallery", class: "btn btn-primary"
           = link_to "Back to list", admin_galleries_path, class: "btn btn-outline-secondary"
 
-      .card.section-card.admin-editor__rail-card
-        .card-header
-          h4.card-title
-            span.card-chip Navigate
-            |  Sections
-          p.card-subtitle.text-muted.small Jump to the exact block you want to edit
-        nav.admin-editor__nav
-          - nav_sections.each do |item|
-            a.admin-editor__nav-link href="##{item[:id]}"
-              span.admin-editor__nav-title = item[:title]
-              span.admin-editor__nav-hint = item[:hint]
+      .admin-editor__rail-sticky
+        .card.section-card.admin-editor__rail-card.admin-editor__rail-card--nav
+          .card-header
+            h4.card-title
+              span.card-chip Navigate
+              |  Sections
+          nav.admin-editor__nav
+            - nav_sections.each do |item|
+              a.admin-editor__nav-link href="##{item[:id]}" data-action="click->home-editor#jumpToSection" data-home-editor-target="navItem" data-scope="shared"
+                span.admin-editor__nav-title = item[:title]
 
-      .card.section-card.admin-editor__rail-card
-        .card-header
-          h4.card-title
-            span.card-chip Summary
-            |  Card readiness
-          p.card-subtitle.text-muted.small Quick check before assigning this gallery to the homepage
-        .admin-summary-list
-          - summary_rows.each do |label, value, tone|
-            .admin-summary-list__item
-              span.admin-summary-list__label = label
-              span class="admin-summary-list__value admin-summary-list__value--#{tone}" = value
+        .card.section-card.admin-editor__rail-card
+          .card-header
+            h4.card-title
+              span.card-chip Summary
+              |  Card readiness
+            p.card-subtitle.text-muted.small Quick check before assigning this gallery to the homepage
+          .admin-summary-list
+            - summary_rows.each do |label, value, tone|
+              .admin-summary-list__item
+                span.admin-summary-list__label = label
+                span class="admin-summary-list__value admin-summary-list__value--#{tone}" = value
 
     .admin-editor__main
-      section.card.section-card.admin-editor__section id="gallery-basics"
+      section.card.section-card.admin-editor__section id="gallery-basics" data-home-editor-target="section" data-scope="shared"
         .card-header
           h4.card-title
             span.card-chip Settings
@@ -67,7 +66,7 @@
                   = f.check_box :visible, class: "form-check-input input-card__switch", id: dom_id(gallery, :visible)
                   = f.label :visible, "Show on site", class: "form-check-label", for: dom_id(gallery, :visible)
 
-      section.card.section-card.admin-editor__section id="gallery-copy"
+      section.card.section-card.admin-editor__section id="gallery-copy" data-home-editor-target="section" data-scope="shared"
         .card-header
           h4.card-title
             span.card-chip Homepage
@@ -96,7 +95,7 @@
               p.input-card__hint Second bottom label on larger cards
               = f.text_field :homepage_footer_secondary, class: "form-control input-card__control"
 
-      section.card.section-card.admin-editor__section id="gallery-meta"
+      section.card.section-card.admin-editor__section id="gallery-meta" data-home-editor-target="section" data-scope="shared"
         .card-header
           h4.card-title
             span.card-chip Homepage
@@ -121,7 +120,7 @@
               p.input-card__hint Comma-separated labels displayed under mini cards
               = f.text_field :homepage_tags, class: "form-control input-card__control", placeholder: "backstage, details, chronicle"
 
-      section.card.section-card.admin-editor__section id="gallery-media"
+      section.card.section-card.admin-editor__section id="gallery-media" data-home-editor-target="section" data-scope="shared"
         .card-header
           h4.card-title
             span.card-chip Media
