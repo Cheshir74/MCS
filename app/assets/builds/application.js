@@ -92854,12 +92854,30 @@ var featured_home_controller_default = class extends Controller {
     if (label) {
       label.classList.add("is-active");
     }
+    this.syncAria();
+  }
+  select(event2) {
+    const item = event2.currentTarget;
+    const radio = item.querySelector("input[type='radio']");
+    if (!radio || radio.disabled) return;
+    event2.preventDefault();
+    this.itemTargets.forEach((target) => {
+      const targetRadio = target.querySelector("input[type='radio']");
+      if (targetRadio) targetRadio.checked = false;
+    });
+    radio.checked = true;
+    this.markActive();
   }
   syncRadios() {
     this.itemTargets.forEach((item) => {
       const radio = item.querySelector("input[type='radio']");
       if (!radio) return;
       radio.checked = item.classList.contains("is-active");
+    });
+  }
+  syncAria() {
+    this.itemTargets.forEach((item) => {
+      item.setAttribute("aria-checked", item.classList.contains("is-active") ? "true" : "false");
     });
   }
   handleHover(event2) {
