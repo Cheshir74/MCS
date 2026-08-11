@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  before_action :ensure_registrations_enabled, only: [:new, :create]
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
@@ -38,7 +39,18 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super
   # end
 
-  # protected
+  protected
+
+  def ensure_registrations_enabled
+    return if SiteSetting.get_value("registrations_enabled", true)
+
+    respond_to do |format|
+      format.html { redirect_to new_user_session_path, alert: "Registration is currently closed." }
+      format.json { render json: { errors: ["Registration is currently closed."] }, status: :forbidden }
+      format.js { head :forbidden }
+      format.any { head :forbidden }
+    end
+  end
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_up_params

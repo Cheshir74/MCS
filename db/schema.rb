@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_07_170000) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_11_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -137,6 +137,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_07_170000) do
     t.boolean "email_tls"
     t.string "tg_url", default: "", null: false
     t.boolean "pages_enabled", default: true, null: false
+    t.boolean "registrations_enabled", default: true, null: false
   end
 
   create_table "users", force: :cascade do |t|

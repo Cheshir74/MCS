@@ -68,6 +68,7 @@ class Admin::AdminController < ApplicationController
       :email_tls,
       :email_ssl,
       :pages_enabled,
+      :registrations_enabled,
       :favicon,
       :remove_favicon,
       :logo,

@@ -10,6 +10,7 @@ class SiteSetting < ApplicationRecord
   after_commit :purge_favicon, if: -> { remove_favicon.to_s == '1' }
 
   attribute :pages_enabled, :boolean, default: true
+  attribute :registrations_enabled, :boolean, default: true
 
   def update_mailer_settings
     ActionMailer::Base.smtp_settings = {

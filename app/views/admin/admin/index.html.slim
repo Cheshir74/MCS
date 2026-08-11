@@ -89,23 +89,21 @@ section.admin-workspace
         .admin-empty-state__actions
           = link_to "Create homepage", new_admin_home_path, class: "btn btn-primary"
 
-  section.card.section-card.admin-panel
+  section.card.section-card.admin-panel.admin-settings-panel
     .admin-panel__header
       div
         p.admin-kicker Site settings
-        h2.admin-panel__title Brand, public profile and email delivery
-        p.admin-panel__copy Use compact panels with predictable spacing instead of one long settings page. Desktop keeps a two-column rhythm, tablet collapses to one, mobile prioritizes the form order.
+        h2.admin-panel__title Brand, profile and email
+        p.admin-panel__copy Core site settings in one compact form.
     = form_with(model: @site_setting, url: admin_site_setting_path(@site_setting), local: true, html: { class: "settings-form admin-settings-form" }) do |f|
       .admin-settings-grid
         .admin-settings-card
           .admin-settings-card__header
             h3.admin-settings-card__title Brand assets
-            p.admin-settings-card__copy Refresh the visuals shown in the admin shell, navigation and browser tabs.
           .admin-settings-card__body
             .brand-upload
               .brand-upload__item data-controller="logo-preview"
                 h5.brand-upload__title Primary logo
-                p.brand-upload__hint Displayed in navigation and admin
                 - if @site_setting.logo.attached?
                   - logo_preview = @site_setting.logo.variable? ? @site_setting.logo.variant(resize_to_limit: [200, 200]) : @site_setting.logo
                   .brand-upload__preview data-logo-preview-target="currentPreview"
@@ -119,13 +117,11 @@ section.admin-workspace
                   div.brand-upload__meta
                     span.brand-upload__filename data-logo-preview-target="filename"
                     button.brand-upload__reset type="button" data-action="logo-preview#reset" Reset selection
-                span.brand-upload__note Recommended 320×320px PNG or SVG
 
               hr
 
               .brand-upload__item
                 h5.brand-upload__title Favicon
-                p.brand-upload__hint Used in browser tabs and bookmarks
                 - if @site_setting.favicon.attached?
                   - favicon_preview = @site_setting.favicon.variable? ? @site_setting.favicon.variant(resize_to_limit: [64, 64]) : @site_setting.favicon
                   .brand-upload__preview.brand-upload__preview--favicon
@@ -134,12 +130,10 @@ section.admin-workspace
                       = f.check_box :remove_favicon, class: "form-check-input"
                       span Remove favicon
                 = f.file_field :favicon, accept: "image/x-icon,image/png", class: "form-control", direct_upload: true
-                span.brand-upload__note ICO or PNG 32×32px
 
         .admin-settings-card
           .admin-settings-card__header
             h3.admin-settings-card__title Public profile
-            p.admin-settings-card__copy Site name, verification codes and social links used across the public site.
           .admin-settings-card__body
             .form-grid
               .form-grid__item
@@ -167,19 +161,23 @@ section.admin-workspace
                 = f.label :fb_url, "Facebook URL", class: "form-label form-label--strong"
                 = f.text_field :fb_url, class: "form-control", placeholder: "https://facebook.com/..."
               .form-grid__item.form-grid__item--full
-                .input-card.input-card--switch
-                  h5.input-card__title Pages
-                  p.input-card__hint Future feature
-                  .form-switch-row
-                    .form-check.form-switch
-                      = f.check_box :pages_enabled, class: "form-check-input input-card__switch", id: "site_setting_pages_enabled", disabled: true
-                      = f.label :pages_enabled, "Pages enabled", class: "form-check-label", for: "site_setting_pages_enabled"
-                  p.card-subtitle.text-muted.small.mt-2 Coming later. Pages workspace is locked for now.
+                .settings-switch-row
+                  .input-card.input-card--switch
+                    h5.input-card__title User registration
+                    .form-switch-row
+                      .form-check.form-switch
+                        = f.check_box :registrations_enabled, class: "form-check-input input-card__switch", id: "site_setting_registrations_enabled"
+                        = f.label :registrations_enabled, "Allow new users", class: "form-check-label", for: "site_setting_registrations_enabled"
+                  .input-card.input-card--switch
+                    h5.input-card__title Pages
+                    .form-switch-row
+                      .form-check.form-switch
+                        = f.check_box :pages_enabled, class: "form-check-input input-card__switch", id: "site_setting_pages_enabled", disabled: true
+                        = f.label :pages_enabled, "Pages enabled", class: "form-check-label", for: "site_setting_pages_enabled"
 
         .admin-settings-card.admin-settings-card--full
           .admin-settings-card__header
             h3.admin-settings-card__title Email delivery
-            p.admin-settings-card__copy SMTP credentials and security toggles used by outgoing mailers.
           .admin-settings-card__body
             .form-grid.form-grid--two-col
               .form-grid__item
@@ -201,21 +199,19 @@ section.admin-workspace
                 = f.label :email_port, "SMTP port", class: "form-label form-label--strong"
                 = f.number_field :email_port, class: "form-control", placeholder: "587"
               .form-grid__item.form-grid__item--full
-                .input-card.input-card--switch
-                  h5.input-card__title TLS
-                  p.input-card__hint Enable TLS for outgoing mail
-                  .form-switch-row
-                    .form-check.form-switch
-                      = f.check_box :email_tls, class: "form-check-input input-card__switch"
-                      = f.label :email_tls, "TLS enabled", class: "form-check-label"
-              .form-grid__item.form-grid__item--full
-                .input-card.input-card--switch
-                  h5.input-card__title SSL
-                  p.input-card__hint Enable SSL when required by provider
-                  .form-switch-row
-                    .form-check.form-switch
-                      = f.check_box :email_ssl, class: "form-check-input input-card__switch"
-                      = f.label :email_ssl, "SSL enabled", class: "form-check-label"
+                .settings-switch-row
+                  .input-card.input-card--switch
+                    h5.input-card__title TLS
+                    .form-switch-row
+                      .form-check.form-switch
+                        = f.check_box :email_tls, class: "form-check-input input-card__switch"
+                        = f.label :email_tls, "TLS enabled", class: "form-check-label"
+                  .input-card.input-card--switch
+                    h5.input-card__title SSL
+                    .form-switch-row
+                      .form-check.form-switch
+                        = f.check_box :email_ssl, class: "form-check-input input-card__switch"
+                        = f.label :email_ssl, "SSL enabled", class: "form-check-label"
 
       .settings-form-actions
         button.btn.btn-gradient type="submit"
