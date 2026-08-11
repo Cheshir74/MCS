@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_11_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_11_124500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -107,6 +107,44 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_11_120000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "page_events", force: :cascade do |t|
+    t.bigint "page_view_id", null: false
+    t.string "event_type", null: false
+    t.string "path", null: false
+    t.decimal "x_percent", precision: 6, scale: 3
+    t.decimal "y_percent", precision: 6, scale: 3
+    t.integer "scroll_percent"
+    t.integer "viewport_width"
+    t.integer "viewport_height"
+    t.string "element_name"
+    t.string "element_label"
+    t.datetime "occurred_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_type"], name: "index_page_events_on_event_type"
+    t.index ["occurred_at"], name: "index_page_events_on_occurred_at"
+    t.index ["page_view_id"], name: "index_page_events_on_page_view_id"
+    t.index ["path"], name: "index_page_events_on_path"
+  end
+
+  create_table "page_views", force: :cascade do |t|
+    t.string "visitor_id", null: false
+    t.string "path", null: false
+    t.string "full_path", null: false
+    t.string "controller_name"
+    t.string "action_name"
+    t.string "referrer"
+    t.string "user_agent"
+    t.string "ip_hash"
+    t.datetime "started_at", null: false
+    t.integer "duration_seconds"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["path"], name: "index_page_views_on_path"
+    t.index ["started_at"], name: "index_page_views_on_started_at"
+    t.index ["visitor_id"], name: "index_page_views_on_visitor_id"
+  end
+
   create_table "pages", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -172,4 +210,5 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_11_120000) do
   add_foreign_key "homes", "galleries", column: "editorial_series_first_gallery_id"
   add_foreign_key "homes", "galleries", column: "editorial_series_second_gallery_id"
   add_foreign_key "homes", "galleries", column: "editorial_series_third_gallery_id"
+  add_foreign_key "page_events", "page_views"
 end

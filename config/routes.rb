@@ -15,8 +15,11 @@ Rails.application.routes.draw do
   get 'about' => 'pages#about'
   get 'message' => 'messages#new'
   post 'message' => 'messages#create'
+  post 'analytics/page_view_duration' => 'analytics#duration', as: :analytics_page_view_duration
+  post 'analytics/page_events' => 'analytics#events', as: :analytics_page_events
   namespace :admin do
     get '/' => 'admin#index', as: :dashboard
+    get 'service' => 'admin#service', as: :service
     resources :site_settings
     resources :users do
       member do

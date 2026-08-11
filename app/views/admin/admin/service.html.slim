@@ -1,0 +1,169 @@
+section.admin-workspace
+  .admin-workspace__header
+    div
+      p.admin-kicker Service
+      h1.admin-workspace__title Server status
+      p.admin-workspace__lead Runtime, storage and dependency checks for this deployment.
+    span.admin-pill.admin-pill--muted = "Checked #{l(@service_stats[:checked_at], format: :short)}"
+
+  .admin-overview-grid.admin-overview-grid--tight.admin-service-overview
+    - @service_stats[:overview].each do |item|
+      article.card.section-card.admin-stat-card.admin-service-stat
+        span.admin-stat-card__label = item[:label]
+        strong.admin-stat-card__value = item[:value]
+        span class="admin-pill admin-pill--#{item[:tone]}" = item[:note]
+
+  article.card.section-card.admin-record-card.admin-service-card.admin-service-analytics
+    .admin-record-card__head
+      .admin-record-card__title-group
+        span.admin-record-card__eyebrow Audience
+        h2.admin-record-card__title Page views
+        p.admin-record-card__summary = @service_stats[:analytics][:available] ? @service_stats[:analytics][:period] : @service_stats[:analytics][:message]
+    .admin-record-card__metric-grid
+      .admin-record-card__metric
+        span.admin-record-card__metric-label Views
+        strong.admin-record-card__metric-value = @service_stats[:analytics][:views]
+      .admin-record-card__metric
+        span.admin-record-card__metric-label Visitors
+        strong.admin-record-card__metric-value = @service_stats[:analytics][:visitors]
+      .admin-record-card__metric
+        span.admin-record-card__metric-label Avg. time
+        strong.admin-record-card__metric-value = admin_duration_label(@service_stats[:analytics][:average_duration])
+    - if @service_stats[:analytics][:top_pages].any?
+      .admin-service-table
+        .admin-service-table__head
+          span Page
+          span Views
+          span People
+          span Avg. time
+        - @service_stats[:analytics][:top_pages].each do |page|
+          .admin-service-table__row
+            strong = page[:path]
+            span = page[:views]
+            span = page[:visitors]
+            span = admin_duration_label(page[:average_duration])
+    - else
+      .admin-service-empty
+        = @service_stats[:analytics][:available] ? "No public page views recorded for this period yet." : "Run migrations to enable page view analytics."
+
+  article.card.section-card.admin-record-card.admin-service-card.admin-service-heatmap
+    .admin-record-card__head
+      .admin-record-card__title-group
+        span.admin-record-card__eyebrow Heatmap
+        h2.admin-record-card__title Click map
+        p.admin-record-card__summary = @service_stats[:heatmap][:available] ? @service_stats[:heatmap][:path] : @service_stats[:heatmap][:message]
+      span.admin-pill.admin-pill--accent = @service_stats[:heatmap][:period]
+    .admin-record-card__metric-grid
+      .admin-record-card__metric
+        span.admin-record-card__metric-label Clicks
+        strong.admin-record-card__metric-value = @service_stats[:heatmap][:clicks_count]
+      .admin-record-card__metric
+        span.admin-record-card__metric-label Avg. scroll
+        strong.admin-record-card__metric-value = "#{@service_stats[:heatmap][:average_scroll_depth]}%"
+    - if @service_stats[:heatmap][:clicks].any?
+      .admin-heatmap-layout
+        .admin-heatmap-map
+          .admin-heatmap-toolbar
+            strong = @service_stats[:heatmap][:path]
+            span Last 80 clicks
+          .admin-heatmap-canvas aria-label="Click heatmap preview"
+            .admin-heatmap-zone.admin-heatmap-zone--top
+              span Top
+              strong = @service_stats[:heatmap][:zone_counts][:top]
+            .admin-heatmap-zone.admin-heatmap-zone--middle
+              span Middle
+              strong = @service_stats[:heatmap][:zone_counts][:middle]
+            .admin-heatmap-zone.admin-heatmap-zone--bottom
+              span Bottom
+              strong = @service_stats[:heatmap][:zone_counts][:bottom]
+            - @service_stats[:heatmap][:clicks].each_with_index do |click, index|
+              - size = index < 12 ? "hot" : index < 36 ? "warm" : "soft"
+              span class="admin-heatmap-point admin-heatmap-point--#{size}" style="left: #{click[:x]}%; top: #{click[:y]}%;" title="#{click[:element]} #{click[:label]}"
+          .admin-heatmap-legend
+            span
+              i.admin-heatmap-dot.admin-heatmap-dot--hot
+              | Recent / repeated clicks
+            span
+              i.admin-heatmap-dot.admin-heatmap-dot--soft
+              | Older clicks
+        .admin-heatmap-targets
+          span.admin-record-card__eyebrow Top targets
+          - @service_stats[:heatmap][:top_targets].each do |target|
+            .admin-heatmap-target
+              .admin-heatmap-target__body
+                strong = target[:label]
+                span = target[:element]
+              b = target[:clicks]
+    - else
+      .admin-service-empty
+        = @service_stats[:heatmap][:available] ? "No click events recorded for the selected period yet." : "Run migrations and collect public visits to enable heatmap."
+
+  .admin-record-grid.admin-service-grid
+    article.card.section-card.admin-record-card.admin-service-card
+      .admin-record-card__head
+        .admin-record-card__title-group
+          span.admin-record-card__eyebrow Runtime
+          h2.admin-record-card__title Versions
+      .admin-service-list
+        - @service_stats[:versions].each do |label, value|
+          .admin-service-list__row
+            span.admin-service-list__label = label
+            strong.admin-service-list__value = value
+
+    article.card.section-card.admin-record-card.admin-service-card
+      .admin-record-card__head
+        .admin-record-card__title-group
+          span.admin-record-card__eyebrow Bundle
+          h2.admin-record-card__title Dependencies
+        span class="admin-pill admin-pill--#{@service_stats[:dependencies][:tone]}" = @service_stats[:dependencies][:summary]
+      p.admin-record-card__summary = @service_stats[:dependencies][:note]
+      .admin-service-dependency-grid
+        - @service_stats[:dependencies][:sections].each do |section|
+          .admin-service-dependency
+            .admin-service-dependency__head
+              span.admin-service-list__label = section[:label]
+              span class="admin-pill admin-pill--#{section[:tone]}" = section[:summary]
+            - if section[:missing].any?
+              .admin-service-dependency__missing = section[:missing].join(", ")
+            - else
+              .admin-service-dependency__missing All required gems available
+
+    article.card.section-card.admin-record-card.admin-service-card
+      .admin-record-card__head
+        .admin-record-card__title-group
+          span.admin-record-card__eyebrow Storage
+          h2.admin-record-card__title Disk space
+        span class="admin-pill admin-pill--#{@service_stats[:disk][:tone]}" = @service_stats[:disk][:note]
+      .admin-record-card__metric-grid
+        - @service_stats[:disk][:rows].each do |label, value|
+          .admin-record-card__metric
+            span.admin-record-card__metric-label = label
+            strong.admin-record-card__metric-value = value
+
+    article.card.section-card.admin-record-card.admin-service-card
+      .admin-record-card__head
+        .admin-record-card__title-group
+          span.admin-record-card__eyebrow Linux
+          h2.admin-record-card__title Memory
+        span class="admin-pill admin-pill--#{@service_stats[:memory][:tone]}" = @service_stats[:memory][:note]
+      .admin-record-card__metric-grid
+        - @service_stats[:memory][:rows].each do |label, value|
+          .admin-record-card__metric
+            span.admin-record-card__metric-label = label
+            strong.admin-record-card__metric-value = value
+
+    article.card.section-card.admin-record-card.admin-service-card
+      .admin-record-card__head
+        .admin-record-card__title-group
+          span.admin-record-card__eyebrow Network
+          h2.admin-record-card__title IP addresses
+      .admin-service-list
+        - if @service_stats[:ip_addresses].any?
+          - @service_stats[:ip_addresses].each_with_index do |address, index|
+            .admin-service-list__row
+              span.admin-service-list__label = index.zero? ? "Primary" : "Interface"
+              strong.admin-service-list__value = address
+        - else
+          .admin-service-list__row
+            span.admin-service-list__label Address
+            strong.admin-service-list__value Unavailable

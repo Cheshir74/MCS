@@ -9,6 +9,10 @@ html
     = csrf_meta_tags
     = csp_meta_tag
     = site_favicon_tag
+    - if @analytics_page_view&.persisted?
+      meta name="analytics-page-view-token" content=@analytics_page_view.signed_id(purpose: :analytics_duration)
+      meta name="analytics-duration-url" content=analytics_page_view_duration_path
+      meta name="analytics-events-url" content=analytics_page_events_path
 
     = javascript_include_tag "application", "data-turbo-track": "reload"
     = stylesheet_link_tag 'application', media: 'all'

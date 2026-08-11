@@ -8,6 +8,18 @@ module AdminHelper
     "#{admin_home_variant_label(value)} mode"
   end
 
+  def admin_duration_label(seconds)
+    seconds = seconds.to_i
+    return "0s" if seconds <= 0
+
+    minutes, remaining_seconds = seconds.divmod(60)
+    hours, remaining_minutes = minutes.divmod(60)
+    return "#{hours}h #{remaining_minutes}m" if hours.positive?
+    return "#{remaining_minutes}m #{remaining_seconds}s" if remaining_minutes.positive?
+
+    "#{remaining_seconds}s"
+  end
+
   def admin_sidebar_icon(name)
     svg = case name
           when :dashboard
@@ -47,6 +59,14 @@ module AdminHelper
                 <path d="M14 4.5V9h4"/>
                 <path d="M9 13h6"/>
                 <path d="M9 16.5h6"/>
+              </svg>
+            SVG
+          when :service
+            <<~SVG
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="16" height="6" rx="2"/>
+                <rect x="4" y="14" width="16" height="6" rx="2"/>
+                <path d="M8 7h.01M8 17h.01M12 7h5M12 17h5"/>
               </svg>
             SVG
           else

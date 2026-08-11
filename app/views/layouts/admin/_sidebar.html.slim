@@ -16,7 +16,7 @@ nav class="admin-sidebar" id="sidebar"
         span.sidebar-logo-card__tagline Content command
 
   ul.admin-sidebar__nav
-    - menu_items = [{ section: 'Overview' }, { title: 'Dashboard', short: 'DB', icon: :dashboard, path: admin_dashboard_path }, { section: 'Content' }, { title: 'Home Pages', short: 'HM', icon: :home, path: admin_homes_path }, { title: 'Galleries', short: 'GL', icon: :galleries, path: admin_galleries_path }, { title: 'Pages', short: 'PG', icon: :pages, path: admin_pages_path }, { section: 'Access' }, { title: 'Users', short: 'US', icon: :users, path: admin_users_path }]
+    - menu_items = [{ section: 'Overview' }, { title: 'Dashboard', short: 'DB', icon: :dashboard, path: admin_dashboard_path }, { title: 'Service', short: 'SV', icon: :service, path: admin_service_path }, { section: 'Content' }, { title: 'Home Pages', short: 'HM', icon: :home, path: admin_homes_path }, { title: 'Galleries', short: 'GL', icon: :galleries, path: admin_galleries_path }, { title: 'Pages', short: 'PG', icon: :pages, path: admin_pages_path }, { section: 'Access' }, { title: 'Users', short: 'US', icon: :users, path: admin_users_path }]
     - menu_items.each do |item|
       - if item[:section]
         li.admin-sidebar__section = item[:section]

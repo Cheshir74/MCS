@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.3.0'
+ruby '3.4.8'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails'
@@ -22,7 +22,8 @@ gem 'jbuilder', '~> 2.7'
 
 
 # Use Active Storage variant
- gem 'image_processing', '~> 1.2'
+gem 'image_processing', '~> 2.0'
+gem 'ruby-vips', '~> 2.0'
 
 gem 'devise'
 gem 'cancancan'
@@ -41,10 +42,10 @@ group :development do
   gem 'listen', '~> 3.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-watcher-listen', '~> 2.1'
   # For deploy
-  gem 'capistrano', '~> 3.17.0'
-  gem 'capistrano-rails', '~> 1.6.0'
+  gem 'capistrano', '~> 3.20'
+  gem 'capistrano-rails', '~> 1.7'
   gem 'capistrano-rbenv', '~> 2.2.0'
   gem 'capistrano-puma'
 end

@@ -21489,7 +21489,7 @@ code {
 /* Footer */
 .footer {
   background: #f2f2f2;
-  color: color(dark);
+  color: var(--bs-dark);
   padding: 8px 40px 37px 40px;
   transition: all 0.25s ease;
   -moz-transition: all 0.25s ease;
