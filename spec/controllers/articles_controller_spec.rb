@@ -2,6 +2,7 @@ require 'rails_helper'
 RSpec.describe ArticlesController, type: :controller do
 
   let(:article) { create(:article) }
+  let(:user) { create(:user) }
 
   describe 'GET #edit' do
 
@@ -34,6 +35,7 @@ RSpec.describe ArticlesController, type: :controller do
   end
 
   describe 'GET #new' do
+    before { sign_in user }
     before { get :new }
 
     it 'assigns a new Article to @article' do
@@ -47,6 +49,7 @@ RSpec.describe ArticlesController, type: :controller do
   end
 
   describe 'GET #show' do
+    before { sign_in user }
     before { get :show, params: { id: article } }
 
     it 'assings the requested question to @article' do
@@ -61,6 +64,8 @@ RSpec.describe ArticlesController, type: :controller do
   end
 
   describe 'POST #create' do
+    before { sign_in user }
+
     let(:http_request) { post :create, params: { article: attributes_for(:article) } }
     let(:invalid_params) { post :create, params: { article: attributes_for(:invalid_article) } }
 

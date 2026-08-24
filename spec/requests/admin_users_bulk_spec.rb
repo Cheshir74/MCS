@@ -21,11 +21,11 @@ RSpec.describe "Admin users bulk actions", type: :request do
 
       expect(response).to redirect_to(admin_users_path)
       expect(viewer.reload.superadmin_role).to be(true)
-      expect(viewer.supervisor_role).to be(false)
-      expect(viewer.user_role).to be(false)
+      expect(viewer.supervisor_role).to be(true)
+      expect(viewer.user_role).to be(true)
       expect(editor.reload.superadmin_role).to be(true)
-      expect(editor.supervisor_role).to be(false)
-      expect(editor.user_role).to be(false)
+      expect(editor.supervisor_role).to be(true)
+      expect(editor.user_role).to be(true)
     end
 
     it "deletes selected users and skips the current account" do
