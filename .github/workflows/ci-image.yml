@@ -110,7 +110,6 @@ jobs:
           push: true
           build-args: |
             MAILER_HOST=example.com
-            ENCRYPTION_KEY=${{ env.ENCRYPTION_KEY }}
           tags: |
             ${{ env.IMAGE }}:${{ github.sha }}
             ${{ env.IMAGE }}:latest

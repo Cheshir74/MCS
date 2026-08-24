@@ -44,8 +44,12 @@ RUN node .yarn/releases/yarn-4.18.0.cjs install --immutable
 COPY . .
 
 ARG MAILER_HOST=example.com
-ARG ENCRYPTION_KEY=0000000000000000000000000000000000000000000000000000000000000000
-RUN SECRET_KEY_BASE_DUMMY=1 MAILER_HOST=${MAILER_HOST} ENCRYPTION_KEY=${ENCRYPTION_KEY} bundle exec rails assets:precompile
+RUN cp config/database.yml.example config/database.yml && \
+    SECRET_KEY_BASE_DUMMY=1 \
+    MAILER_HOST=${MAILER_HOST} \
+    ENCRYPTION_KEY=0000000000000000000000000000000000000000000000000000000000000000 \
+    bundle exec rails assets:precompile && \
+    rm config/database.yml
 
 FROM base
 
