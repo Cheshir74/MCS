@@ -8,18 +8,23 @@
 end
 
 namespace :puma do
+  def puma_start_command
+    [
+      "exec puma -b '#{fetch(:puma_socket)}'",
+      " -e #{fetch(:stage)} ",
+      "--control-url '#{fetch(:pumactl_socket)}'",
+      "-S #{fetch(:puma_state)}",
+      fetch(:puma_flags),
+      ">> #{fetch(:puma_log)} 2>&1 &"
+    ]
+  end
 
   desc "Start puma instance for this application"
   task :start do
     on roles fetch(:puma_roles) do
       within release_path do
         with rails_env: fetch(:rails_env) do
-          execute :bundle, "exec puma -b '#{fetch(:puma_socket)}'",
-            " -e #{fetch(:stage)} ",
-            "--control-url '#{fetch(:pumactl_socket)}'",
-            "-S #{fetch(:puma_state)}",
-            fetch(:puma_flags),
-            ">> #{fetch(:puma_log)} 2>&1 &"
+          execute :bundle, *puma_start_command
         end
       end
     end
@@ -38,7 +43,15 @@ namespace :puma do
   task :restart do
     on roles fetch(:puma_roles) do
       within release_path do
-        execute :bundle, "exec pumactl -S #{fetch(:puma_state)} restart"
+        begin
+          execute :bundle, "exec pumactl -S #{fetch(:puma_state)} restart"
+        rescue SSHKit::Command::Failed => e
+          warn "Puma restart failed via control socket: #{e.message}"
+          warn "Starting Puma instead"
+          with rails_env: fetch(:rails_env) do
+            execute :bundle, *puma_start_command
+          end
+        end
       end
     end
   end

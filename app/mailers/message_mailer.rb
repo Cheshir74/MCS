@@ -1,5 +1,5 @@
 class MessageMailer < ApplicationMailer
-    default from: SiteSetting.get_value('email_login')
+    default from: -> { SiteSetting.get_value('email_login', 'user@example.com') }
 
     def contact_email(name, email, body)
         @name = name

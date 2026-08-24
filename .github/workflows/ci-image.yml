@@ -3,9 +3,11 @@ name: CI Image
 on:
   push:
     branches:
+      - master
       - main
       - new_version_design
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read

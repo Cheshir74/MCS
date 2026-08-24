@@ -1,5 +1,5 @@
 # config valid for current version of Capistrano
-lock "~> 3.17.3"
+lock "~> 3.20"
 
 set :application, 'Photohub'
 set :repo_url, 'git@github.com:Cheshir74/MCS.git'
@@ -11,11 +11,13 @@ append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/syst
 
 # Ruby environment
 set :rbenv_type, :user
-set :rbenv_ruby, '3.3.0'
+set :rbenv_ruby, '3.4.8'
 
 # Default environment variables
-set :default_env, {
-  'RAILS_MASTER_KEY' => ENV['RAILS_MASTER_KEY']
+set :default_env, -> {
+  env = { 'RAILS_ENV' => fetch(:rails_env, 'production') }
+  env['RAILS_MASTER_KEY'] = ENV['RAILS_MASTER_KEY'] if ENV['RAILS_MASTER_KEY']
+  env
 }
 
 # Puma settings
@@ -31,54 +33,60 @@ set :gallery_reset_variants, false
 set :assets_keep, 5
 set :nginx_reload, false
 set :nginx_service, 'nginx'
+set :bootstrap_runtime_on_deploy, true
+set :yarn_release_path, '.yarn/releases/yarn-4.18.0.cjs'
 
 namespace :deploy do
-  desc "🔑 Check master.key and credentials.yml.enc existence"
+  desc "Check master.key and credentials.yml.enc existence"
   task :check_keys do
     on roles(:app) do
       within shared_path do
-        info "---- 🔑 Checking master.key ----"
+        info "---- Checking master.key ----"
         if test("[ -f #{shared_path}/config/master.key ]")
-          key = capture(:cat, "#{shared_path}/config/master.key").strip
-          info "✅ master.key exists"
-          info "   Content: #{key}"
+          info "master.key exists"
         else
-          error "❌ master.key missing"
+          error "master.key missing"
           exit 1
         end
 
-        info "---- 📜 Checking credentials.yml.enc ----"
+        info "---- Checking credentials.yml.enc ----"
         if test("[ -f #{shared_path}/config/credentials.yml.enc ]")
-          info "✅ credentials.yml.enc exists"
+          info "credentials.yml.enc exists"
         else
-          error "❌ credentials.yml.enc missing"
+          error "credentials.yml.enc missing"
           exit 1
         end
       end
     end
   end
 
-  desc "🔓 Show decrypted credentials (after release is ready)"
-  task :show_credentials do
+  desc "Verify encrypted credentials can be decrypted"
+  task :verify_credentials do
     on roles(:app) do
+      if defined?(SSHKit::Backend::Printer) && SSHKit.config.backend == SSHKit::Backend::Printer
+        info "skipping credentials verification in dry-run mode"
+        next
+      end
+
       if test("[ -d #{release_path} ]")
         within release_path do
           with rails_env: fetch(:rails_env) do
-            creds = capture(:bundle, "exec rails credentials:show || true")
-            if creds.strip.empty?
-              warn "⚠️ Failed to decrypt credentials (check master.key)"
+            result = capture(:bundle, "exec rails credentials:show >/dev/null 2>&1 && echo OK || echo FAIL")
+            if result.strip == "OK"
+              info "credentials decrypted successfully"
             else
-              info "🔓 credentials decrypted:\n#{creds}"
+              error "failed to decrypt credentials; check shared/config/master.key"
+              exit 1
             end
           end
         end
       else
-        warn "⚠️ release_path not found — skipping credentials:show"
+        warn "release_path not found; skipping credentials verification"
       end
     end
   end
 
-  desc '📦 Run DB migrations'
+  desc 'Run DB migrations'
   task :migrate do
     on roles(:app) do
       within release_path do
@@ -89,19 +97,19 @@ namespace :deploy do
     end
   end
 
-  desc '🛠️ Build frontend assets (JS + CSS)'
+  desc 'Build frontend assets (JS + CSS)'
   task :build_frontend do
     on roles(:web) do
       within release_path do
         with rails_env: fetch(:rails_env), node_env: 'production' do
-          execute :yarn, 'install --immutable'
-          execute :yarn, 'run build'
+          execute :node, "#{fetch(:yarn_release_path)} install --immutable"
+          execute :node, "#{fetch(:yarn_release_path)} run build"
         end
       end
     end
   end
 
-  desc '🧹 Clean shared assets cache before precompile'
+  desc 'Clean shared assets cache before precompile'
   task :clean_assets do
     on roles(:app) do
       within release_path do
@@ -112,7 +120,7 @@ namespace :deploy do
     end
   end
 
-  desc '🧼 Remove old compiled assets while keeping the latest ones'
+  desc 'Remove old compiled assets while keeping the latest ones'
   task :prune_old_assets do
     on roles(:app) do
       within release_path do
@@ -124,7 +132,7 @@ namespace :deploy do
     end
   end
 
-  desc '🔄 Restart Puma'
+  desc 'Restart Puma'
   task :restart do
     on roles(:app) do
       invoke 'puma:restart'
@@ -133,7 +141,7 @@ namespace :deploy do
 end
 
 namespace :nginx do
-  desc '♻️ Reload Nginx to pick up fresh static assets'
+  desc 'Reload Nginx to pick up fresh static assets'
   task :reload do
     on roles(:web) do
       unless fetch(:nginx_reload, false)
@@ -144,7 +152,7 @@ namespace :nginx do
       begin
         execute :sudo, :systemctl, :reload, fetch(:nginx_service, 'nginx')
       rescue SSHKit::Command::Failed => e
-        warn "⚠️ Failed to reload Nginx automatically: #{e.message}"
+        warn "Failed to reload Nginx automatically: #{e.message}"
       end
     end
   end
@@ -152,7 +160,7 @@ end
 
 # Hooks sequence
 before 'deploy:updated', 'deploy:check_keys'
-before 'deploy:assets:precompile', 'deploy:show_credentials'
+before 'deploy:assets:precompile', 'deploy:verify_credentials'
 before 'deploy:assets:precompile', 'deploy:clean_assets'
 before 'deploy:assets:precompile', 'deploy:build_frontend'
 after 'deploy:updated', 'deploy:migrate'
