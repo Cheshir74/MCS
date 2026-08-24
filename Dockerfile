@@ -39,7 +39,9 @@ RUN gem install bundler -v 2.7.1 && \
 
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/releases ./.yarn/releases
-RUN node .yarn/releases/yarn-4.18.0.cjs install --immutable
+RUN ln -s /app/.yarn/releases/yarn-4.18.0.cjs /usr/local/bin/yarn && \
+    ln -s /app/.yarn/releases/yarn-4.18.0.cjs /usr/local/bin/yarnpkg && \
+    yarn install --immutable
 
 COPY . .
 
