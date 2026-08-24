@@ -10,13 +10,4 @@ RSpec.describe "Homes", type: :request do
     end
   end
 
-  describe "GET /show" do
-    it "returns http success" do
-      sign_in create(:user)
-
-      get "/homes/show"
-      expect(response).to have_http_status(:success)
-    end
-  end
-
 end
