@@ -20,8 +20,8 @@ Rails.application.configure do
   # key such as config/credentials/production.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
 
-  # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  # config.public_file_server.enabled = false
+  # Serve static files from the container when a reverse proxy forwards to Rails.
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
@@ -51,7 +51,7 @@ Rails.application.configure do
   # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = ENV.fetch("RAILS_FORCE_SSL", "true") == "true"
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
@@ -74,7 +74,9 @@ Rails.application.configure do
   # for persistent jobs in production.
   config.active_job.queue_adapter = :async
   config.active_job.queue_name_prefix = "mcs_production"
-  config.action_mailer.default_url_options = { host: Rails.application.credentials.mailer.mail_domain }
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch("MAILER_HOST") { Rails.application.credentials.dig(:mailer, :mail_domain) }
+  }
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp

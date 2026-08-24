@@ -1,0 +1,28 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
+development:
+  <<: *default
+  database: MSC_development
+  username: <%= ENV.fetch("DATABASE_USER", "postgres") %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5432) %>
+
+test:
+  <<: *default
+  database: MSC_test
+  username: <%= ENV.fetch("DATABASE_USER", "postgres") %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5432) %>
+
+production:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_NAME", "MSC_production") %>
+  username: <%= ENV.fetch("DATABASE_USER", "depus") %>
+  password: <%= ENV["DATABASE_PASSWORD"] %>
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5432) %>

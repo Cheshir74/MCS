@@ -20,6 +20,11 @@
 /node_modules
 /yarn-error.log
 
+# Docker production secrets and persistent runtime data
+/.env.production
+/data
+/secrets
+
 /public/assets
 /public/uploads
 .byebug_history
@@ -31,6 +36,7 @@
 
 /config/deploy.rb.bk
 /config/database*
+!/config/database.yml.example
 /config/secrets*
 /config/credentials.yml.enc
 .idea
