@@ -74,9 +74,7 @@ Rails.application.configure do
   # for persistent jobs in production.
   config.active_job.queue_adapter = :async
   config.active_job.queue_name_prefix = "mcs_production"
-  config.action_mailer.default_url_options = {
-    host: ENV.fetch("MAILER_HOST") { Rails.application.credentials.dig(:mailer, :mail_domain) }
-  }
+  config.action_mailer.default_url_options = { host: "localhost" }
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp

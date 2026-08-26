@@ -35,7 +35,6 @@ env:
   secret:
     - DATABASE_PASSWORD
     - ENCRYPTION_KEY
-    - MAILER_HOST
     - RAILS_MASTER_KEY
 
 volumes:
@@ -55,4 +54,4 @@ accessories:
       secret:
         - POSTGRES_PASSWORD
     directories:
-      - data:/var/lib/postgresql/data
+      - /home/depus/mcs/postgres/data:/var/lib/postgresql/data

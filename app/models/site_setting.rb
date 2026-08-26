@@ -13,7 +13,7 @@ class SiteSetting < ApplicationRecord
   attribute :registrations_enabled, :boolean, default: true
 
   def update_mailer_settings
-    ActionMailer::Base.smtp_settings = SiteSetting.mailer_settings
+    SiteSetting.apply_mailer_settings
   end
 
   def self.mailer_settings
@@ -22,9 +22,27 @@ class SiteSetting < ApplicationRecord
       port: SiteSetting.get_value('email_port', 587),
       user_name: SiteSetting.get_value('email_login', 'user@example.com'),
       password: SiteSetting.get_value('email_password', 'password'),
+      domain: SiteSetting.get_value('email_domain', 'localhost'),
       enable_starttls_auto: SiteSetting.get_value('email_tls', true),
       ssl: SiteSetting.get_value('email_ssl', false)
     }
+  end
+
+  def self.mailer_host
+    get_value('email_domain', 'localhost')
+  end
+
+  def self.mailer_sender
+    get_value('email_login', 'user@example.com')
+  end
+
+  def self.apply_mailer_settings
+    settings = mailer_settings
+
+    ActionMailer::Base.smtp_settings = settings
+    Rails.application.config.action_mailer.smtp_settings = settings
+    ActionMailer::Base.default_url_options = { host: mailer_host }
+    Rails.application.config.action_mailer.default_url_options = { host: mailer_host }
   end
 
   def email_password

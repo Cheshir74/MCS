@@ -187,8 +187,8 @@ section.admin-workspace
                 = f.label :email_login, "SMTP login", class: "form-label form-label--strong"
                 = f.text_field :email_login, class: "form-control"
               .form-grid__item
-                = f.label :email_domain, "SMTP domain", class: "form-label form-label--strong"
-                = f.text_field :email_domain, class: "form-control"
+                = f.label :email_domain, "Mailer host / SMTP domain", class: "form-label form-label--strong"
+                = f.text_field :email_domain, class: "form-control", placeholder: "example.com"
               .form-grid__item
                 = f.label :email_password, "SMTP password", class: "form-label form-label--strong"
                 = f.password_field :email_password, class: "form-control"
