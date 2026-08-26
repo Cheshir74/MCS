@@ -31,7 +31,6 @@
     "lg-pager": "^1.0.2",
     "lightgallery": "^2.9.0",
     "nodemon": "^3.1.14",
-    "popper.js": "^1.16.1",
     "postcss": "^8.5.26",
     "postcss-cli": "^11.0.1",
     "prop-types": "^15.8.1",
