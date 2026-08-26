@@ -1,168 +1,126 @@
-# Docker Deployment
+# Kamal Deployment
 
-This Docker setup runs Rails/Puma in one container and PostgreSQL in a separate
-container. Uploaded files are stored outside the app container in
-`./data/storage`, so rebuilding or replacing the app image does not remove
-Active Storage files.
+Kamal is the primary Docker deployment path for this app. It builds the Rails
+image, pushes it through a local registry on the server, runs the web container
+behind kamal-proxy, and keeps PostgreSQL as a Kamal accessory.
 
-## Short Version
-
-First deploy:
-
-```bash
-bin/docker-setup
-```
-
-Then edit `.env.production` and run:
-
-```bash
-bin/docker-deploy
-```
-
-Regular deploy after code changes:
-
-```bash
-git pull
-bin/docker-deploy
-```
-
-Backup:
-
-```bash
-bin/docker-backup
-```
-
-## Build In GitHub
-
-The repository has a GitHub Actions workflow at:
+The staging destination is configured in:
 
 ```text
-.github/workflows/ci-image.yml
+config/deploy.yml
+config/deploy.staging.yml
+.kamal/secrets.staging
+mise.toml
 ```
 
-On `push` to `main` or `new_version_design` it runs specs first, then builds and
-pushes the Docker image to GitHub Container Registry:
+## First Deploy
 
-```text
-ghcr.io/<owner>/<repo>:<commit-sha>
-ghcr.io/<owner>/<repo>:latest
-```
-
-To deploy the prebuilt image from GHCR, set this on the server in
-`.env.production`:
-
-```text
-DEPLOY_FROM_REGISTRY=true
-WEB_IMAGE=ghcr.io/cheshir74/mcs:latest
-```
-
-If the GHCR package is private, log in on the server once:
+Install project tools and dependencies:
 
 ```bash
-echo "<github-token-with-read-packages>" | docker login ghcr.io -u "<github-username>" --password-stdin
+mise install
+bundle install
+node .yarn/releases/yarn-4.18.0.cjs install --immutable
 ```
 
-Then deploy with the same command:
+Trust the project `mise.toml` once:
 
 ```bash
-bin/docker-deploy
+mise trust
 ```
 
-For a pinned deploy, use the commit SHA tag instead of `latest`:
+Export the secrets used by `.kamal/secrets.staging`:
 
-```text
-WEB_IMAGE=ghcr.io/cheshir74/mcs:<commit-sha>
+```bash
+export DATABASE_PASSWORD="replace_with_strong_database_password"
+export ENCRYPTION_KEY="replace_with_64_hex_characters_or_keep_it_in_credentials"
+export MAILER_HOST="example.com"
+```
+
+`RAILS_MASTER_KEY` is read from `config/master.key` by `.kamal/secrets.staging`.
+Do not commit `config/master.key`.
+
+Validate the rendered Kamal config:
+
+```bash
+mise run kamal-check
+```
+
+Bootstrap the server, push env, boot PostgreSQL, and deploy:
+
+```bash
+mise run kamal-setup
+```
+
+## Regular Deploy
+
+Use backward-compatible migrations where possible. For deploys that include DB
+changes, run the migration explicitly, then deploy:
+
+```bash
+mise run kamal-migrate
+mise run kamal-deploy
+```
+
+For code-only deploys:
+
+```bash
+mise run kamal-deploy
+```
+
+Useful commands:
+
+```bash
+mise run kamal-logs
+bundle exec kamal app exec --interactive --reuse -d staging "bundle exec rails console"
+bundle exec kamal app exec --interactive --reuse -d staging "bash"
+bundle exec kamal rollback -d staging
 ```
 
 ## Server Layout
 
-Use this layout on the production server:
+Kamal owns its runtime files under the default `.kamal` directory on the server.
+Persistent application data is stored in Docker volumes/accessory directories:
 
 ```text
-/srv/mcs/
-  compose.production.yml
-  .env.production
-  data/
-    postgres/
-    storage/
-  secrets/
-    credentials.yml.enc
-  backups/
+mcs_storage              -> /app/storage
+mcs-postgres data volume -> /var/lib/postgresql/data
 ```
 
-`data/postgres` and `data/storage` are persistent data. Back them up regularly.
+The Rails container exposes port `3000` internally. Kamal-proxy publishes the
+app on ports `80` and `443`; staging currently has SSL disabled because the
+configuration targets the raw server IP.
 
-## Required Secrets
-
-`bin/docker-setup` creates `.env.production` from `.env.production.example`.
-Fill in real values before deploy.
-
-The app also needs encrypted Rails credentials at runtime. `bin/docker-setup`
-copies `config/credentials.yml.enc` to:
-
-```text
-./secrets/credentials.yml.enc -> /app/config/credentials.yml.enc
-```
-
-The decrypt key must be provided as `RAILS_MASTER_KEY` in `.env.production`.
-
-## Build And Boot
-
-Use the wrapper script:
-
-```bash
-bin/docker-deploy
-```
-
-It builds the image, starts PostgreSQL, runs migrations, starts Rails, and prints
-container status.
-
-The Rails container listens on `127.0.0.1:3000`. Put Nginx or Caddy in front of
-it for TLS and public traffic.
-
-## Migrating From The Current Server
+## Migrating Existing Server Data
 
 1. Stop writes on the old app, or put the site in maintenance mode.
 2. Dump the old PostgreSQL database:
 
    ```bash
-   pg_dump -Fc -d MSC_production -f /srv/mcs/backups/mcs.dump
+   pg_dump -Fc -d MSC_production -f /tmp/mcs.dump
    ```
 
-3. Restore into the Docker PostgreSQL container:
+3. Copy the dump to the new server.
+4. Boot the PostgreSQL accessory if it is not already running:
 
    ```bash
-   docker compose -f compose.production.yml up -d postgres
-   docker compose -f compose.production.yml exec -T postgres sh -c \
-     'pg_restore --clean --if-exists --no-owner -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
-     < /srv/mcs/backups/mcs.dump
+   bundle exec kamal accessory boot postgres -d staging
    ```
 
-4. Copy Active Storage files from the old shared storage directory:
+5. Restore into the accessory database:
 
    ```bash
-   rsync -a /home/depus/app_deploy/shared/storage/ /srv/mcs/data/storage/
+   bundle exec kamal accessory exec postgres -d staging --reuse \
+     'pg_restore --clean --if-exists --no-owner -U "$POSTGRES_USER" -d "$POSTGRES_DB" /tmp/mcs.dump'
    ```
 
-5. Run migrations and boot the app:
+6. Copy Active Storage files from the old shared storage directory into the
+   `mcs_storage` Docker volume.
+7. Run migrations and deploy:
 
    ```bash
-   bin/docker-deploy
+   mise run kamal-migrate
+   mise run kamal-deploy
    ```
 
-6. Check login, uploads, existing images/files, mail delivery, and admin flows.
-
-## Backups
-
-Back up both PostgreSQL and Active Storage:
-
-```bash
-bin/docker-backup
-```
-
-## Moving Files Later
-
-This setup keeps files portable because Active Storage files live in
-`data/storage`, not inside the container. For stronger portability, move Active
-Storage to an S3-compatible service later and change `config.active_storage.service`
-from `:local` to that remote service.
+8. Check login, uploads, existing images/files, mail delivery, and admin flows.

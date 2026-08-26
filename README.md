@@ -59,61 +59,62 @@ bundle exec rspec
 - `MAILER_HOST`
 - `ENCRYPTION_KEY` или `encryption_key` в Rails credentials
 
-## Деплой Через Capistrano
+## Деплой Через Kamal
 
-Текущий Capistrano stage:
-
-```text
-config/deploy/staging.rb
-```
-
-Деплой:
+Основной Docker-деплой теперь идет через Kamal:
 
 ```bash
-bundle exec cap staging deploy
+mise install
+bundle install
+mise trust
+mise run kamal-check
+mise run kamal-setup
 ```
 
-Capistrano использует shared-файлы и директории на сервере:
+Повторный деплой:
+
+```bash
+mise run kamal-deploy
+```
+
+Если в релизе есть миграции:
+
+```bash
+mise run kamal-migrate
+mise run kamal-deploy
+```
+
+Staging-конфиги:
 
 ```text
-/home/depus/app_deploy/shared/config/database.yml
-/home/depus/app_deploy/shared/config/master.key
-/home/depus/app_deploy/shared/config/credentials.yml.enc
-/home/depus/app_deploy/shared/storage
+config/deploy.yml
+config/deploy.staging.yml
+.kamal/secrets.staging
+mise.toml
 ```
 
-## Деплой Через Docker
+Перед деплоем нужны локальные env-переменные:
+
+```bash
+export DATABASE_PASSWORD="replace_with_strong_database_password"
+export ENCRYPTION_KEY="replace_with_64_hex_characters_or_keep_it_in_credentials"
+export MAILER_HOST="example.com"
+```
+
+`RAILS_MASTER_KEY` читается из `config/master.key`.
 
 Подробная инструкция: [DEPLOY_DOCKER.md](DEPLOY_DOCKER.md).
-
-Первичная подготовка:
-
-```bash
-bin/docker-setup
-```
-
-После заполнения `.env.production`:
-
-```bash
-bin/docker-deploy
-```
-
-Бэкап:
-
-```bash
-bin/docker-backup
-```
 
 Файлы Active Storage хранятся вне app-контейнера:
 
 ```text
-data/storage
+mcs_storage Docker volume
 ```
 
-PostgreSQL data хранится отдельно:
+PostgreSQL data хранится в accessory volume:
 
 ```text
-data/postgres
+mcs-postgres:/var/lib/postgresql/data
 ```
 
 ## Docker Image Из GitHub

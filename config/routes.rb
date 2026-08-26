@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   #root 'articles#index', as: 'homes'
+  get "up" => "up#show"
   root 'homes#index', as: 'home'
   get "upload" => "images#new", :as => "upload"
   get 'about' => 'pages#about'

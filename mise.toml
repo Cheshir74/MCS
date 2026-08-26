@@ -1,0 +1,22 @@
+[tools]
+ruby = "3.4.8"
+
+[tasks.kamal-check]
+description = "Validate Kamal staging config"
+run = "bundle exec kamal config -d staging"
+
+[tasks.kamal-setup]
+description = "Bootstrap and first deploy staging with Kamal"
+run = "bundle exec kamal setup -d staging"
+
+[tasks.kamal-deploy]
+description = "Deploy staging with Kamal"
+run = "bundle exec kamal deploy -d staging"
+
+[tasks.kamal-migrate]
+description = "Run production migrations on staging"
+run = "bundle exec kamal app exec --primary -d staging \"bundle exec rails db:migrate\""
+
+[tasks.kamal-logs]
+description = "Tail staging app logs"
+run = "bundle exec kamal app logs -f -d staging"

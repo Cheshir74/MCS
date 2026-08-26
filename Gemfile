@@ -44,10 +44,7 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.1'
   # For deploy
-  gem 'capistrano', '~> 3.20'
-  gem 'capistrano-rails', '~> 1.7'
-  gem 'capistrano-rbenv', '~> 2.2.0'
-  gem 'capistrano-puma'
+  gem 'kamal', '~> 2.10'
 end
 
 group :test do

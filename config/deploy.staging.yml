@@ -1,0 +1,11 @@
+servers:
+  web:
+    - 89.22.234.238
+
+ssh:
+  user: depus
+  port: 22
+
+env:
+  clear:
+    RAILS_FORCE_SSL: "false"
