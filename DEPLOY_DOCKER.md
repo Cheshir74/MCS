@@ -1,19 +1,35 @@
 # Kamal Deployment
 
-Kamal is the primary Docker deployment path for this app. It builds the Rails
-image, pushes it through a local registry on the server, runs the web container
-behind kamal-proxy, and keeps PostgreSQL as a Kamal accessory.
+Kamal is the primary Docker deployment path for this app. GitHub Actions builds
+and publishes the Rails image to GHCR, Kamal pulls that image on the server,
+runs the web container behind kamal-proxy, and keeps PostgreSQL as a Kamal
+accessory.
 
-The staging destination is configured in:
+Production deploys use service `msc_tda`. Staging deploys use service `mcs`.
+
+Shared config:
 
 ```text
 config/deploy.yml
-config/deploy.staging.yml
-.kamal/secrets.staging
 mise.toml
 ```
 
-## First Deploy
+Production config:
+
+```text
+config/deploy.production.yml
+.kamal/secrets.production
+.kamal/deploy.production.local
+```
+
+Staging config:
+
+```text
+config/deploy.staging.yml
+.kamal/secrets.staging
+```
+
+## First Production Deploy
 
 Install project tools and dependencies:
 
@@ -29,98 +45,151 @@ Trust the project `mise.toml` once:
 mise trust
 ```
 
-Export the secrets used by `.kamal/secrets.staging`:
+Make sure the image for the commit exists in GHCR. Push to `master` and wait
+for the `CI Image` GitHub Actions workflow to finish successfully.
 
 ```bash
-export DATABASE_PASSWORD="replace_with_strong_database_password"
-export ENCRYPTION_KEY="replace_with_64_hex_characters_or_keep_it_in_credentials"
-export MAILER_HOST="example.com"
+git push origin master
 ```
 
-`RAILS_MASTER_KEY` is read from `config/master.key` by `.kamal/secrets.staging`.
-Do not commit `config/master.key`.
+Run the first deploy:
 
-Validate the rendered Kamal config:
+```bash
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-first-deploy
+```
+
+The first-deploy script:
+
+- verifies SSH key access;
+- creates `.kamal/deploy.production.local` if needed;
+- generates `.kamal/secrets.production.local`;
+- creates `/home/depus/msc_tda/postgres/data`;
+- creates `/home/depus/msc_tda/storage`;
+- creates `/home/depus/msc_tda/backups`;
+- runs Kamal setup with `--skip-push`;
+- runs `rails db:prepare`;
+- creates the first superadmin;
+- prints the first admin credentials once at the end of the deploy log.
+
+The first admin password is not written to the deploy files. If the account
+already exists, the password is not changed or printed.
+
+## Regular Production Deploy
+
+For normal deploys:
+
+```bash
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-deploy
+```
+
+Useful production commands:
+
+```bash
+mise run kamal-production-check
+mise run kamal-production-logs
+mise run kamal-production-migrate
+```
+
+## Staging Deploy
+
+First staging deploy:
+
+```bash
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-first-deploy
+```
+
+Regular staging deploy:
+
+```bash
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-deploy
+```
+
+Useful staging commands:
 
 ```bash
 mise run kamal-check
-```
-
-Bootstrap the server, push env, boot PostgreSQL, and deploy:
-
-```bash
-mise run kamal-setup
-```
-
-## Regular Deploy
-
-Use backward-compatible migrations where possible. For deploys that include DB
-changes, run the migration explicitly, then deploy:
-
-```bash
-mise run kamal-migrate
-mise run kamal-deploy
-```
-
-For code-only deploys:
-
-```bash
-mise run kamal-deploy
-```
-
-Useful commands:
-
-```bash
 mise run kamal-logs
-bundle exec kamal app exec --interactive --reuse -d staging "bundle exec rails console"
-bundle exec kamal app exec --interactive --reuse -d staging "bash"
-bundle exec kamal rollback -d staging
+mise run kamal-migrate
 ```
 
 ## Server Layout
 
-Kamal owns its runtime files under the default `.kamal` directory on the server.
-Persistent application data is stored in Docker volumes/accessory directories:
+Production persistent data:
 
 ```text
-mcs_storage              -> /app/storage
-mcs-postgres data volume -> /var/lib/postgresql/data
+/home/depus/msc_tda/postgres/data  -> PostgreSQL data directory
+/home/depus/msc_tda/storage        -> Rails Active Storage uploads
+/home/depus/msc_tda/backups        -> backup files
+```
+
+Staging persistent data:
+
+```text
+/home/depus/mcs/postgres/data      -> PostgreSQL data directory
+/home/depus/mcs/storage            -> Rails Active Storage uploads
+/home/depus/mcs/backups            -> backup files
 ```
 
 The Rails container exposes port `3000` internally. Kamal-proxy publishes the
-app on ports `80` and `443`; staging currently has SSL disabled because the
-configuration targets the raw server IP.
+app on ports `80` and `443`.
 
-## Migrating Existing Server Data
+## Backup
+
+Create a production database dump:
+
+```bash
+ssh depus@89.22.234.238 \
+  "docker exec msc-tda-postgres pg_dump -U msc_tda msc_tda_production" \
+  > msc_tda_production.sql
+```
+
+Archive production uploads:
+
+```bash
+ssh depus@89.22.234.238 \
+  "tar -czf /home/depus/msc_tda/backups/storage.tar.gz -C /home/depus/msc_tda/storage ."
+scp depus@89.22.234.238:/home/depus/msc_tda/backups/storage.tar.gz .
+```
+
+## Migrating To Another Server
 
 1. Stop writes on the old app, or put the site in maintenance mode.
-2. Dump the old PostgreSQL database:
+2. Copy these local deploy files to the new machine:
 
-   ```bash
-   pg_dump -Fc -d MSC_production -f /tmp/mcs.dump
+   ```text
+   config/master.key
+   .kamal/secrets.production.local
+   .kamal/deploy.production.local
    ```
 
-3. Copy the dump to the new server.
-4. Boot the PostgreSQL accessory if it is not already running:
+3. Copy or restore database data from:
 
-   ```bash
-   bundle exec kamal accessory boot postgres -d staging
+   ```text
+   /home/depus/msc_tda/postgres/data
    ```
 
-5. Restore into the accessory database:
+   Prefer a `pg_dump`/restore for a live production database.
 
-   ```bash
-   bundle exec kamal accessory exec postgres -d staging --reuse \
-     'pg_restore --clean --if-exists --no-owner -U "$POSTGRES_USER" -d "$POSTGRES_DB" /tmp/mcs.dump'
+4. Copy uploaded files from:
+
+   ```text
+   /home/depus/msc_tda/storage
    ```
 
-6. Copy Active Storage files from the old shared storage directory into the
-   `mcs_storage` Docker volume.
-7. Run migrations and deploy:
+5. Deploy the same image version on the new server:
 
    ```bash
-   mise run kamal-migrate
-   mise run kamal-deploy
+   KAMAL_VERSION=<git-sha> mise run kamal-production-first-deploy
    ```
 
-8. Check login, uploads, existing images/files, mail delivery, and admin flows.
+6. Check login, uploads, existing images/files, mail delivery, and admin flows.
+
+## Legacy Staging Commands
+
+The generic staging aliases are:
+
+```bash
+mise run kamal-first-deploy
+mise run kamal-deploy
+mise run kamal-logs
+```

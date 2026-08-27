@@ -45,76 +45,95 @@ bundle exec rspec
 
 - `config/master.key`
 - `config/database.yml`
-- `.env.production`
+- `.kamal/*.local`
 - `storage`
 - PostgreSQL dump-файлы
 
-Для production нужны:
+Kamal-секреты генерируются локально первым деплоем в ignored-файл
+`.kamal/secrets.production.local`:
 
 - `RAILS_MASTER_KEY`
-- `DATABASE_HOST`
-- `DATABASE_NAME`
-- `DATABASE_USER`
 - `DATABASE_PASSWORD`
-- `MAILER_HOST`
-- `ENCRYPTION_KEY` или `encryption_key` в Rails credentials
+- `POSTGRES_PASSWORD`
+- `ENCRYPTION_KEY`
+- `SECRET_KEY_BASE`
+
+Настройки почты задаются в админке, не через deploy env.
 
 ## Деплой Через Kamal
 
-Основной Docker-деплой теперь идет через Kamal:
+Production service называется `msc_tda`. Приложение разворачивается из готового
+GHCR image `ghcr.io/cheshir74/mcs:<version>`, который собирает GitHub Actions.
+
+Первый production-деплой:
 
 ```bash
 mise install
 bundle install
 mise trust
-mise run kamal-check
-mise run kamal-setup
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-first-deploy
 ```
 
-Повторный деплой:
+First-deploy сам:
+
+- проверяет/настраивает SSH key access;
+- генерирует локальные Kamal secrets;
+- создает серверные директории;
+- запускает Kamal setup;
+- выполняет `rails db:prepare`;
+- создает первого superadmin;
+- печатает логин/пароль первого админа один раз в конце вывода.
+
+Повторный production-деплой:
 
 ```bash
-mise run kamal-deploy
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-deploy
 ```
 
 Если в релизе есть миграции:
 
 ```bash
-mise run kamal-migrate
-mise run kamal-deploy
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-deploy
 ```
 
-Staging-конфиги:
+Production-конфиги:
 
 ```text
 config/deploy.yml
-config/deploy.staging.yml
-.kamal/secrets.staging
+config/deploy.production.yml
+.kamal/secrets.production
+.kamal/deploy.production.local
 mise.toml
 ```
 
-Перед деплоем нужны локальные env-переменные:
+Staging-команды:
 
 ```bash
-export DATABASE_PASSWORD="replace_with_strong_database_password"
-export ENCRYPTION_KEY="replace_with_64_hex_characters_or_keep_it_in_credentials"
-export MAILER_HOST="example.com"
+mise run kamal-first-deploy
+mise run kamal-deploy
+mise run kamal-logs
 ```
-
-`RAILS_MASTER_KEY` читается из `config/master.key`.
 
 Подробная инструкция: [DEPLOY_DOCKER.md](DEPLOY_DOCKER.md).
 
-Файлы Active Storage хранятся вне app-контейнера:
+## Production Data
+
+Файлы Active Storage хранятся вне app-контейнера в обычной папке на сервере:
 
 ```text
-mcs_storage Docker volume
+/home/depus/msc_tda/storage
 ```
 
-PostgreSQL data хранится в accessory volume:
+PostgreSQL data хранится вне Postgres-контейнера:
 
 ```text
-mcs-postgres:/var/lib/postgresql/data
+/home/depus/msc_tda/postgres/data
+```
+
+Папка для бэкапов:
+
+```text
+/home/depus/msc_tda/backups
 ```
 
 ## Docker Image Из GitHub
@@ -127,9 +146,9 @@ Workflow:
 
 Он запускает RSpec, собирает Docker image и публикует его в GHCR.
 
-Чтобы сервер тянул готовый image, в `.env.production`:
+Публикуемые теги:
 
 ```text
-DEPLOY_FROM_REGISTRY=true
-WEB_IMAGE=ghcr.io/cheshir74/mcs:latest
+ghcr.io/cheshir74/mcs:<git-sha>
+ghcr.io/cheshir74/mcs:latest
 ```
