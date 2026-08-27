@@ -48,7 +48,9 @@
   },
   "version": "0.1.0",
   "scripts": {
-    "build": "yarn build:css && esbuild app/javascript/*.* --bundle --loader:.ttf=file --loader:.js=jsx --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build": "yarn build:css && yarn build:js",
+    "build:js": "esbuild app/javascript/*.* --bundle --loader:.ttf=file --loader:.js=jsx --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets --define:process.env.NODE_ENV=\\\"production\\\" --minify",
+    "build:js:dev": "esbuild app/javascript/*.* --bundle --loader:.ttf=file --loader:.js=jsx --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
     "build:css:compile": "sass --style compressed --quiet-deps --silence-deprecation=import --silence-deprecation=global-builtin --silence-deprecation=color-functions --silence-deprecation=if-function ./app/assets/stylesheets/application.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
     "build:css_admin:compile": "sass --style compressed --quiet-deps --silence-deprecation=import --silence-deprecation=global-builtin --silence-deprecation=color-functions --silence-deprecation=if-function ./app/assets/stylesheets/admin.scss:./app/assets/builds/admin.css --no-source-map --load-path=node_modules",
     "build:css:prefix": "postcss ./app/assets/builds/application.css --use=autoprefixer --output=./app/assets/builds/application.css",
