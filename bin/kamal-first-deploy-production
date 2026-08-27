@@ -71,6 +71,7 @@ load_local_config() {
   local provided_ssl="${PRODUCTION_SSL:-}"
   local provided_force_ssl="${PRODUCTION_FORCE_SSL:-}"
   local provided_postgres_data_dir="${PRODUCTION_POSTGRES_DATA_DIR:-}"
+  local provided_storage_dir="${PRODUCTION_STORAGE_DIR:-}"
   local provided_backup_dir="${PRODUCTION_BACKUP_DIR:-}"
 
   if [[ -f "$LOCAL_CONFIG" ]]; then
@@ -86,6 +87,7 @@ load_local_config() {
   PRODUCTION_SSL="${provided_ssl:-${PRODUCTION_SSL:-}}"
   PRODUCTION_FORCE_SSL="${provided_force_ssl:-${PRODUCTION_FORCE_SSL:-}}"
   PRODUCTION_POSTGRES_DATA_DIR="${provided_postgres_data_dir:-${PRODUCTION_POSTGRES_DATA_DIR:-}}"
+  PRODUCTION_STORAGE_DIR="${provided_storage_dir:-${PRODUCTION_STORAGE_DIR:-}}"
   PRODUCTION_BACKUP_DIR="${provided_backup_dir:-${PRODUCTION_BACKUP_DIR:-}}"
 }
 
@@ -98,6 +100,7 @@ PRODUCTION_SSH_PORT=${PRODUCTION_SSH_PORT}
 PRODUCTION_SSL=${PRODUCTION_SSL}
 PRODUCTION_FORCE_SSL=${PRODUCTION_FORCE_SSL}
 PRODUCTION_POSTGRES_DATA_DIR=${PRODUCTION_POSTGRES_DATA_DIR}
+PRODUCTION_STORAGE_DIR=${PRODUCTION_STORAGE_DIR}
 PRODUCTION_BACKUP_DIR=${PRODUCTION_BACKUP_DIR}
 CONFIG
   chmod 600 "$LOCAL_CONFIG"
@@ -113,6 +116,7 @@ ask_missing_config() {
   PRODUCTION_SSL="${PRODUCTION_SSL:-false}"
   PRODUCTION_FORCE_SSL="${PRODUCTION_FORCE_SSL:-$PRODUCTION_SSL}"
   PRODUCTION_POSTGRES_DATA_DIR="${PRODUCTION_POSTGRES_DATA_DIR:-/home/${PRODUCTION_USER}/msc_tda/postgres/data}"
+  PRODUCTION_STORAGE_DIR="${PRODUCTION_STORAGE_DIR:-/home/${PRODUCTION_USER}/msc_tda/storage}"
   PRODUCTION_BACKUP_DIR="${PRODUCTION_BACKUP_DIR:-/home/${PRODUCTION_USER}/msc_tda/backups}"
 
   if [[ -z "$PRODUCTION_HOST" ]]; then
@@ -126,6 +130,7 @@ ask_missing_config() {
   export PRODUCTION_SSL
   export PRODUCTION_FORCE_SSL
   export PRODUCTION_POSTGRES_DATA_DIR
+  export PRODUCTION_STORAGE_DIR
   export PRODUCTION_BACKUP_DIR
 }
 
@@ -160,7 +165,7 @@ run bundle check
 run yarn install --immutable
 
 info "Prepare server directories over SSH"
-run ssh "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "mkdir -p '$PRODUCTION_POSTGRES_DATA_DIR' '$PRODUCTION_BACKUP_DIR'"
+run ssh "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "mkdir -p '$PRODUCTION_POSTGRES_DATA_DIR' '$PRODUCTION_STORAGE_DIR' '$PRODUCTION_BACKUP_DIR'"
 
 info "Check Docker access over SSH"
 if ! ssh "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "docker ps >/dev/null 2>&1"; then
@@ -179,8 +184,7 @@ info "Prepare production database"
 run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary -d production --version "$KAMAL_IMAGE_VERSION" "bundle exec rails db:prepare"
 
 info "Ensure first production admin"
-FIRST_ADMIN_EMAIL="${FIRST_ADMIN_EMAIL:-admin@example.com}"
-admin_output="$(env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary --raw --quiet --env "FIRST_ADMIN_EMAIL:${FIRST_ADMIN_EMAIL}" -d production --version "$KAMAL_IMAGE_VERSION" "bundle exec rails admin:ensure_superadmin")"
+admin_output="$(env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary --raw --quiet -d production --version "$KAMAL_IMAGE_VERSION" "bundle exec rails admin:ensure_superadmin")"
 
 info "Health check"
 if [[ "$PRODUCTION_SSL" == "true" ]]; then

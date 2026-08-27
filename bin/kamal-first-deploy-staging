@@ -8,6 +8,7 @@ HOST="${STAGING_HOST:-89.22.234.238}"
 USER="${STAGING_USER:-depus}"
 SSH_TARGET="${USER}@${HOST}"
 POSTGRES_DATA_DIR="${STAGING_POSTGRES_DATA_DIR:-/home/depus/mcs/postgres/data}"
+STORAGE_DIR="${STAGING_STORAGE_DIR:-/home/depus/mcs/storage}"
 BACKUP_DIR="${STAGING_BACKUP_DIR:-/home/depus/mcs/backups}"
 KAMAL_IMAGE_VERSION="${KAMAL_VERSION:-latest}"
 
@@ -93,7 +94,7 @@ run bundle check
 run yarn install --immutable
 
 info "Prepare server directories over SSH"
-run ssh "$SSH_TARGET" "mkdir -p '$POSTGRES_DATA_DIR' '$BACKUP_DIR'"
+run ssh "$SSH_TARGET" "mkdir -p '$POSTGRES_DATA_DIR' '$STORAGE_DIR' '$BACKUP_DIR'"
 
 info "Check Docker access over SSH"
 if ! ssh "$SSH_TARGET" "docker ps >/dev/null 2>&1"; then
@@ -112,8 +113,7 @@ info "Prepare production database"
 run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary -d staging --version "$KAMAL_IMAGE_VERSION" "bundle exec rails db:prepare"
 
 info "Ensure first staging admin"
-FIRST_ADMIN_EMAIL="${FIRST_ADMIN_EMAIL:-admin@example.com}"
-admin_output="$(env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary --raw --quiet --env "FIRST_ADMIN_EMAIL:${FIRST_ADMIN_EMAIL}" -d staging --version "$KAMAL_IMAGE_VERSION" "bundle exec rails admin:ensure_superadmin")"
+admin_output="$(env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary --raw --quiet -d staging --version "$KAMAL_IMAGE_VERSION" "bundle exec rails admin:ensure_superadmin")"
 
 info "Health check"
 run curl --fail --show-error --silent "http://${HOST}/up"

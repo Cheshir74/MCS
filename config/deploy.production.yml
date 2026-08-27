@@ -2,6 +2,7 @@
   production_host = ENV.fetch("PRODUCTION_HOST")
   production_user = ENV.fetch("PRODUCTION_USER", "depus")
   production_postgres_data_dir = ENV.fetch("PRODUCTION_POSTGRES_DATA_DIR", "/home/#{production_user}/msc_tda/postgres/data")
+  production_storage_dir = ENV["PRODUCTION_STORAGE_DIR"].presence || "/home/#{production_user}/msc_tda/storage"
 %>
 
 service: msc_tda
@@ -41,7 +42,7 @@ env:
     - SECRET_KEY_BASE
 
 volumes:
-  - msc_tda_storage:/app/storage
+  - <%= production_storage_dir %>:/app/storage
 
 accessories:
   postgres:

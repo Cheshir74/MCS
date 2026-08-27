@@ -43,7 +43,7 @@ env:
     - SECRET_KEY_BASE
 
 volumes:
-  - mcs_storage:/app/storage
+  - /home/depus/mcs/storage:/app/storage
 
 asset_path: /app/public/assets
 
