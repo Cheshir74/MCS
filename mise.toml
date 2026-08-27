@@ -3,20 +3,48 @@ ruby = "3.4.8"
 
 [tasks.kamal-check]
 description = "Validate Kamal staging config"
-run = "bundle exec kamal config -d staging"
+run = "KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public config -d staging --version ${KAMAL_VERSION:-latest}"
 
 [tasks.kamal-setup]
 description = "Bootstrap and first deploy staging with Kamal"
-run = "bundle exec kamal setup -d staging"
+run = "KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public setup -d staging --skip-push --version ${KAMAL_VERSION:-latest}"
+
+[tasks.kamal-first-deploy]
+description = "Generate local secrets, prepare the staging server, and run the first Kamal deploy"
+run = "bin/kamal-first-deploy-staging"
 
 [tasks.kamal-deploy]
 description = "Deploy staging with Kamal"
-run = "bundle exec kamal deploy -d staging"
+run = "KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public deploy -d staging --skip-push --version ${KAMAL_VERSION:-latest}"
 
 [tasks.kamal-migrate]
 description = "Run production migrations on staging"
-run = "bundle exec kamal app exec --primary -d staging \"bundle exec rails db:migrate\""
+run = "KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary -d staging \"bundle exec rails db:migrate\""
 
 [tasks.kamal-logs]
 description = "Tail staging app logs"
-run = "bundle exec kamal app logs -f -d staging"
+run = "KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app logs -f -d staging"
+
+[tasks.kamal-production-check]
+description = "Validate Kamal production config"
+run = "bin/kamal-production config --version ${KAMAL_VERSION:-latest}"
+
+[tasks.kamal-production-setup]
+description = "Bootstrap and first deploy production with Kamal"
+run = "bin/kamal-production setup --skip-push --version ${KAMAL_VERSION:-latest}"
+
+[tasks.kamal-production-first-deploy]
+description = "Generate local secrets, prepare the production server, and run the first Kamal deploy"
+run = "bin/kamal-first-deploy-production"
+
+[tasks.kamal-production-deploy]
+description = "Deploy production with Kamal"
+run = "bin/kamal-production deploy --skip-push --version ${KAMAL_VERSION:-latest}"
+
+[tasks.kamal-production-migrate]
+description = "Run production migrations"
+run = "bin/kamal-production app exec --primary \"bundle exec rails db:migrate\""
+
+[tasks.kamal-production-logs]
+description = "Tail production app logs"
+run = "bin/kamal-production app logs -f"

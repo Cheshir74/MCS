@@ -1,0 +1,188 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+LOCAL_CONFIG=".kamal/deploy.production.local"
+KAMAL_IMAGE_VERSION="${KAMAL_VERSION:-latest}"
+
+info() {
+  printf "\n==> %s\n" "$1"
+}
+
+run() {
+  printf "+ %s\n" "$*"
+  "$@"
+}
+
+ensure_ssh_key_access() {
+  local key_path="${KAMAL_SSH_KEY:-$HOME/.ssh/id_ed25519}"
+
+  info "Ensure key-based SSH access"
+
+  if ssh -o BatchMode=yes "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "true" 2>/dev/null; then
+    printf "Key-based SSH is already working for %s.\n" "$SSH_TARGET"
+    return
+  fi
+
+  if [[ ! -f "${key_path}.pub" ]]; then
+    mkdir -p "$(dirname "$key_path")"
+    run ssh-keygen -t ed25519 -f "$key_path" -N "" -C "kamal-deploy-$(whoami)@$(hostname)"
+  fi
+
+  printf "Installing SSH public key on %s. Enter the SSH password once if prompted.\n" "$SSH_TARGET"
+  if command -v ssh-copy-id >/dev/null 2>&1; then
+    run ssh-copy-id -i "${key_path}.pub" -p "$PRODUCTION_SSH_PORT" "$SSH_TARGET"
+  else
+    local public_key
+    public_key="$(tr -d '\n' < "${key_path}.pub")"
+    printf "%s\n" "$public_key" | ssh "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" 'read -r key; mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && grep -qxF "$key" ~/.ssh/authorized_keys || printf "%s\n" "$key" >> ~/.ssh/authorized_keys'
+  fi
+
+  if ! ssh -o BatchMode=yes "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "true" 2>/dev/null; then
+    printf "Key-based SSH still does not work for %s. Check ~/.ssh/authorized_keys on the server.\n" "$SSH_TARGET" >&2
+    exit 1
+  fi
+}
+
+check_port_80() {
+  info "Check port 80 availability"
+
+  if ! ssh "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "ss -ltn 'sport = :80' | grep -q LISTEN"; then
+    return
+  fi
+
+  if ssh "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "docker ps --filter 'name=^kamal-proxy$' --filter status=running --quiet | grep -q ."; then
+    printf "Port 80 is already owned by running kamal-proxy; continuing.\n"
+    return
+  fi
+
+  printf "Port 80 is already in use on %s.\n" "$SSH_TARGET" >&2
+  printf "Kamal proxy needs port 80. Stop the existing web server first, then remove the failed created proxy container if present:\n" >&2
+  printf "  ssh -p %s %s \"sudo systemctl disable --now nginx && docker rm kamal-proxy 2>/dev/null || true\"\n" "$PRODUCTION_SSH_PORT" "$SSH_TARGET" >&2
+  exit 1
+}
+
+load_local_config() {
+  local provided_host="${PRODUCTION_HOST:-}"
+  local provided_user="${PRODUCTION_USER:-}"
+  local provided_ssh_port="${PRODUCTION_SSH_PORT:-}"
+  local provided_ssl="${PRODUCTION_SSL:-}"
+  local provided_force_ssl="${PRODUCTION_FORCE_SSL:-}"
+  local provided_postgres_data_dir="${PRODUCTION_POSTGRES_DATA_DIR:-}"
+  local provided_backup_dir="${PRODUCTION_BACKUP_DIR:-}"
+
+  if [[ -f "$LOCAL_CONFIG" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$LOCAL_CONFIG"
+    set +a
+  fi
+
+  PRODUCTION_HOST="${provided_host:-${PRODUCTION_HOST:-}}"
+  PRODUCTION_USER="${provided_user:-${PRODUCTION_USER:-}}"
+  PRODUCTION_SSH_PORT="${provided_ssh_port:-${PRODUCTION_SSH_PORT:-}}"
+  PRODUCTION_SSL="${provided_ssl:-${PRODUCTION_SSL:-}}"
+  PRODUCTION_FORCE_SSL="${provided_force_ssl:-${PRODUCTION_FORCE_SSL:-}}"
+  PRODUCTION_POSTGRES_DATA_DIR="${provided_postgres_data_dir:-${PRODUCTION_POSTGRES_DATA_DIR:-}}"
+  PRODUCTION_BACKUP_DIR="${provided_backup_dir:-${PRODUCTION_BACKUP_DIR:-}}"
+}
+
+write_local_config() {
+  mkdir -p .kamal
+  cat > "$LOCAL_CONFIG" <<CONFIG
+PRODUCTION_HOST=${PRODUCTION_HOST}
+PRODUCTION_USER=${PRODUCTION_USER}
+PRODUCTION_SSH_PORT=${PRODUCTION_SSH_PORT}
+PRODUCTION_SSL=${PRODUCTION_SSL}
+PRODUCTION_FORCE_SSL=${PRODUCTION_FORCE_SSL}
+PRODUCTION_POSTGRES_DATA_DIR=${PRODUCTION_POSTGRES_DATA_DIR}
+PRODUCTION_BACKUP_DIR=${PRODUCTION_BACKUP_DIR}
+CONFIG
+  chmod 600 "$LOCAL_CONFIG"
+}
+
+ask_missing_config() {
+  if [[ -z "${PRODUCTION_HOST:-}" ]]; then
+    read -r -p "Production server IP/host: " PRODUCTION_HOST
+  fi
+
+  PRODUCTION_USER="${PRODUCTION_USER:-depus}"
+  PRODUCTION_SSH_PORT="${PRODUCTION_SSH_PORT:-22}"
+  PRODUCTION_SSL="${PRODUCTION_SSL:-false}"
+  PRODUCTION_FORCE_SSL="${PRODUCTION_FORCE_SSL:-$PRODUCTION_SSL}"
+  PRODUCTION_POSTGRES_DATA_DIR="${PRODUCTION_POSTGRES_DATA_DIR:-/home/${PRODUCTION_USER}/msc_tda/postgres/data}"
+  PRODUCTION_BACKUP_DIR="${PRODUCTION_BACKUP_DIR:-/home/${PRODUCTION_USER}/msc_tda/backups}"
+
+  if [[ -z "$PRODUCTION_HOST" ]]; then
+    printf "Production host is required.\n" >&2
+    exit 1
+  fi
+
+  export PRODUCTION_HOST
+  export PRODUCTION_USER
+  export PRODUCTION_SSH_PORT
+  export PRODUCTION_SSL
+  export PRODUCTION_FORCE_SSL
+  export PRODUCTION_POSTGRES_DATA_DIR
+  export PRODUCTION_BACKUP_DIR
+}
+
+if [[ ! -f config/master.key ]]; then
+  printf "Missing config/master.key. Copy the production master key here before first deploy.\n" >&2
+  exit 1
+fi
+
+load_local_config
+ask_missing_config
+write_local_config
+
+SSH_TARGET="${PRODUCTION_USER}@${PRODUCTION_HOST}"
+SSH_PORT_ARGS=(-p "$PRODUCTION_SSH_PORT")
+ensure_ssh_key_access
+
+info "Generate missing local Kamal secrets"
+run bin/kamal-secret production RAILS_MASTER_KEY >/dev/null
+run bin/kamal-secret production DATABASE_PASSWORD >/dev/null
+run bin/kamal-secret production POSTGRES_PASSWORD >/dev/null
+run bin/kamal-secret production ENCRYPTION_KEY >/dev/null
+run bin/kamal-secret production SECRET_KEY_BASE >/dev/null
+chmod 600 .kamal/secrets.production.local
+
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  info "Working tree has uncommitted changes"
+  printf "This first deploy will pull ghcr.io/cheshir74/mcs:%s, so uncommitted changes will not be deployed.\n" "$KAMAL_IMAGE_VERSION"
+fi
+
+info "Check local dependencies"
+run bundle check
+run yarn install --immutable
+
+info "Prepare server directories over SSH"
+run ssh "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "mkdir -p '$PRODUCTION_POSTGRES_DATA_DIR' '$PRODUCTION_BACKUP_DIR'"
+
+info "Check Docker access over SSH"
+if ! ssh "${SSH_PORT_ARGS[@]}" "$SSH_TARGET" "docker ps >/dev/null 2>&1"; then
+  printf "Docker is not ready for %s. Kamal setup will try to bootstrap Docker and may ask for sudo.\n" "$SSH_TARGET"
+fi
+
+check_port_80
+
+info "Validate Kamal production config"
+run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public config -d production --version "$KAMAL_IMAGE_VERSION"
+
+info "Run first Kamal production setup"
+run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public setup -d production --skip-push --version "$KAMAL_IMAGE_VERSION"
+
+info "Prepare production database"
+run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary -d production --version "$KAMAL_IMAGE_VERSION" "bundle exec rails db:prepare"
+
+info "Health check"
+if [[ "$PRODUCTION_SSL" == "true" ]]; then
+  run curl --fail --show-error --silent "https://${PRODUCTION_HOST}/up"
+else
+  run curl --fail --show-error --silent "http://${PRODUCTION_HOST}/up"
+fi
+
+printf "\nFirst production deploy finished.\n"

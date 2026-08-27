@@ -50,8 +50,7 @@ RUN cp config/database.yml.example config/database.yml && \
     SECRET_KEY_BASE_DUMMY=1 \
     MAILER_HOST=${MAILER_HOST} \
     ENCRYPTION_KEY=0000000000000000000000000000000000000000000000000000000000000000 \
-    bundle exec rails assets:precompile && \
-    rm config/database.yml
+    bundle exec rails assets:precompile
 
 FROM base
 

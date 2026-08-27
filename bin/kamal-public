@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+Thread.report_on_exception = false
+
+require "kamal"
+
+if ENV["KAMAL_PUBLIC_REGISTRY"] == "1"
+  module KamalPublicRegistry
+    def login(registry_config: nil)
+      [ :true ]
+    end
+
+    def logout(registry_config: nil)
+      [ :true ]
+    end
+  end
+
+  Kamal::Commands::Registry.prepend(KamalPublicRegistry)
+
+  module KamalPublicImageValidation
+    def validate_image
+      [ :true ]
+    end
+  end
+
+  Kamal::Commands::Builder::Base.prepend(KamalPublicImageValidation)
+end
+
+begin
+  Kamal::Cli::Main.start(ARGV)
+rescue SSHKit::Runner::ExecuteError => e
+  puts "  \e[31mERROR (#{e.cause.class}): #{e.message}\e[0m"
+  puts e.cause.backtrace if ENV["VERBOSE"]
+  exit 1
+rescue => e
+  puts "  \e[31mERROR (#{e.class}): #{e.message}\e[0m"
+  puts e.backtrace if ENV["VERBOSE"]
+  exit 1
+end

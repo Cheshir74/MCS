@@ -22,6 +22,7 @@
 
 # Docker production secrets and persistent runtime data
 /.env.production
+/.kamal/*.local
 /data
 /secrets
 

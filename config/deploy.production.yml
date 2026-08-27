@@ -1,0 +1,50 @@
+<%
+  production_host = ENV.fetch("PRODUCTION_HOST")
+  production_user = ENV.fetch("PRODUCTION_USER", "depus")
+  production_postgres_data_dir = ENV.fetch("PRODUCTION_POSTGRES_DATA_DIR", "/home/#{production_user}/msc_tda/postgres/data")
+%>
+
+service: msc_tda
+
+image: cheshir74/mcs
+
+servers:
+  web:
+    - <%= production_host %>
+
+ssh:
+  user: <%= production_user %>
+  port: <%= ENV.fetch("PRODUCTION_SSH_PORT", "22") %>
+
+proxy:
+  ssl: <%= ENV.fetch("PRODUCTION_SSL", "false") %>
+  app_port: 3000
+  healthcheck:
+    path: /up
+    interval: 3
+    timeout: 3
+
+env:
+  clear:
+    DATABASE_HOST: msc-tda-postgres
+    DATABASE_PORT: 5432
+    DATABASE_NAME: msc_tda_production
+    DATABASE_USER: msc_tda
+    RAILS_FORCE_SSL: <%= ENV.fetch("PRODUCTION_FORCE_SSL", ENV.fetch("PRODUCTION_SSL", "false")) %>
+
+volumes:
+  - msc_tda_storage:/app/storage
+
+accessories:
+  postgres:
+    service: msc-tda-postgres
+    image: postgres:16
+    host: <%= production_host %>
+    env:
+      clear:
+        POSTGRES_DB: msc_tda_production
+        POSTGRES_USER: msc_tda
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - <%= production_postgres_data_dir %>:/var/lib/postgresql/data
