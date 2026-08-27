@@ -178,6 +178,10 @@ run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public setup -d production --skip-push
 info "Prepare production database"
 run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary -d production --version "$KAMAL_IMAGE_VERSION" "bundle exec rails db:prepare"
 
+info "Ensure first production admin"
+FIRST_ADMIN_EMAIL="${FIRST_ADMIN_EMAIL:-admin@example.com}"
+admin_output="$(env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary --raw --quiet --env "FIRST_ADMIN_EMAIL:${FIRST_ADMIN_EMAIL}" -d production --version "$KAMAL_IMAGE_VERSION" "bundle exec rails admin:ensure_superadmin")"
+
 info "Health check"
 if [[ "$PRODUCTION_SSL" == "true" ]]; then
   run curl --fail --show-error --silent "https://${PRODUCTION_HOST}/up"
@@ -185,4 +189,20 @@ else
   run curl --fail --show-error --silent "http://${PRODUCTION_HOST}/up"
 fi
 
+admin_status="$(printf "%s\n" "$admin_output" | awk -F= '/^FIRST_ADMIN_STATUS=/{ print $2; exit }')"
+admin_email="$(printf "%s\n" "$admin_output" | awk -F= '/^FIRST_ADMIN_EMAIL=/{ print $2; exit }')"
+admin_password="$(printf "%s\n" "$admin_output" | awk -F= '/^FIRST_ADMIN_PASSWORD=/{ print $2; exit }')"
+
+printf "\n========================================\n"
+printf " First production admin\n"
+printf "========================================\n"
+printf " URL:      %s\n" "$([[ "$PRODUCTION_SSL" == "true" ]] && printf "https" || printf "http")://${PRODUCTION_HOST}/admin"
+printf " Email:    %s\n" "$admin_email"
+if [[ "$admin_status" == "created" ]]; then
+  printf " Password: %s\n" "$admin_password"
+  printf "\nThis password is shown once and is not stored by the deploy script.\n"
+else
+  printf " Status:   existing account, password was not changed or printed\n"
+fi
+printf "========================================\n"
 printf "\nFirst production deploy finished.\n"

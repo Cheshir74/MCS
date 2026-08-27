@@ -111,6 +111,26 @@ run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public setup -d staging --skip-push --
 info "Prepare production database"
 run env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary -d staging --version "$KAMAL_IMAGE_VERSION" "bundle exec rails db:prepare"
 
+info "Ensure first staging admin"
+FIRST_ADMIN_EMAIL="${FIRST_ADMIN_EMAIL:-admin@example.com}"
+admin_output="$(env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary --raw --quiet --env "FIRST_ADMIN_EMAIL:${FIRST_ADMIN_EMAIL}" -d staging --version "$KAMAL_IMAGE_VERSION" "bundle exec rails admin:ensure_superadmin")"
+
 info "Health check"
 run curl --fail --show-error --silent "http://${HOST}/up"
+admin_status="$(printf "%s\n" "$admin_output" | awk -F= '/^FIRST_ADMIN_STATUS=/{ print $2; exit }')"
+admin_email="$(printf "%s\n" "$admin_output" | awk -F= '/^FIRST_ADMIN_EMAIL=/{ print $2; exit }')"
+admin_password="$(printf "%s\n" "$admin_output" | awk -F= '/^FIRST_ADMIN_PASSWORD=/{ print $2; exit }')"
+
+printf "\n========================================\n"
+printf " First staging admin\n"
+printf "========================================\n"
+printf " URL:      http://%s/admin\n" "$HOST"
+printf " Email:    %s\n" "$admin_email"
+if [[ "$admin_status" == "created" ]]; then
+  printf " Password: %s\n" "$admin_password"
+  printf "\nThis password is shown once and is not stored by the deploy script.\n"
+else
+  printf " Status:   existing account, password was not changed or printed\n"
+fi
+printf "========================================\n"
 printf "\nFirst staging deploy finished.\n"
