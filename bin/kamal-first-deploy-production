@@ -64,8 +64,27 @@ check_port_80() {
   exit 1
 }
 
+check_ssl_config() {
+  if [[ "$PRODUCTION_SSL" != "true" ]]; then
+    return
+  fi
+
+  if [[ -z "${PRODUCTION_APP_HOST:-}" ]]; then
+    printf "PRODUCTION_APP_HOST is required when PRODUCTION_SSL=true.\n" >&2
+    printf "Use the public domain pointed to %s, not the server IP.\n" "$PRODUCTION_HOST" >&2
+    exit 1
+  fi
+
+  if [[ "$PRODUCTION_APP_HOST" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    printf "Let's Encrypt requires a real domain, but PRODUCTION_APP_HOST is an IP: %s\n" "$PRODUCTION_APP_HOST" >&2
+    printf "Create an A record pointing your domain to %s, then set PRODUCTION_APP_HOST to that domain.\n" "$PRODUCTION_HOST" >&2
+    exit 1
+  fi
+}
+
 load_local_config() {
   local provided_host="${PRODUCTION_HOST:-}"
+  local provided_app_host="${PRODUCTION_APP_HOST:-}"
   local provided_user="${PRODUCTION_USER:-}"
   local provided_ssh_port="${PRODUCTION_SSH_PORT:-}"
   local provided_ssl="${PRODUCTION_SSL:-}"
@@ -82,6 +101,7 @@ load_local_config() {
   fi
 
   PRODUCTION_HOST="${provided_host:-${PRODUCTION_HOST:-}}"
+  PRODUCTION_APP_HOST="${provided_app_host:-${PRODUCTION_APP_HOST:-}}"
   PRODUCTION_USER="${provided_user:-${PRODUCTION_USER:-}}"
   PRODUCTION_SSH_PORT="${provided_ssh_port:-${PRODUCTION_SSH_PORT:-}}"
   PRODUCTION_SSL="${provided_ssl:-${PRODUCTION_SSL:-}}"
@@ -95,6 +115,7 @@ write_local_config() {
   mkdir -p .kamal
   cat > "$LOCAL_CONFIG" <<CONFIG
 PRODUCTION_HOST=${PRODUCTION_HOST}
+PRODUCTION_APP_HOST=${PRODUCTION_APP_HOST}
 PRODUCTION_USER=${PRODUCTION_USER}
 PRODUCTION_SSH_PORT=${PRODUCTION_SSH_PORT}
 PRODUCTION_SSL=${PRODUCTION_SSL}
@@ -112,6 +133,7 @@ ask_missing_config() {
   fi
 
   PRODUCTION_USER="${PRODUCTION_USER:-depus}"
+  PRODUCTION_APP_HOST="${PRODUCTION_APP_HOST:-}"
   PRODUCTION_SSH_PORT="${PRODUCTION_SSH_PORT:-22}"
   PRODUCTION_SSL="${PRODUCTION_SSL:-false}"
   PRODUCTION_FORCE_SSL="${PRODUCTION_FORCE_SSL:-$PRODUCTION_SSL}"
@@ -125,6 +147,7 @@ ask_missing_config() {
   fi
 
   export PRODUCTION_HOST
+  export PRODUCTION_APP_HOST
   export PRODUCTION_USER
   export PRODUCTION_SSH_PORT
   export PRODUCTION_SSL
@@ -145,6 +168,7 @@ write_local_config
 
 SSH_TARGET="${PRODUCTION_USER}@${PRODUCTION_HOST}"
 SSH_PORT_ARGS=(-p "$PRODUCTION_SSH_PORT")
+check_ssl_config
 ensure_ssh_key_access
 
 info "Generate missing local Kamal secrets"
@@ -188,7 +212,7 @@ admin_output="$(env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public app exec --primary 
 
 info "Health check"
 if [[ "$PRODUCTION_SSL" == "true" ]]; then
-  run curl --fail --show-error --silent "https://${PRODUCTION_HOST}/up"
+  run curl --fail --show-error --silent "https://${PRODUCTION_APP_HOST}/up"
 else
   run curl --fail --show-error --silent "http://${PRODUCTION_HOST}/up"
 fi
@@ -200,7 +224,11 @@ admin_password="$(printf "%s\n" "$admin_output" | awk -F= '/^FIRST_ADMIN_PASSWOR
 printf "\n========================================\n"
 printf " First production admin\n"
 printf "========================================\n"
-printf " URL:      %s\n" "$([[ "$PRODUCTION_SSL" == "true" ]] && printf "https" || printf "http")://${PRODUCTION_HOST}/admin"
+if [[ "$PRODUCTION_SSL" == "true" ]]; then
+  printf " URL:      https://%s/admin\n" "$PRODUCTION_APP_HOST"
+else
+  printf " URL:      http://%s/admin\n" "$PRODUCTION_HOST"
+fi
 printf " Email:    %s\n" "$admin_email"
 if [[ "$admin_status" == "created" ]]; then
   printf " Password: %s\n" "$admin_password"

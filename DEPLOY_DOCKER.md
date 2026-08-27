@@ -74,6 +74,44 @@ The first-deploy script:
 The first admin password is not written to the deploy files. If the account
 already exists, the password is not changed or printed.
 
+## Production SSL
+
+Kamal-proxy provides automatic HTTPS via Let's Encrypt when `proxy.ssl` is
+enabled. It also handles certificate renewal; do not run a separate certbot
+container for this app.
+
+Requirements:
+
+- deploy to a single production server;
+- point the public domain A record to `89.22.234.238`;
+- keep ports `80` and `443` open to the server;
+- set `PRODUCTION_APP_HOST` to the domain, not to the IP address.
+
+Example `.kamal/deploy.production.local` values:
+
+```text
+PRODUCTION_HOST=89.22.234.238
+PRODUCTION_APP_HOST=example.com
+PRODUCTION_SSL=true
+PRODUCTION_FORCE_SSL=true
+```
+
+Apply SSL after DNS is ready:
+
+```bash
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-enable-ssl
+```
+
+For one-off checks without editing the local config:
+
+```bash
+PRODUCTION_APP_HOST=example.com \
+PRODUCTION_SSL=true \
+PRODUCTION_FORCE_SSL=true \
+KAMAL_VERSION=$(git rev-parse HEAD) \
+mise run kamal-production-enable-ssl
+```
+
 ## Regular Production Deploy
 
 For normal deploys:

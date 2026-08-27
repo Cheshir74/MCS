@@ -41,6 +41,10 @@ run = "bin/kamal-first-deploy-production"
 description = "Deploy production with Kamal"
 run = "bin/kamal-production deploy --skip-push --version ${KAMAL_VERSION:-latest}"
 
+[tasks.kamal-production-enable-ssl]
+description = "Reboot Kamal proxy and deploy production with Let's Encrypt SSL enabled"
+run = "PRODUCTION_SSL=true PRODUCTION_FORCE_SSL=true bin/kamal-production proxy reboot && PRODUCTION_SSL=true PRODUCTION_FORCE_SSL=true bin/kamal-production deploy --skip-push --version ${KAMAL_VERSION:-latest}"
+
 [tasks.kamal-production-migrate]
 description = "Run production migrations"
 run = "bin/kamal-production app exec --primary \"bundle exec rails db:migrate\""

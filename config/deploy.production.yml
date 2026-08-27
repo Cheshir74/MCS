@@ -1,6 +1,7 @@
 <%
   production_host = ENV.fetch("PRODUCTION_HOST")
   production_user = ENV.fetch("PRODUCTION_USER", "depus")
+  production_app_host = ENV["PRODUCTION_APP_HOST"].presence || production_host
   production_postgres_data_dir = ENV.fetch("PRODUCTION_POSTGRES_DATA_DIR", "/home/#{production_user}/msc_tda/postgres/data")
   production_storage_dir = ENV["PRODUCTION_STORAGE_DIR"].presence || "/home/#{production_user}/msc_tda/storage"
 %>
@@ -19,7 +20,9 @@ ssh:
 
 proxy:
   ssl: <%= ENV.fetch("PRODUCTION_SSL", "false") %>
+  host: <%= production_app_host %>
   app_port: 3000
+  forward_headers: true
   healthcheck:
     path: /up
     interval: 3
@@ -32,6 +35,7 @@ env:
     DATABASE_NAME: msc_tda_production
     DATABASE_USER: msc_tda
     RAILS_ENV: production
+    RAILS_ASSUME_SSL: <%= ENV.fetch("PRODUCTION_SSL", "false") %>
     RAILS_FORCE_SSL: <%= ENV.fetch("PRODUCTION_FORCE_SSL", ENV.fetch("PRODUCTION_SSL", "false")) %>
     RAILS_LOG_TO_STDOUT: "true"
     RAILS_SERVE_STATIC_FILES: "true"

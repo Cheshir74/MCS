@@ -116,6 +116,31 @@ mise run kamal-logs
 
 Подробная инструкция: [DEPLOY_DOCKER.md](DEPLOY_DOCKER.md).
 
+## Production SSL
+
+Let's Encrypt SSL выпускает и обновляет `kamal-proxy`. Отдельный certbot не
+нужен.
+
+Перед включением SSL домен должен указывать A-записью на production server:
+
+```text
+89.22.234.238
+```
+
+В `.kamal/deploy.production.local` должны быть:
+
+```text
+PRODUCTION_APP_HOST=example.com
+PRODUCTION_SSL=true
+PRODUCTION_FORCE_SSL=true
+```
+
+После DNS-настройки:
+
+```bash
+KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-enable-ssl
+```
+
 ## Production Data
 
 Файлы Active Storage хранятся вне app-контейнера в обычной папке на сервере:
