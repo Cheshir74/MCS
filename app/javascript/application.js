@@ -1,26 +1,8 @@
 import "@hotwired/turbo-rails"
-import * as bootstrap from "bootstrap"
-import "./controllers"
-
-import React from "react"
-import ReactDOM from "react-dom"
-
-// Глобальные переменные для react-rails
-window.React = React
-window.ReactDOM = ReactDOM
+import "bootstrap"
+import "./controllers/public"
 
 import "./add_jquery"
-import "./packs/admin"
-
-var ReactRailsUJS = require("react_ujs");
-
-var skipFirstCall = false
-ReactRailsUJS.handleEvent('turbo:load', ()=> {
-  skipFirstCall && ReactRailsUJS.handleMount()
-  skipFirstCall = true
-})
-
-import "@fortawesome/fontawesome-free/js/all"
 
 //import './service/galleries'
 
@@ -159,6 +141,4 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") sendAnalyticsDuration()
 })
 window.addEventListener("pagehide", sendAnalyticsDuration)
-
-
 

@@ -2,10 +2,11 @@ section id="banner"
   div id="owl-list" class="swiper-container owl-theme owl-carousel full-screen" data-controller="swiper" style="min-height:700px;"
     div class="swiper-wrapper"
       - if home.present?
-        - home.ordered_images.each do |image|
+        - home.ordered_images.each_with_index do |image, index|
+          - background_url = optimized_variant_url(image, resize_to_limit: [1600, 960])
           div class="swiper-slide"
             .item
-              span style="background: url('#{url_for(image.variant(resize_to_limit: [2000, 1200]))}') center / cover no-repeat;"
+              span class=("lazy-background" unless index.zero?) style=("background: url('#{background_url}') center / cover no-repeat;" if index.zero?) data-background=(background_url unless index.zero?)
               .overlay-bg
                 div class="text-start intro-tex rounded bg-faded" style="margin-top: 1px;margin-left: 42px; position: absolute; bottom: 25%;"
                   h2 class="section-heading mb-4"

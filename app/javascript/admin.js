@@ -1,27 +1,15 @@
 import "@hotwired/turbo-rails"
-import * as bootstrap from "bootstrap"
-import "./controllers"
+import "bootstrap"
+import "./controllers/admin"
 import "./helpers/admin_confirm"
 
 import "./add_jquery"
 import "./misc"
 
-var ReactRailsUJS = require("react_ujs");
-
-var skipFirstCall = false
-ReactRailsUJS.handleEvent('turbo:load', ()=> {
-  skipFirstCall && ReactRailsUJS.handleMount()
-  skipFirstCall = true
-})
-
-import "@fortawesome/fontawesome-free/js/all"
-
 //import './service/galleries'
 
 import toastr from 'toastr'
 window.toastr = toastr
-
-
 
 
 

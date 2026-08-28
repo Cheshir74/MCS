@@ -127,15 +127,8 @@ Let's Encrypt SSL выпускает и обновляет `kamal-proxy`. Отд
 89.22.234.238
 ```
 
-В `.kamal/deploy.production.local` должны быть:
-
-```text
-PRODUCTION_APP_HOST=example.com
-PRODUCTION_SSL=true
-PRODUCTION_FORCE_SSL=true
-```
-
-После DNS-настройки:
+После DNS-настройки команда сама спросит домен, сохранит его в
+`.kamal/deploy.production.local`, перезапустит proxy и выполнит deploy:
 
 ```bash
 KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-enable-ssl

@@ -21,11 +21,32 @@ module HomesHelper
     ["Репортажный фотограф", location.presence].compact.join(" / ").presence
   end
 
-  def editorial_media_style(image, resize_to_limit: [2200, 1400], position: "center center")
+  def optimized_variant_url(image, resize_to_limit:, format: :webp, quality: 78)
     return if image.blank?
     return if image.respond_to?(:attached?) && !image.attached?
 
-    "background-image: url('#{url_for(image.variant(resize_to_limit: resize_to_limit))}'); background-position: #{position};"
+    variant_options = { resize_to_limit: resize_to_limit }
+    variant_options[:format] = format if format
+    variant_options[:saver] = { quality: quality } if quality
+
+    url_for(image.variant(variant_options))
+  rescue StandardError => e
+    Rails.logger&.warn("[ImageVariant] Variant URL failed for #{image.try(:filename)}: #{e.class} #{e.message}")
+    url_for(image)
+  end
+
+  def editorial_media_style(image, resize_to_limit: [1600, 1000], position: "center center")
+    image_url = optimized_variant_url(image, resize_to_limit: resize_to_limit)
+    return if image_url.blank?
+
+    "background-image: url('#{image_url}'); background-position: #{position};"
+  end
+
+  def preload_image_variant_tag(image, resize_to_limit:, media: nil)
+    image_url = optimized_variant_url(image, resize_to_limit: resize_to_limit)
+    return if image_url.blank?
+
+    tag.link(rel: "preload", as: "image", href: image_url, media: media)
   end
 
   def editorial_gallery_options(galleries)

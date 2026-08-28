@@ -43,7 +43,7 @@ run = "bin/kamal-production deploy --skip-push --version ${KAMAL_VERSION:-latest
 
 [tasks.kamal-production-enable-ssl]
 description = "Reboot Kamal proxy and deploy production with Let's Encrypt SSL enabled"
-run = "PRODUCTION_SSL=true PRODUCTION_FORCE_SSL=true bin/kamal-production proxy reboot && PRODUCTION_SSL=true PRODUCTION_FORCE_SSL=true bin/kamal-production deploy --skip-push --version ${KAMAL_VERSION:-latest}"
+run = "bin/kamal-enable-ssl-production"
 
 [tasks.kamal-production-migrate]
 description = "Run production migrations"

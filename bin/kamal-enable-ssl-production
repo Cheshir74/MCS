@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+LOCAL_CONFIG=".kamal/deploy.production.local"
+KAMAL_IMAGE_VERSION="${KAMAL_VERSION:-latest}"
+
+info() {
+  printf "\n==> %s\n" "$1"
+}
+
+run() {
+  printf "+ %s\n" "$*"
+  "$@"
+}
+
+load_local_config() {
+  local provided_host="${PRODUCTION_HOST:-}"
+  local provided_app_host="${PRODUCTION_APP_HOST:-}"
+  local provided_user="${PRODUCTION_USER:-}"
+  local provided_ssh_port="${PRODUCTION_SSH_PORT:-}"
+  local provided_postgres_data_dir="${PRODUCTION_POSTGRES_DATA_DIR:-}"
+  local provided_storage_dir="${PRODUCTION_STORAGE_DIR:-}"
+  local provided_backup_dir="${PRODUCTION_BACKUP_DIR:-}"
+
+  if [[ -f "$LOCAL_CONFIG" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$LOCAL_CONFIG"
+    set +a
+  fi
+
+  PRODUCTION_HOST="${provided_host:-${PRODUCTION_HOST:-}}"
+  PRODUCTION_APP_HOST="${provided_app_host:-${PRODUCTION_APP_HOST:-}}"
+  PRODUCTION_USER="${provided_user:-${PRODUCTION_USER:-depus}}"
+  PRODUCTION_SSH_PORT="${provided_ssh_port:-${PRODUCTION_SSH_PORT:-22}}"
+  PRODUCTION_POSTGRES_DATA_DIR="${provided_postgres_data_dir:-${PRODUCTION_POSTGRES_DATA_DIR:-/home/${PRODUCTION_USER}/msc_tda/postgres/data}}"
+  PRODUCTION_STORAGE_DIR="${provided_storage_dir:-${PRODUCTION_STORAGE_DIR:-/home/${PRODUCTION_USER}/msc_tda/storage}}"
+  PRODUCTION_BACKUP_DIR="${provided_backup_dir:-${PRODUCTION_BACKUP_DIR:-/home/${PRODUCTION_USER}/msc_tda/backups}}"
+}
+
+write_local_config() {
+  mkdir -p .kamal
+  cat > "$LOCAL_CONFIG" <<CONFIG
+PRODUCTION_HOST=${PRODUCTION_HOST}
+PRODUCTION_APP_HOST=${PRODUCTION_APP_HOST}
+PRODUCTION_USER=${PRODUCTION_USER}
+PRODUCTION_SSH_PORT=${PRODUCTION_SSH_PORT}
+PRODUCTION_SSL=true
+PRODUCTION_FORCE_SSL=true
+PRODUCTION_POSTGRES_DATA_DIR=${PRODUCTION_POSTGRES_DATA_DIR}
+PRODUCTION_STORAGE_DIR=${PRODUCTION_STORAGE_DIR}
+PRODUCTION_BACKUP_DIR=${PRODUCTION_BACKUP_DIR}
+CONFIG
+  chmod 600 "$LOCAL_CONFIG"
+}
+
+validate_app_host() {
+  if [[ -z "$PRODUCTION_APP_HOST" ]]; then
+    printf "Production domain is required.\n" >&2
+    exit 1
+  fi
+
+  if [[ "$PRODUCTION_APP_HOST" =~ ^https?:// ]]; then
+    printf "Enter only the domain, without http:// or https://: %s\n" "$PRODUCTION_APP_HOST" >&2
+    exit 1
+  fi
+
+  if [[ "$PRODUCTION_APP_HOST" == */* ]]; then
+    printf "Enter only the domain, without a path: %s\n" "$PRODUCTION_APP_HOST" >&2
+    exit 1
+  fi
+
+  if [[ "$PRODUCTION_APP_HOST" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    printf "Let's Encrypt requires a real domain, not an IP: %s\n" "$PRODUCTION_APP_HOST" >&2
+    exit 1
+  fi
+}
+
+ask_domain() {
+  if [[ -z "${PRODUCTION_HOST:-}" ]]; then
+    read -r -p "Production server IP/host: " PRODUCTION_HOST
+  fi
+
+  if [[ -z "$PRODUCTION_HOST" ]]; then
+    printf "Production server IP/host is required.\n" >&2
+    exit 1
+  fi
+
+  if [[ -n "${PRODUCTION_APP_HOST:-}" ]]; then
+    printf "Current production domain: %s\n" "$PRODUCTION_APP_HOST"
+    read -r -p "Use this domain for Let's Encrypt SSL? [Y/n] " answer
+    case "${answer:-Y}" in
+      y|Y|yes|YES|Yes) ;;
+      *) read -r -p "Production domain for Let's Encrypt: " PRODUCTION_APP_HOST ;;
+    esac
+  else
+    read -r -p "Production domain for Let's Encrypt: " PRODUCTION_APP_HOST
+  fi
+
+  validate_app_host
+}
+
+load_local_config
+ask_domain
+
+export PRODUCTION_HOST
+export PRODUCTION_APP_HOST
+export PRODUCTION_USER
+export PRODUCTION_SSH_PORT
+export PRODUCTION_SSL=true
+export PRODUCTION_FORCE_SSL=true
+export PRODUCTION_POSTGRES_DATA_DIR
+export PRODUCTION_STORAGE_DIR
+export PRODUCTION_BACKUP_DIR
+
+info "Production SSL config"
+printf "Server: %s\n" "$PRODUCTION_HOST"
+printf "Domain: %s\n" "$PRODUCTION_APP_HOST"
+printf "Config: %s\n" "$LOCAL_CONFIG"
+printf "\nMake sure DNS A record points %s to %s before continuing.\n" "$PRODUCTION_APP_HOST" "$PRODUCTION_HOST"
+read -r -p "Continue with Kamal proxy reboot and deploy? [y/N] " confirm
+case "${confirm:-N}" in
+  y|Y|yes|YES|Yes) ;;
+  *) printf "Cancelled.\n"; exit 0 ;;
+esac
+
+write_local_config
+
+info "Validate Kamal production config"
+run bin/kamal-production config --version "$KAMAL_IMAGE_VERSION"
+
+info "Reboot Kamal proxy"
+run bin/kamal-production proxy reboot
+
+info "Deploy production with SSL"
+run bin/kamal-production deploy --skip-push --version "$KAMAL_IMAGE_VERSION"
+
+printf "\nProduction SSL is enabled for https://%s\n" "$PRODUCTION_APP_HOST"

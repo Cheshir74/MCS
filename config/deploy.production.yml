@@ -34,6 +34,7 @@ env:
     DATABASE_PORT: 5432
     DATABASE_NAME: msc_tda_production
     DATABASE_USER: msc_tda
+    CANONICAL_HOST: <%= production_app_host %>
     RAILS_ENV: production
     RAILS_ASSUME_SSL: <%= ENV.fetch("PRODUCTION_SSL", "false") %>
     RAILS_FORCE_SSL: <%= ENV.fetch("PRODUCTION_FORCE_SSL", ENV.fetch("PRODUCTION_SSL", "false")) %>

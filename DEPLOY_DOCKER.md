@@ -87,27 +87,18 @@ Requirements:
 - keep ports `80` and `443` open to the server;
 - set `PRODUCTION_APP_HOST` to the domain, not to the IP address.
 
-Example `.kamal/deploy.production.local` values:
-
-```text
-PRODUCTION_HOST=89.22.234.238
-PRODUCTION_APP_HOST=example.com
-PRODUCTION_SSL=true
-PRODUCTION_FORCE_SSL=true
-```
-
-Apply SSL after DNS is ready:
+Apply SSL after DNS is ready. The command asks for the domain, writes
+`PRODUCTION_APP_HOST`, `PRODUCTION_SSL=true`, and `PRODUCTION_FORCE_SSL=true`
+to `.kamal/deploy.production.local`, reboots the proxy, and deploys:
 
 ```bash
 KAMAL_VERSION=$(git rev-parse HEAD) mise run kamal-production-enable-ssl
 ```
 
-For one-off checks without editing the local config:
+The domain can still be passed non-interactively:
 
 ```bash
 PRODUCTION_APP_HOST=example.com \
-PRODUCTION_SSL=true \
-PRODUCTION_FORCE_SSL=true \
 KAMAL_VERSION=$(git rev-parse HEAD) \
 mise run kamal-production-enable-ssl
 ```

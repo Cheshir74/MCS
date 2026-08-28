@@ -48,4 +48,18 @@ if [[ -z "${PRODUCTION_HOST:-}" ]]; then
   exit 1
 fi
 
+if [[ "${PRODUCTION_SSL:-false}" == "true" ]]; then
+  if [[ -z "${PRODUCTION_APP_HOST:-}" ]]; then
+    printf "Missing PRODUCTION_APP_HOST. Let's Encrypt SSL needs a real domain pointed to %s.\n" "$PRODUCTION_HOST" >&2
+    printf "Add PRODUCTION_APP_HOST=your-domain.com to %s or pass it before the command.\n" "$LOCAL_CONFIG" >&2
+    exit 1
+  fi
+
+  if [[ "$PRODUCTION_APP_HOST" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    printf "Invalid PRODUCTION_APP_HOST for Let's Encrypt: %s\n" "$PRODUCTION_APP_HOST" >&2
+    printf "Use a real domain, not the server IP.\n" >&2
+    exit 1
+  fi
+fi
+
 exec env KAMAL_PUBLIC_REGISTRY=1 bin/kamal-public "$@" -d production

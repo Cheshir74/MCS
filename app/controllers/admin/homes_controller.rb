@@ -159,6 +159,7 @@ class Admin::HomesController < Admin::AdminController
   end
 
   def persist_home_media!(home, permitted_params)
+    enqueue_variant_processing(home.image.blob) if permitted_params[:image].present? && home.image.attached?
     attach_slider_images!(home, Array(permitted_params[:images]))
     attach_editorial_hero_image!(home, permitted_params[:editorial_hero_image])
   end
@@ -166,6 +167,7 @@ class Admin::HomesController < Admin::AdminController
   def attach_slider_images!(home, uploads)
     uploads.reject(&:blank?).each do |image|
       home.images.attach(image)
+      enqueue_variant_processing(home.images.attachments.last.blob)
     end
   end
 
@@ -176,7 +178,14 @@ class Admin::HomesController < Admin::AdminController
     home.images.attach(upload)
 
     fresh_attachment = home.images.attachments.where.not(id: existing_attachment_ids).order(created_at: :desc).first
-    promote_hero_attachment!(home, fresh_attachment) if fresh_attachment.present?
+    if fresh_attachment.present?
+      enqueue_variant_processing(fresh_attachment.blob)
+      promote_hero_attachment!(home, fresh_attachment)
+    end
+  end
+
+  def enqueue_variant_processing(blob)
+    ProcessImageVariantsJob.perform_later(blob)
   end
 
   def promote_hero_attachment!(home, attachment)

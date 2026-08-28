@@ -43,6 +43,10 @@
 - contacts_email_value = home.editorial_content(:contacts_email_value)
 - contacts_social_label = home.editorial_content(:contacts_social_label)
 
+- content_for :head do
+  = preload_image_variant_tag(hero_image, resize_to_limit: [1200, 900], media: "(max-width: 840px)")
+  = preload_image_variant_tag(hero_image, resize_to_limit: [1600, 1000], media: "(min-width: 841px)")
+
 .shell.home-editorial data-controller="editorial-home"
   header.site-header data-editorial-home-target="header"
     .site-header__inner

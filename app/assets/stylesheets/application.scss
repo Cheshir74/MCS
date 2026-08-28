@@ -1,5 +1,4 @@
 @import 'bootstrap/scss/bootstrap';
-@import 'bootstrap-icons/font/bootstrap-icons';
 
 @import "./src/homes";
 @import "./src/home_editorial";
@@ -12,6 +11,8 @@
 
 @import "./src/css/vendor/animate.min";
 
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/solid";
 @import "@fortawesome/fontawesome-free/scss/brands";
 
 @font-face {
@@ -45,5 +46,4 @@
 }
 
 
-@import 'lightgallery/css/lightgallery-bundle';
 @import 'swiper/swiper-bundle.min';
