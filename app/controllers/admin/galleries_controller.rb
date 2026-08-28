@@ -169,7 +169,7 @@ class Admin::GalleriesController < Admin::AdminController
   end
 
   def gallery_params
-    params.require(:gallery).permit(:name, :visible, *Gallery::HOMEPAGE_FIELDS)
+    params.require(:gallery).permit(:name, :visible, *Gallery::HOMEPAGE_FIELDS, *Gallery::SEO_FIELDS)
   end
 
   def selected_gallery_ids

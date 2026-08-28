@@ -48,5 +48,36 @@ RSpec.describe "SEO", type: :request do
       expect(response.body).to include('property="og:title"')
       expect(response.body).to include('name="twitter:card"')
     end
+
+    it "uses custom homepage SEO fields when present" do
+      Home.create!(
+        title: "Fallback home",
+        body: "Fallback description",
+        visible: true,
+        seo_title: "Custom homepage SEO title",
+        seo_description: "Custom homepage SEO description for search engines"
+      )
+
+      get home_path
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("Custom homepage SEO title")
+      expect(response.body).to include("Custom homepage SEO description for search engines")
+    end
+
+    it "uses custom gallery SEO fields when present" do
+      gallery = Gallery.create!(
+        name: "Fallback gallery",
+        visible: true,
+        seo_title: "Custom gallery SEO title",
+        seo_description: "Custom gallery SEO description for search engines"
+      )
+
+      get gallery_path(gallery)
+
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("Custom gallery SEO title")
+      expect(response.body).to include("Custom gallery SEO description for search engines")
+    end
   end
 end

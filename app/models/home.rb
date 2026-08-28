@@ -87,6 +87,10 @@ class Home < ApplicationRecord
     contacts_email_value
     contacts_social_label
   ].freeze
+  SEO_FIELDS = %i[
+    seo_title
+    seo_description
+  ].freeze
   EDITORIAL_DEFAULTS = {
     hero_eyebrow: "Репортаж / Documentary",
     hero_title: "Дмитрий Толстошеев.",
@@ -142,7 +146,7 @@ class Home < ApplicationRecord
     contacts_social_label: "Соцсети"
   }.freeze
 
-  store_accessor :editorial_settings, *EDITORIAL_FIELDS
+  store_accessor :editorial_settings, *(EDITORIAL_FIELDS + SEO_FIELDS)
 
   validates :design_variant, inclusion: { in: DESIGN_VARIANTS }
 

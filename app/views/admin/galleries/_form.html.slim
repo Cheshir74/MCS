@@ -1,4 +1,4 @@
-- nav_sections = [{ id: "gallery-basics", title: "Basics", hint: "name and visibility" }, { id: "gallery-copy", title: "Homepage copy", hint: "titles and text" }, { id: "gallery-meta", title: "Details & tags", hint: "shared labels" }, { id: "gallery-media", title: "Media", hint: "photos and order" }]
+- nav_sections = [{ id: "gallery-basics", title: "Basics", hint: "name and visibility" }, { id: "gallery-seo", title: "SEO", hint: "search snippets" }, { id: "gallery-copy", title: "Homepage copy", hint: "titles and text" }, { id: "gallery-meta", title: "Details & tags", hint: "shared labels" }, { id: "gallery-media", title: "Media", hint: "photos and order" }]
 - attached_images_count = gallery.images.attachments.size
 - filled_homepage_fields = Gallery::HOMEPAGE_FIELDS.count { |field| gallery.public_send(field).present? }
 - summary_rows = [["Status", gallery.visible? ? "Visible" : "Hidden", gallery.visible? ? "success" : "muted"], ["Images", "#{attached_images_count} file#{'s' unless attached_images_count == 1}", attached_images_count.positive? ? "accent" : "warning"], ["Cover", gallery.primary_image.present? ? "Ready" : "Missing", gallery.primary_image.present? ? "success" : "warning"], ["Homepage fields", "#{filled_homepage_fields}/#{Gallery::HOMEPAGE_FIELDS.size}", filled_homepage_fields.positive? ? "accent" : "muted"]]
@@ -65,6 +65,23 @@
                 .form-check.form-switch
                   = f.check_box :visible, class: "form-check-input input-card__switch", id: dom_id(gallery, :visible)
                   = f.label :visible, "Show on site", class: "form-check-label", for: dom_id(gallery, :visible)
+
+      section.card.section-card.admin-editor__section id="gallery-seo" data-home-editor-target="section" data-scope="shared"
+        .card-header
+          h4.card-title
+            span.card-chip SEO
+            |  Search preview
+          p.card-subtitle.text-muted.small Optional title and description for search engines and social previews
+        .card-body
+          .admin-section-grid.admin-section-grid--two
+            .input-card
+              h5.input-card__title SEO title
+              p.input-card__hint Fallback: large card title or gallery name
+              = f.text_field :seo_title, class: "form-control input-card__control", maxlength: 70, placeholder: gallery.homepage_content(:homepage_title)
+            .input-card.admin-editor__full
+              h5.input-card__title SEO description
+              p.input-card__hint Recommended length: 120-155 characters
+              = f.text_area :seo_description, class: "form-control input-card__control", rows: 3, maxlength: 180, placeholder: gallery.homepage_content(:homepage_description)
 
       section.card.section-card.admin-editor__section id="gallery-copy" data-home-editor-target="section" data-scope="shared"
         .card-header

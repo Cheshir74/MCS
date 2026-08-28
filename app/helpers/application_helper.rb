@@ -78,11 +78,13 @@ module ApplicationHelper
   end
 
   def seo_resource_title
+    return @gallery.seo_title if defined?(@gallery) && @gallery&.seo_title.present?
     return @gallery.homepage_content(:homepage_title) if defined?(@gallery) && @gallery.present?
     return @article.title if defined?(@article) && @article.present?
     return "О фотографе" if controller_name == "pages" && action_name == "about"
 
     if defined?(@home) && @home.present?
+      return @home.seo_title if @home.seo_title.present?
       return @home.editorial_content(:hero_title) if @home.editorial?
 
       return @home.title.presence
@@ -92,6 +94,7 @@ module ApplicationHelper
   end
 
   def seo_resource_description
+    return @gallery.seo_description if defined?(@gallery) && @gallery&.seo_description.present?
     return @gallery.homepage_content(:homepage_description) if defined?(@gallery) && @gallery.present?
     return @article.body if defined?(@article) && @article.present?
 
@@ -100,6 +103,7 @@ module ApplicationHelper
     end
 
     if defined?(@home) && @home.present?
+      return @home.seo_description if @home.seo_description.present?
       return @home.editorial_content(:hero_body) if @home.editorial?
 
       return @home.body.presence || @home.body_block1.presence

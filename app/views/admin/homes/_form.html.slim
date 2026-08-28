@@ -1,6 +1,6 @@
 - galleries ||= []
 - design_options = [["Legacy", "legacy"], ["New", "editorial"]]
-- nav_sections = [{ id: "home-publish", title: "Publish", scope: "shared" }, { id: "home-media", title: "Media", scope: "shared" }, { id: "home-legacy-hero", title: "Old hero", scope: "legacy" }, { id: "home-legacy-about", title: "Old about", scope: "legacy" }, { id: "home-editorial-hero", title: "New hero", scope: "editorial" }, { id: "home-editorial-reports", title: "Reports", scope: "editorial" }, { id: "home-editorial-about", title: "New about", scope: "editorial" }, { id: "home-editorial-contacts", title: "Contacts", scope: "editorial" }, { id: "home-editorial-galleries", title: "Slots", scope: "editorial" }]
+- nav_sections = [{ id: "home-publish", title: "Publish", scope: "shared" }, { id: "home-seo", title: "SEO", scope: "shared" }, { id: "home-media", title: "Media", scope: "shared" }, { id: "home-legacy-hero", title: "Old hero", scope: "legacy" }, { id: "home-legacy-about", title: "Old about", scope: "legacy" }, { id: "home-editorial-hero", title: "New hero", scope: "editorial" }, { id: "home-editorial-reports", title: "Reports", scope: "editorial" }, { id: "home-editorial-about", title: "New about", scope: "editorial" }, { id: "home-editorial-contacts", title: "Contacts", scope: "editorial" }, { id: "home-editorial-galleries", title: "Slots", scope: "editorial" }]
 - hero_image_count = home.images.attachments.size
 - active_hero_attachment = home.ordered_images.first
 - legacy_extra_hero_count = [hero_image_count - 1, 0].max
@@ -96,6 +96,23 @@
                 .form-check.form-switch
                   = f.check_box :visible_cf, class: "form-check-input input-card__switch", id: visible_cf_id
                   = f.label :visible_cf, "Show public contact form", class: "form-check-label", for: visible_cf_id
+
+      section.card.section-card.admin-editor__section id="home-seo" data-home-editor-target="section" data-scope="shared"
+        .card-header
+          h4.card-title
+            span.card-chip SEO
+            |  Homepage snippet
+          p.card-subtitle.text-muted.small Optional title and description for search engines and social previews
+        .card-body
+          .admin-section-grid.admin-section-grid--two
+            .input-card
+              h5.input-card__title SEO title
+              p.input-card__hint Fallback: hero title or legacy title
+              = f.text_field :seo_title, class: "form-control input-card__control", maxlength: 70, placeholder: field_example.call(home.editorial? ? home.editorial_content(:hero_title) : home.title, "Homepage title")
+            .input-card.admin-editor__full
+              h5.input-card__title SEO description
+              p.input-card__hint Recommended length: 120-155 characters
+              = f.text_area :seo_description, class: "form-control input-card__control", rows: 3, maxlength: 180, placeholder: field_example.call(home.editorial? ? home.editorial_content(:hero_body) : home.body, "Short search description")
 
       section.card.section-card.admin-editor__section id="home-media" data-home-editor-target="section" data-scope="shared"
         .card-header

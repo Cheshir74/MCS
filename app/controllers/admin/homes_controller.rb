@@ -210,6 +210,7 @@ class Admin::HomesController < Admin::AdminController
       :editorial_hero_image,
       :image,
       *Home::EDITORIAL_GALLERY_FIELDS,
+      *Home::SEO_FIELDS,
       *Home::EDITORIAL_FIELDS.excluding(
         :hero_primary_cta_label,
         :hero_secondary_cta_label,

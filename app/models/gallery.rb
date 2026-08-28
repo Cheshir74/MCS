@@ -12,6 +12,10 @@ class Gallery < ApplicationRecord
     homepage_overlay_title
     homepage_tags
   ].freeze
+  SEO_FIELDS = %i[
+    seo_title
+    seo_description
+  ].freeze
 
   LEGACY_HOMEPAGE_FIELDS = %i[
     homepage_overlay_meta_primary
@@ -28,7 +32,7 @@ class Gallery < ApplicationRecord
     homepage_tags: "backstage, детали, хроника"
   }.freeze
 
-  store_accessor :homepage_settings, *(HOMEPAGE_FIELDS + LEGACY_HOMEPAGE_FIELDS)
+  store_accessor :homepage_settings, *(HOMEPAGE_FIELDS + SEO_FIELDS + LEGACY_HOMEPAGE_FIELDS)
 
   def ordered_images
     images.attachments.includes(:blob).sort_by { |attachment| [attachment.position || 0, attachment.created_at] }
