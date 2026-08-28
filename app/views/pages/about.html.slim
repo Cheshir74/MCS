@@ -1,19 +1,10 @@
-doctype html
-html
-  head
-    title Slim Examples
-    meta name="keywords" content="template language"
+- content_for :title, "О фотографе"
+- content_for :description, "О фотографе Дмитрии Толстошееве: репортажная съемка культурных событий, выставок, премьер и редакционных проектов."
 
-
-
-  body
-    h1 Markup examples
-
-    #content
-      p This example shows you how a basic Slim file looks.
-
-    == yield
-
-    =submit
-
-    div id="footer"
+section.about-page
+  .container.py-5
+    h1 О фотографе
+    p.lead
+      | Дмитрий Толстошеев снимает культурные события, выставки, премьеры, backstage и документальные портреты.
+    p
+      | В репортаже важны не только ключевые моменты, но и атмосфера события: свет, жесты, паузы, детали пространства и люди внутри реального контекста.

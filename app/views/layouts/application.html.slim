@@ -1,10 +1,11 @@
 doctype html
 html
   head
-    title =@site_setting.name_site
+    title = seo_title
     meta name="yandex-verification" content=@site_setting.yn_verification_pri
     meta name="yandex-verification" content=@site_setting.yn_verification_sec
     meta name="turbo-visit-control" content="reload"
+    = seo_meta_tags
 
     = csrf_meta_tags
     = csp_meta_tag

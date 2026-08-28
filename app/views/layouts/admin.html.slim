@@ -4,6 +4,7 @@ html
     title =@site_setting.name_site
     meta name="yandex-verification" content=@site_setting.yn_verification_pri
     meta name="yandex-verification" content=@site_setting.yn_verification_sec
+    meta name="robots" content="noindex, nofollow"
     = csrf_meta_tags
     = csp_meta_tag
     = site_favicon_tag
