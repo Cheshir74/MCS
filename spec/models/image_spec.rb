@@ -1,5 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Image, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should validate_presence_of(:gallery_id) }
+
+  it "has one attached image" do
+    expect(described_class.reflect_on_attachment(:image).macro).to eq(:has_one_attached)
+  end
 end

@@ -1,0 +1,17 @@
+- content_for :title, "Связаться"
+- content_for :description, "Связаться с фотографом Дмитрием Толстошеевым по вопросам съемки событий, выставок, премьер и редакционных проектов."
+
+section.contact-page
+  .container.py-5
+    h1 Связаться
+    = form_with url: message_path, method: :post, local: true, class: "contact-form" do |f|
+      .mb-3
+        = label_tag :name, "Имя", class: "form-label"
+        = text_field_tag :name, nil, class: "form-control", required: true
+      .mb-3
+        = label_tag :email, "Email", class: "form-label"
+        = email_field_tag :email, nil, class: "form-control", required: true
+      .mb-3
+        = label_tag :body, "Сообщение", class: "form-label"
+        = text_area_tag :body, nil, class: "form-control", rows: 5, required: true
+      = f.submit "Отправить", class: "btn btn-primary"
